@@ -11,7 +11,7 @@ sudo pip install -r ~/iSDX/setup/pip-ryu-requires
 
 #  Ryu install
 cd ~
-git clone -b $RYU_VERSION git://github.com/osrg/ryu.git
+git clone -b $RYU_VERSION https://github.com/osrg/ryu.git
 sudo cp iSDX/setup/ryu-flags.py ryu/ryu/flags.py
 cd ryu
 
