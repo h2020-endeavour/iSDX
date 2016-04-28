@@ -1,6 +1,7 @@
 #  Author:
 #  Rudiger Birkner (Networked Systems Group ETH Zurich)
 
+import abc
 import json
 import logging
 
@@ -29,7 +30,10 @@ class Config(object):
 
     def __init__(self, config_file):
         self.server = None
-
+        # Controller mode name
+        self.mode_name = None
+        # Controller mode alias
+        self.mode_alias = None
         self.mode = None
         self.ofdpa = set()
         self.ofv = None
@@ -48,9 +52,14 @@ class Config(object):
 
         # read from file
         if "Mode" in config:
-            if config["Mode"] == "Multi-Switch":
+            mode = config["Mode"]
+            # Create an alias from the first letter of each word of the config mode 
+            alias_prefix = "".join( [mode.split('-')[0][0], mode.split('-')[1][0]] )
+            self.mode_alias = "%s_ctrlr" % (alias_prefix.lower())
+            self.name =  "".join(mode.split('-'))
+            if mode == "Multi-Switch":
                 self.mode = self.MULTISWITCH
-            elif config["Mode"] == "Multi-Table":
+            elif mode == "Multi-Table":
                 self.mode = self.MULTITABLE
         if "RefMon Settings" in config:
             if "fabric options" in config["RefMon Settings"]:
@@ -98,17 +107,72 @@ class InvalidConfigError(Exception):
     def __str__(self):
         return repr(self.flow_mod)
 
-class MultiTableController(object):
+# Base class for iSDX reference monitor controllers
+
+class Controller(object):
+    __metaclass__ = abc.ABCMeta    
     def __init__(self, config):
         self.config = config
-        self.logger = util.log.getLogger('MultiTableController')
-        self.logger.info('mt_ctrlr: creating an instance of MultiTableController')
+        self.logger = util.log.getLogger("%sController" %(config.name))
+              
+    def switch_connect(self, dp):
+   
+        dp_name = self.config.dpid_2_name[dp.id]
 
+        self.config.datapaths[dp_name] = dp
+
+        if self.config.ofproto is None:
+            self.config.ofproto = dp.ofproto
+        if self.config.parser is None:
+            self.config.parser = dp.ofproto_parser
+
+        self.logger.info('%s: switch connect: %s' % (self.config.mode_alias, dp_name))
+
+        if self.is_ready():
+            self.init_fabric()
+
+            while not self.fm_queue.empty():
+                self.process_flow_mod(self.fm_queue.get())
+
+    def is_ready(self):
+        if len(self.config.datapaths) == len(self.config.dpids) or self.config.always_ready:
+            return True
+        return False
+    
+    def switch_disconnect(self, dp):
+        if dp.id in self.config.dpid_2_name:
+            dp_name = self.config.dpid_2_name[dp.id]
+            self.logger.info('%s: switch disconnect: %s' % (self.config.mode_alias, dp_name))
+            del self.config.datapaths[dp_name]
+
+    def packet_in(self, ev):
+        self.logger.info("%s: packet in" % (self.config.mode_alias))
+    
+    @abc.abstractmethod
+    def init_fabric(self):
+        pass
+
+    @abc.abstractmethod
+    def process_flow_mod(self, fm):
+        pass
+    
+    @abc.abstractmethod
+    def send_barrier_request(self):
+        pass
+
+    @abc.abstractmethod
+    def handle_barrier_reply(self):
+        pass
+
+class MultiTableController(Controller):
+    def __init__(self, config):
+        super(MultiTableController, self).__init__(config)
+        self.logger.info('%s: creating an instance of MultiTableController' % (self.config.mode_alias))
         self.fm_queue = Queue()
 
     def init_fabric(self):
         # install table-miss flow entry
-        self.logger.info("mt_ctrlr: init fabric")
+        self.logger.info("%s: init fabric" % self.config.mode_alias)
         match = self.config.parser.OFPMatch()
         actions = [self.config.parser.OFPActionOutput(self.config.ofproto.OFPP_CONTROLLER, self.config.ofproto.OFPCML_NO_BUFFER)]
         instructions = [self.config.parser.OFPInstructionActions(self.config.ofproto.OFPIT_APPLY_ACTIONS, actions)]
@@ -129,45 +193,12 @@ class MultiTableController(object):
                                             match=match, instructions=instructions)
         self.config.datapaths["arp"].send_msg(mod)
 
-    def switch_connect(self, dp):
-        dp_name = self.config.dpid_2_name[dp.id]
-
-        self.config.datapaths[dp_name] = dp
-
-        if self.config.ofproto is None:
-            self.config.ofproto = dp.ofproto
-        if self.config.parser is None:
-            self.config.parser = dp.ofproto_parser
-
-        self.logger.info('mt_ctrlr: switch connect: ' + dp_name)
-
-        if self.is_ready():
-            self.init_fabric()
-
-            while not self.fm_queue.empty():
-                self.process_flow_mod(self.fm_queue.get())
-
-    def switch_disconnect(self, dp):
-        if dp.id in self.config.dpid_2_name:
-            dp_name = self.config.dpid_2_name[dp.id]
-            self.logger.info('mt_ctrlr: switch disconnect: ' + dp_name)
-            del self.config.datapaths[dp_name]
-
-
     def process_flow_mod(self, fm):
         if not self.is_ready():
             self.fm_queue.put(fm)
         else:
             mod = fm.get_flow_mod(self.config)
             self.config.datapaths[fm.get_dst_dp()].send_msg(mod)
-
-    def packet_in(self, ev):
-        self.logger.info("mt_ctrlr: packet in")
-
-    def is_ready(self):
-        if len(self.config.datapaths) == len(self.config.dpids):
-            return True
-        return False
 
     def send_barrier_request(self):
         request = self.config.parser.OFPBarrierRequest(self.config.datapaths["main"])
@@ -178,44 +209,17 @@ class MultiTableController(object):
             return True
         return False
 
-class MultiSwitchController(object):
+class MultiSwitchController(Controller):
     def __init__(self, config):
-        self.logger = util.log.getLogger('MultiSwitchController')
-        self.logger.info('ms_ctrlr: creating an instance of MultiSwitchController')
-
-        self.datapaths = {}
+        super(MultiSwitchController, self).__init__(config)
+        self.logger.info('%s: creating an instance of MultiSwitchController' % (self.config.mode_alias))
         self.config = config
-
         self.fm_queue = Queue()
         self.last_command_type = {}
 
-    def switch_connect(self, dp):
-        dp_name = self.config.dpid_2_name[dp.id]
-
-        self.config.datapaths[dp_name] = dp
-
-        if self.config.ofproto is None:
-            self.config.ofproto = dp.ofproto
-        if self.config.parser is None:
-            self.config.parser = dp.ofproto_parser
-
-        self.logger.info('ms_ctrlr: switch connect: ' + dp_name)
-
-        if self.is_ready():
-            self.init_fabric()
-
-            while not self.fm_queue.empty():
-                self.process_flow_mod(self.fm_queue.get())
-
-    def switch_disconnect(self, dp):
-        if dp.id in self.config.dpid_2_name:
-            dp_name = self.config.dpid_2_name[dp.id]
-            self.logger.info('ms_ctrlr: switch disconnect: ' + dp_name)
-            del self.config.datapaths[dp_name]
-
     def init_fabric(self):
         # install table-miss flow entry
-        self.logger.info('ms_ctrlr: init fabric')
+        self.logger.info('%s: init fabric' % (self.config.mode_alias))
         match = self.config.parser.OFPMatch()
 
         if self.config.ofv  == "1.3":
@@ -258,14 +262,6 @@ class MultiSwitchController(object):
                 self.last_command_type[dp.id] = flow_mod.command
                 dp.send_msg(self.config.parser.OFPBarrierRequest(dp))
             dp.send_msg(flow_mod)
-
-    def packet_in(self, ev):
-        pass
-
-    def is_ready(self):
-        if len(self.config.datapaths) == len(self.config.dpids) or self.config.always_ready:
-            return True
-        return False
 
     def send_barrier_request(self):
         if self.is_ready():
