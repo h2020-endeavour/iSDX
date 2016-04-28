@@ -27,6 +27,7 @@ class Config(object):
 
     MULTISWITCH = 0
     MULTITABLE  = 1
+    MULTIHOP = 2
 
     def __init__(self, config_file):
         self.server = None
@@ -61,6 +62,8 @@ class Config(object):
                 self.mode = self.MULTISWITCH
             elif mode == "Multi-Table":
                 self.mode = self.MULTITABLE
+            elif mode == "Multi-Hop": 
+                self.mode = self.MULTIHOP
         if "RefMon Settings" in config:
             if "fabric options" in config["RefMon Settings"]:
                 if "tables" in config["RefMon Settings"]["fabric options"]:
@@ -91,6 +94,9 @@ class Config(object):
         elif self.isMultiTableMode():
             if not (self.ofv == "1.3" and self.tables and self.datapath_ports):
                 raise InvalidConfigError(config)
+        elif self.isMultiHopMode():
+            #TODO: Implement check for edges and nodes            
+            pass
         else:
             raise InvalidConfigError(config)
 
@@ -99,6 +105,9 @@ class Config(object):
 
     def isMultiTableMode(self):
         return self.mode == self.MULTITABLE
+
+    def isMultiHopMode(self):
+        return self.mode == self.MULTIHOP
 
 
 class InvalidConfigError(Exception):
@@ -113,6 +122,7 @@ class Controller(object):
     __metaclass__ = abc.ABCMeta    
     def __init__(self, config):
         self.config = config
+        self.fm_queue = Queue()        
         self.logger = util.log.getLogger("%sController" %(config.name))
               
     def switch_connect(self, dp):
@@ -168,11 +178,9 @@ class MultiTableController(Controller):
     def __init__(self, config):
         super(MultiTableController, self).__init__(config)
         self.logger.info('%s: creating an instance of MultiTableController' % (self.config.mode_alias))
-        self.fm_queue = Queue()
 
     def init_fabric(self):
         # install table-miss flow entry
-        self.logger.info("%s: init fabric" % self.config.mode_alias)
         match = self.config.parser.OFPMatch()
         actions = [self.config.parser.OFPActionOutput(self.config.ofproto.OFPP_CONTROLLER, self.config.ofproto.OFPCML_NO_BUFFER)]
         instructions = [self.config.parser.OFPInstructionActions(self.config.ofproto.OFPIT_APPLY_ACTIONS, actions)]
@@ -214,7 +222,6 @@ class MultiSwitchController(Controller):
         super(MultiSwitchController, self).__init__(config)
         self.logger.info('%s: creating an instance of MultiSwitchController' % (self.config.mode_alias))
         self.config = config
-        self.fm_queue = Queue()
         self.last_command_type = {}
 
     def init_fabric(self):
@@ -276,3 +283,56 @@ class MultiSwitchController(Controller):
         if self.config.datapaths["outbound"] == datapath:
             return True
         return False
+
+class MultiHopController(Controller):
+    def __init__(self, config):
+        super(MultiHopController, self).__init__(config)
+        self.logger.info('%s: creating an instance of MultiHopController' % (self.config.mode_alias))
+
+    def process_flow_mod(self, fm):
+        pass
+
+    def init_fabric(self):
+        match = self.config.parser.OFPMatch()
+        actions = [self.config.parser.OFPActionOutput(self.config.ofproto.OFPP_CONTROLLER, self.config.ofproto.OFPCML_NO_BUFFER)]
+        instructions = [self.config.parser.OFPInstructionActions(self.config.ofproto.OFPIT_APPLY_ACTIONS, actions)]
+        tables = self.config.tables
+        umbrella_core_table = tables["umbrella-core"]
+        umbrela_edge_table = tables["umbrella-edge"] 
+        iSDX_tables = {x:tables[x] for x in tables if x.find("umbrella") < 0}
+        # Need to init more tables in the edges
+        datapaths = self.config.datapaths
+        edges = [datapaths[x] for x in datapaths if x.find("edge") == 0]
+        for edge in edges:
+            for table in iSDX_tables:
+                table_id = iSDX_tables[table]
+                mod = self.config.parser.OFPFlowMod(datapath=edge,
+                                                cookie=NO_COOKIE, cookie_mask=1,
+                                                table_id=table_id,
+                                                command=self.config.ofproto.OFPFC_ADD,
+                                                priority=FLOW_MISS_PRIORITY,
+                                                match=match, instructions=instructions)
+                edge.send_msg(mod)
+            mod = self.config.parser.OFPFlowMod(datapath=edge,
+                                                cookie=NO_COOKIE, cookie_mask=1,
+                                                table_id=umbrela_edge_table,
+                                                command=self.config.ofproto.OFPFC_ADD,
+                                                priority=FLOW_MISS_PRIORITY,
+                                                match=match, instructions=instructions)
+            edge.send_msg(mod)
+        # Only one table for the cores
+        cores = [datapaths[x] for x in datapaths if x.find("core") == 0]
+        for core in cores:
+            mod = self.config.parser.OFPFlowMod(datapath=edge,
+                                                cookie=NO_COOKIE, cookie_mask=1,
+                                                table_id=umbrella_core_table,
+                                                command=self.config.ofproto.OFPFC_ADD,
+                                                priority=FLOW_MISS_PRIORITY,
+                                                match=match, instructions=instructions)
+            core.send_msg(mod)            
+
+    def send_barrier_request(self):
+        pass  
+
+    def handle_barrier_reply(self, datapath):
+        pass

@@ -20,7 +20,7 @@ if np not in sys.path:
     sys.path.append(np)
 import util.log
 
-from lib import MultiSwitchController, MultiTableController, Config, InvalidConfigError
+from lib import MultiSwitchController, MultiTableController, MultiHopController, Config, InvalidConfigError
 from ofp10 import FlowMod as OFP10FlowMod
 from ofp13 import FlowMod as OFP13FlowMod
 from server import Server
@@ -77,6 +77,8 @@ class RefMon(app_manager.RyuApp):
             self.controller = MultiSwitchController(self.config)
         elif self.config.isMultiTableMode():
             self.controller = MultiTableController(self.config)
+        elif self.config.isMultiHopMode():
+			self.controller = MultiHopController(self.config)
 
         # start server receiving flowmod requests
         self.server = Server(self, self.config.server["IP"], self.config.server["Port"], self.config.server["key"])
