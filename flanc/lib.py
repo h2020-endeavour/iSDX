@@ -17,8 +17,13 @@ import util.log
 
 from ofdpa20 import OFDPA20
 
+IP_ETH_TYPE = 0x0800
+TCP_IP_PROTO = 6
+
 # PRIORITIES
 FLOW_MISS_PRIORITY = 0
+BGP = 179
+BGP_PRIORITY = 8
 
 # COOKIES
 NO_COOKIE = 0
@@ -292,44 +297,50 @@ class MultiHopController(Controller):
     def process_flow_mod(self, fm):
         pass
 
-    def init_fabric(self):
+    def install_default_flow(self, datapath, table_id):
         match = self.config.parser.OFPMatch()
         actions = [self.config.parser.OFPActionOutput(self.config.ofproto.OFPP_CONTROLLER, self.config.ofproto.OFPCML_NO_BUFFER)]
         instructions = [self.config.parser.OFPInstructionActions(self.config.ofproto.OFPIT_APPLY_ACTIONS, actions)]
-        tables = self.config.tables
-        umbrella_core_table = tables["umbrella-core"]
-        umbrela_edge_table = tables["umbrella-edge"] 
-        iSDX_tables = {x:tables[x] for x in tables if x.find("umbrella") < 0}
-        # Need to init more tables in the edges
-        datapaths = self.config.datapaths
-        edges = [datapaths[x] for x in datapaths if x.find("edge") == 0]
-        for edge in edges:
-            for table in iSDX_tables:
-                table_id = iSDX_tables[table]
-                mod = self.config.parser.OFPFlowMod(datapath=edge,
+        mod = self.config.parser.OFPFlowMod(datapath=datapath,
                                                 cookie=NO_COOKIE, cookie_mask=1,
                                                 table_id=table_id,
                                                 command=self.config.ofproto.OFPFC_ADD,
                                                 priority=FLOW_MISS_PRIORITY,
                                                 match=match, instructions=instructions)
-                edge.send_msg(mod)
-            mod = self.config.parser.OFPFlowMod(datapath=edge,
+        datapath.send_msg(mod)
+
+    # Create flow to send every BGP packet to the umbrella table
+    def handle_BGP(self, edge, table, goto_table):
+        match = self.config.parser.OFPMatch(eth_type=IP_ETH_TYPE, ip_proto = TCP_IP_PROTO, tcp_src = BGP)
+        instructions = [self.config.parser.OFPInstructionGotoTable(goto_table)]        
+        mod = self.config.parser.OFPFlowMod(datapath=edge,
                                                 cookie=NO_COOKIE, cookie_mask=1,
-                                                table_id=umbrela_edge_table,
+                                                table_id=table,
                                                 command=self.config.ofproto.OFPFC_ADD,
-                                                priority=FLOW_MISS_PRIORITY,
+                                                priority = BGP_PRIORITY,
                                                 match=match, instructions=instructions)
-            edge.send_msg(mod)
+        edge.send_msg(mod)
+
+    def init_fabric(self):
+        tables = self.config.tables
+        umbrella_core_table = tables["umbrella-core"]
+        umbrella_edge_table = tables["umbrella-edge"]
+        iSDX_tables = {x:tables[x] for x in tables if x.find("umbrella") < 0}
+        # Need to init more tables in the edges
+        datapaths = self.config.datapaths
+        edges = [datapaths[x] for x in datapaths if x.find("edge") == 0]
+        for edge in edges:
+            # iSDX tables            
+            for table in iSDX_tables:
+                table_id = iSDX_tables[table]
+                self.install_default_flow(edge, table_id)
+            # Umbrella table
+            self.install_default_flow(edge, umbrella_edge_table)
+            self.handle_BGP(edge, iSDX_tables["main-in"], umbrella_edge_table)
         # Only one table for the cores
         cores = [datapaths[x] for x in datapaths if x.find("core") == 0]
         for core in cores:
-            mod = self.config.parser.OFPFlowMod(datapath=edge,
-                                                cookie=NO_COOKIE, cookie_mask=1,
-                                                table_id=umbrella_core_table,
-                                                command=self.config.ofproto.OFPFC_ADD,
-                                                priority=FLOW_MISS_PRIORITY,
-                                                match=match, instructions=instructions)
-            core.send_msg(mod)            
+            self.install_default_flow(core, umbrella_core_table)            
 
     def send_barrier_request(self):
         pass  
