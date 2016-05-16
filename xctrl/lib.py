@@ -63,10 +63,16 @@ class Config(object):
             self.vnhs = IPNetwork(config["VNHs"])
 
         if "Route Server" in config:
-            self.route_server = Peer("RS", [Port(config["Route Server"]["Port"], config["Route Server"]["MAC"], config["Route Server"]["IP"])])
+            switch = None
+            if "switch" in config["Route Server"]:
+                switch = config["Route Server"]["switch"]
+            self.route_server = Peer("RS", [Port(config["Route Server"]["Port"], switch, config["Route Server"]["MAC"], config["Route Server"]["IP"])])
 
         if "ARP Proxy" in config:
-            self.arp_proxy = Peer("ARP", [Port(config["ARP Proxy"]["Port"], config["ARP Proxy"]["MAC"], config["ARP Proxy"]["IP"])])
+            switch = None
+            if "switch" in config["Route Server"]:
+                switch = config["Route Server"]["switch"]
+            self.arp_proxy = Peer("ARP", [Port(config["ARP Proxy"]["Port"], switch, config["ARP Proxy"]["MAC"], config["ARP Proxy"]["IP"])])
 
         if "Participants" in config:
             for participant_name, participant in config["Participants"].iteritems():
@@ -83,7 +89,7 @@ class Config(object):
                     outbound_rules = None
 
                 if ("Ports" in participant):
-                    ports = [Port(port['Id'], port['MAC'], port['IP'])
+                    ports = [Port(port['Id'], port['switch'], port['MAC'], port['IP'])
                               for port in participant["Ports"]]
 
                 self.peers[participant_name] = Participant(participant_name, ports, inbound_rules, outbound_rules)
@@ -102,5 +108,5 @@ class Config(object):
 
 
 Peer = namedtuple('Peer', 'name ports')
-Port = namedtuple('Port', 'id mac ip')
+Port = namedtuple('Port', 'id switch mac ip')
 Participant = namedtuple('Participant', 'name ports inbound_rules outbound_rules')
