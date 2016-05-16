@@ -68,7 +68,8 @@ class RefMon(app_manager.RyuApp):
             self.config = Config(config_file)
         except InvalidConfigError as e:
             self.logger.info('refmon: invalid config '+str(e))
-
+            # No sense to continue the execution             
+            sys.exit()            
 
         self.config.always_ready = CONF['refmon']['always_ready']
 

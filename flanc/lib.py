@@ -100,8 +100,9 @@ class Config(object):
             if not (self.ofv == "1.3" and self.tables and self.datapath_ports):
                 raise InvalidConfigError(config)
         elif self.isMultiHopMode():
-            #TODO: Implement check for edges and nodes            
-            pass
+            #TODO: Implement check for edges and nodes
+            if (not self.checkMultiHopConfig()):
+		        raise InvalidConfigError(config)    
         else:
             raise InvalidConfigError(config)
 
@@ -114,12 +115,20 @@ class Config(object):
     def isMultiHopMode(self):
         return self.mode == self.MULTIHOP
 
+    def checkMultiHopConfig(self):
+        # For now check if there is at least one edge switch
+        # It is does not ensure the file is correct, but a
+        # weak enforcement         
+        for switch in self.dpids:
+            if switch.find("edge") >= 0:
+                return True
+        return False
 
 class InvalidConfigError(Exception):
-    def __init__(self, flow_mod):
-        self.flow_mod = flow_mod
+    def __init__(self, config):
+        self.config = config
     def __str__(self):
-        return repr(self.flow_mod)
+        return repr(self.config)
 
 # Base class for iSDX reference monitor controllers
 
