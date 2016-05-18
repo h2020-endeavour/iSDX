@@ -18,13 +18,14 @@ import util.log
 from ofdpa20 import OFDPA20
 
 IP_ETH_TYPE = 0x0800
+ARP_ETH_TYPE = 0x0806
 TCP_IP_PROTO = 6
 
 # PRIORITIES
 FLOW_MISS_PRIORITY = 0
 BGP = 179
 BGP_PRIORITY = 8
-
+ARP_PRIORITY = 8
 # COOKIES
 NO_COOKIE = 0
 
@@ -329,6 +330,17 @@ class MultiHopController(Controller):
                                                 priority = BGP_PRIORITY,
                                                 match=match, instructions=instructions)
         edge.send_msg(mod)
+    
+    def handle_ARP(self, edge, table, goto_table):
+        match = self.config.parser.OFPMatch(eth_type=ARP_ETH_TYPE)
+        instructions = [self.config.parser.OFPInstructionGotoTable(goto_table)]        
+        mod = self.config.parser.OFPFlowMod(datapath=edge,
+                                                cookie=NO_COOKIE, cookie_mask=1,
+                                                table_id=table,
+                                                command=self.config.ofproto.OFPFC_ADD,
+                                                priority = BGP_PRIORITY,
+                                                match=match, instructions=instructions)
+        edge.send_msg(mod)    
 
     def init_fabric(self):
         tables = self.config.tables
@@ -343,9 +355,10 @@ class MultiHopController(Controller):
             for table in iSDX_tables:
                 table_id = iSDX_tables[table]
                 self.install_default_flow(edge, table_id)
-            # Umbrella table
+            # TODO: Send these packets to the load-balancer table?
             self.install_default_flow(edge, umbrella_edge_table)
             self.handle_BGP(edge, iSDX_tables["main-in"], umbrella_edge_table)
+            self.handle_ARP(edge, iSDX_tables["main-in"], umbrella_edge_table)
         # Only one table for the cores
         cores = [datapaths[x] for x in datapaths if x.find("core") == 0]
         for core in cores:
