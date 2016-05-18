@@ -11,6 +11,7 @@ class Config(object):
 
     MULTISWITCH = 0
     MULTITABLE  = 1
+    MULTIHOP = 2
 
     SUPERSETS = 0
     MDS       = 1
@@ -22,6 +23,9 @@ class Config(object):
         self.vmac_options = None
 
         self.vnhs = None
+
+        self.dpids = None
+        self.dpid_2_name = {}
 
         self.refmon = None
 
@@ -45,6 +49,8 @@ class Config(object):
                 self.mode = self.MULTISWITCH
             if config["Mode"] == "Multi-Table":
                 self.mode = self.MULTITABLE
+            if config["Mode"] == "Multi-Hop":
+                self.mode = self.MULTIHOP
         if "VMAC" in config:
             if "Mode" in config["VMAC"]:
                 if config["VMAC"]["Mode"] == "Superset":
@@ -53,6 +59,14 @@ class Config(object):
                     self.vmac_mode = self.MDS
             if "Options" in config["VMAC"]:
                 self.vmac_options = config["VMAC"]["Options"]
+
+        if "RefMon Settings" in config:
+            if "fabric options" in config["RefMon Settings"]:
+                if "dpids" in config["RefMon Settings"]["fabric options"]:
+                    self.dpids = config["RefMon Settings"]["fabric options"]["dpids"]
+                    for k,v in self.dpids.iteritems():
+                        self.dpid_2_name[v] = k
+
         if "RefMon Server" in config:
             self.refmon = config["RefMon Server"]
 
@@ -99,6 +113,10 @@ class Config(object):
 
     def isMultiTableMode(self):
         return self.mode == self.MULTITABLE
+
+    def isMultiHopMode(self):
+        return self.mode == self.MULTIHOP
+
 
     def isSupersetsMode(self):
         return self.vmac_mode == self.SUPERSETS

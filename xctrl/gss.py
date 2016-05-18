@@ -17,6 +17,7 @@ from vmac_lib import VMACBuilder
 # Priorities
 BGP_PRIORITY = 8
 ARP_PRIORITY = 8
+GRATUITOUS_ARP_PRIORITY = 9
 ARP_BROADCAST_PRIORITY = 7
 VNH_ARP_FILTER_PRIORITY = 6
 OUTBOUND_PRIORITY = 5
@@ -158,9 +159,9 @@ class GSS(object):
                         mac = port.mac
                     match = {"in_port": port.id}
                     action = {"set_eth_src": mac, "fwd": ["outbound"]}
-                    self.fm_builder.add_flow_mod("insert", rule_type, OUTBOUND_PRIORITY, match, action)
+                    self.fm_builder.add_flow_mod("insert", rule_type, OUTBOUND_PRIORITY, match, action, port.switch)
 
-    def handle_participant_with_inbound(self, rule_type, mask_inbound_bit):
+    def handle_participant_with_inbound(self, rule_type, mask_inbound_bit, switch = None):
         for participant in self.config.peers.values():
             ### inbound policies specified
             if participant.inbound_rules:
@@ -172,9 +173,9 @@ class GSS(object):
                     match = {"eth_dst": (vmac, vmac_mask)}
                     action = {"set_eth_dst": port.mac,
                               "fwd": [port.id]}
-                    self.fm_builder.add_flow_mod("insert", rule_type, FORWARDING_PRIORITY, match, action)
+                    self.fm_builder.add_flow_mod("insert", rule_type, FORWARDING_PRIORITY, match, action, switch)
 
-    def default_forwarding(self, rule_type):
+    def default_forwarding(self, rule_type, switch = None):
         for participant in self.config.peers.values():
             ### default forwarding
             if not participant.inbound_rules:
@@ -186,7 +187,7 @@ class GSS(object):
                           "fwd": [port.id]}
                 self.fm_builder.add_flow_mod("insert", rule_type, FORWARDING_PRIORITY, match, action)
 
-    def default_forwarding_inbound(self, rule_type, fwd):
+    def default_forwarding_inbound(self, rule_type, fwd, switch = None):
         ## set the inbound bit to zero
         for participant in self.config.peers.values():
             if participant.inbound_rules:
@@ -196,20 +197,20 @@ class GSS(object):
                 vmac_action = self.vmac_builder.part_port_match(participant.name, 0, False)
                 match = {"eth_dst": (vmac_match, vmac_match_mask)}
                 action = {"set_eth_dst": vmac_action, "fwd": [fwd]}
-                self.fm_builder.add_flow_mod("insert", "inbound", INBOUND_PRIORITY, match, action)
+                self.fm_builder.add_flow_mod("insert", "inbound", INBOUND_PRIORITY, match, action, switch)
 
-    def handle_inbound(self, rule_type):
+    def handle_inbound(self, rule_type, switch = None):
         vmac = self.vmac_builder.only_first_bit()
         match = {"eth_dst": (vmac, vmac)}
         action = {"fwd": ["outbound"]}
-        self.fm_builder.add_flow_mod("insert", rule_type, INBOUND_BIT_PRIORITY, match, action)
+        self.fm_builder.add_flow_mod("insert", rule_type, INBOUND_BIT_PRIORITY, match, action, switch)
 
-    def match_any_fwd(self, rule_type, dst):
+    def match_any_fwd(self, rule_type, dst, switch = None):
         match = {}
         action = {"fwd": [dst]}
-        self.fm_builder.add_flow_mod("insert", rule_type, DEFAULT_PRIORITY, match, action)
+        self.fm_builder.add_flow_mod("insert", rule_type, DEFAULT_PRIORITY, match, action, switch)
 
-    def delete_flow_rule(self, rule_type, cookie, cookie_mask):
+    def delete_flow_rule(self, rule_type, cookie, cookie_mask, switch = None):
         self.fm_builder.delete_flow_mod("remove", rule_type, cookie, cookie_mask)
 
     def start(self):
@@ -273,6 +274,8 @@ class GSSmT(GSS):
     def __init__(self, sender, config):
         super(GSSmT, self).__init__(util.log.getLogger('GSSmT'), sender, config)
 
+    
+
     def init_fabric(self):
         self.logger.info('init fabric')
 
@@ -291,16 +294,16 @@ class GSSmT(GSS):
         self.logger.info('create flow mods to handle participant traffic')
         ### outbound policies specified
         self.handle_participant_with_outbound("main-in")
-        ## direct packets with inbound bit set to the inbound switch
+        ## direct packets with inbound bit set to the inbound table
         self.handle_inbound("main-in")
-        ## whatever doesn't match on any other rule, send to inbound switch
+        ## whatever doesn't match on any other rule, send to inbound table
         self.match_any_fwd("main-in", "main-out")
 
-        # OUTBOUND SWITCH
-        ## whatever doesn't match on any other rule, send to inbound switch
+        # OUTBOUND TABLE
+        ## whatever doesn't match on any other rule, send to inbound table
         self.match_any_fwd("outbound", "inbound")
 
-        # INBOUND SWITCH
+        # INBOUND TABLE
         ## set the inbound bit to zero
         self.default_forwarding_inbound("inbound", "main-out")
         ## send all other packets to main
@@ -311,3 +314,54 @@ class GSSmT(GSS):
         self.handle_participant_with_inbound("main-out", False)
         ### default forwarding
         self.default_forwarding("main-out")
+
+class GSSmH(GSS):
+    def __init__(self, sender, config):
+        super(GSSmH, self).__init__(util.log.getLogger('GSSmH'), sender, config)
+
+    def handle_gratuituous_ARP(self, rule_type, switch = None):
+        for participant in self.config.peers.values():        
+            i = 0
+            for port in participant.ports:
+                vmac = self.vmac_builder.part_port_match(participant.name, i, inbound_bit = False)
+                vmac_mask = self.vmac_builder.part_port_mask(False)
+                match = {"eth_type": ETH_TYPE_ARP,
+                         "eth_dst": (vmac, vmac_mask)}
+                action = {"set_eth_dst": port.mac, "fwd": ["load-balancer"]}
+                self.fm_builder.add_flow_mod("insert", rule_type, GRATUITOUS_ARP_PRIORITY, match, action, switch)
+                i += 1
+
+    def default_forwarding(self, rule_type, switch = None):
+        for participant in self.config.peers.values():
+            ### default forwarding
+            if not participant.inbound_rules:
+                vmac = self.vmac_builder.next_hop_match(participant.name, False)
+                vmac_mask = self.vmac_builder.next_hop_mask(False)
+                port = participant.ports[0]
+                match = {"eth_dst": (vmac, vmac_mask)}
+                action = {"set_eth_dst": port.mac,
+                          "fwd": ["load-balancer"]}
+                self.fm_builder.add_flow_mod("insert", rule_type, FORWARDING_PRIORITY, match, action, switch)
+
+    def init_fabric(self):
+        edges = [x for x in self.config.dpids if x.find("edge") == 0]        
+        # Outbound policies will live only in the edge of the respective participant         
+        self.handle_participant_with_outbound("main-in")
+        for edge in edges:
+            ## direct packets with inbound bit set to the inbound table
+            # MAIN-IN TABLE            
+            self.handle_gratuituous_ARP("main-in")
+            self.handle_inbound("main-in")
+            self.match_any_fwd("main-in", "main-out")
+            # INBOUND TABLE
+            ## set the inbound bit to zero
+            self.default_forwarding_inbound("inbound", "main-out", edge)
+            ## send all other packets to main
+            self.match_any_fwd("inbound", "main-out", edge)
+            # OUTBOUND TABLE
+            ## whatever doesn't match on any other rule, send to inbound table
+            self.match_any_fwd("outbound", "inbound", edge)
+            # MAIN-OUT TABLE            
+            self.handle_participant_with_inbound("main-out", False, edge)
+            self.default_forwarding("main-out")
+

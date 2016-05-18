@@ -13,7 +13,7 @@ if np not in sys.path:
 import util.log
 
 from client import RefMonClient # Socket
-from gss import GSSmS, GSSmT
+from gss import GSSmS, GSSmT, GSSmH
 from lib import Config
 from mds import MDSmS, MDSmT
 
@@ -49,6 +49,9 @@ def main():
         elif config.isMultiTableMode():
             controller = GSSmT(client, config)
             logger.info('mode GSSmT - OF v1.3')
+        elif config.isMultiHopMode():
+            controller = GSSmH(client, config)
+            logger.info('mode GSSmH - OF v1.3')
 
     logger.info('start')
     controller.start()
