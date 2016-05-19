@@ -350,9 +350,9 @@ class GSSmH(GSS):
         for edge in edges:
             ## direct packets with inbound bit set to the inbound table
             # MAIN-IN TABLE            
-            self.handle_gratuituous_ARP("main-in")
-            self.handle_inbound("main-in")
-            self.match_any_fwd("main-in", "main-out")
+            self.handle_gratuituous_ARP("main-in", edge)
+            self.handle_inbound("main-in", edge)
+            self.match_any_fwd("main-in", "main-out", edge)
             # INBOUND TABLE
             ## set the inbound bit to zero
             self.default_forwarding_inbound("inbound", "main-out", edge)
@@ -363,5 +363,5 @@ class GSSmH(GSS):
             self.match_any_fwd("outbound", "inbound", edge)
             # MAIN-OUT TABLE            
             self.handle_participant_with_inbound("main-out", False, edge)
-            self.default_forwarding("main-out")
+            self.default_forwarding("main-out", edge)
 
