@@ -221,6 +221,7 @@ class MultiTableController(Controller):
             self.fm_queue.put(fm)
         else:
             mod = fm.get_flow_mod(self.config)
+	    print 
             self.config.datapaths[fm.get_dst_dp()].send_msg(mod)
 
     def send_barrier_request(self):
@@ -305,7 +306,11 @@ class MultiHopController(Controller):
         self.logger.info('%s: creating an instance of MultiHopController' % (self.config.mode_alias))
 
     def process_flow_mod(self, fm):
-        pass
+        if not self.is_ready():
+            self.fm_queue.put(fm)
+        else:
+            mod = fm.get_flow_mod(self.config)
+            self.config.datapaths[fm.get_dst_dp()].send_msg(mod)
 
     def install_default_flow(self, datapath, table_id):
         match = self.config.parser.OFPMatch()

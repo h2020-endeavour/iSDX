@@ -9,7 +9,7 @@ from ofdpa20 import OFDPA20
 class FlowMod(object):
     def __init__(self, config, origin, flow_mod):
         self.mod_types = ["insert", "remove"]
-        self.rule_types = ["inbound", "outbound", "main", "main-in", "main-out", "arp"]
+        self.rule_types = ["inbound", "outbound", "main", "main-in", "main-out", "arp", "load-balancer", "umbrella"]
         
         self.config = config
         self.parser = None
@@ -48,7 +48,9 @@ class FlowMod(object):
                         self.rule_type = self.config.dp_alias[flow_mod["rule_type"]]
                     else:
                         self.rule_type = flow_mod["rule_type"]
-
+                    datapath = flow_mod["datapath"]
+                    if datapath in self.config.dpids:
+                        self.datapath = datapath
                     if ("priority" in flow_mod):
                         self.priority = flow_mod["priority"]
                         if "match" in flow_mod:
@@ -123,11 +125,11 @@ class FlowMod(object):
         temp_goto_instructions = []
         temp_fwd_actions = []
         temp_actions = []
-
         for action, value in self.actions.iteritems():
             if action == "fwd":
                 if self.config.tables:
                     for port in value:
+                        print port
                         if isinstance( port, int ) or port.isdigit():
                             temp_fwd_actions.append(self.parser.OFPActionOutput(int(port)))
                         elif port in self.config.tables:
@@ -188,14 +190,17 @@ class FlowMod(object):
         group_mods = []
 
         match = self.parser.OFPMatch(**self.matches)
-
         if self.config.tables:
             if self.rule_type == "arp":
                 table_id = 0
                 datapath = self.config.datapaths["arp"]
-            else:
+            elif self.rule_type == "main":
                 table_id = self.config.tables[self.rule_type]
                 datapath = self.config.datapaths["main"]
+            else:
+                self.datapath
+                datapath = self.config.datapaths[self.datapath]
+                table_id = self.config.tables[self.rule_type]
         else:
             datapath = self.config.datapaths[self.rule_type]
             table_id = self.ofdpa.get_table_id() if self.is_ofdpa_datapath(datapath) else 0
@@ -222,6 +227,10 @@ class FlowMod(object):
         return flow_mod, group_mods
 
     def get_dst_dp(self):
+        if self.config.isMultiHopMode():
+            return self.datapath
+        #TODO: For now leave previous logic, so we do not need 
+        # to modify previous code
         if self.config.tables and self.rule_type != "arp":
             return "main"
         return self.rule_type
