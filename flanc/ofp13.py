@@ -9,7 +9,7 @@ from ofdpa20 import OFDPA20
 class FlowMod(object):
     def __init__(self, config, origin, flow_mod):
         self.mod_types = ["insert", "remove"]
-        self.rule_types = ["inbound", "outbound", "main", "main-in", "main-out", "arp", "load-balancer", "umbrella"]
+        self.rule_types = ["inbound", "outbound", "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core"]
         
         self.config = config
         self.parser = None
@@ -129,7 +129,6 @@ class FlowMod(object):
             if action == "fwd":
                 if self.config.tables:
                     for port in value:
-                        print port
                         if isinstance( port, int ) or port.isdigit():
                             temp_fwd_actions.append(self.parser.OFPActionOutput(int(port)))
                         elif port in self.config.tables:
@@ -188,19 +187,18 @@ class FlowMod(object):
         self.config = config
         self.parser = config.parser
         group_mods = []
-
         match = self.parser.OFPMatch(**self.matches)
         if self.config.tables:
             if self.rule_type == "arp":
                 table_id = 0
                 datapath = self.config.datapaths["arp"]
-            elif self.rule_type == "main":
-                table_id = self.config.tables[self.rule_type]
-                datapath = self.config.datapaths["main"]
             else:
-                self.datapath
-                datapath = self.config.datapaths[self.datapath]
-                table_id = self.config.tables[self.rule_type]
+                if config.isMultiHopMode():
+                    datapath = self.config.datapaths[self.datapath]
+                    table_id = self.config.tables[self.rule_type]
+                else:
+                    table_id = self.config.tables[self.rule_type]
+                    datapath = self.config.datapaths["main"]
         else:
             datapath = self.config.datapaths[self.rule_type]
             table_id = self.ofdpa.get_table_id() if self.is_ofdpa_datapath(datapath) else 0

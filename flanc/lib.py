@@ -4,6 +4,7 @@
 import abc
 import json
 import logging
+import copy
 
 from Queue import Queue
 
@@ -53,6 +54,7 @@ class Config(object):
         self.datapaths = {}
         self.parser = None
         self.ofproto = None
+        self.participants = {}
 
         # loading config file
         config = json.load(open(config_file, 'r'))
@@ -92,6 +94,9 @@ class Config(object):
             self.server = config["RefMon Server"]
         else:
             raise InvalidConfigError(config)
+
+        if "Participants" in config:
+            self.participants = config["Participants"]
 
         # check if valid config
         if self.isMultiSwitchMode():
@@ -143,7 +148,6 @@ class Controller(object):
     def switch_connect(self, dp):
    
         dp_name = self.config.dpid_2_name[dp.id]
-
         self.config.datapaths[dp_name] = dp
 
         if self.config.ofproto is None:
@@ -173,6 +177,33 @@ class Controller(object):
     def packet_in(self, ev):
         self.logger.info("%s: packet in" % (self.config.mode_alias))
     
+
+    def distribute_participant_flows(self, flow_mods, participant):
+        # TODO: Make it better, too ugly right now :(
+        new_flows = []
+        for flow in flow_mods:
+            rule_type = flow["rule_type"]
+            # Install only in the participant edges            
+            if rule_type == "outbound":
+                for port in participant["Ports"]:
+                    datapath = port["switch"]
+                    if datapath.find("edge") == 0:
+                        # Delete old flow and add new one
+                        new_flow = copy.deepcopy(flow) 
+                        new_flow["datapath"] = datapath
+                        new_flows.append(new_flow)
+            # Install in all edges        
+            elif rule_type == "inbound":
+                edges = [x for x in self.config.dpids if x.find("edge") == 0]
+                for e in edges:
+                    new_flow = copy.deepcopy(flow) 
+                    #print new_flow
+                    new_flow["datapath"] = e
+                    new_flows.append(new_flow)        
+        if len(new_flows) > 0:
+            return new_flows
+        return flow_mods
+
     @abc.abstractmethod
     def init_fabric(self):
         pass
@@ -221,7 +252,6 @@ class MultiTableController(Controller):
             self.fm_queue.put(fm)
         else:
             mod = fm.get_flow_mod(self.config)
-	    print 
             self.config.datapaths[fm.get_dst_dp()].send_msg(mod)
 
     def send_barrier_request(self):

@@ -139,22 +139,29 @@ class RefMon(app_manager.RyuApp):
 
             if "flow_mods" in msg:
 
-                # flow mod logging
+                flow_mods = msg["flow_mods"]
+                # Flows from the participant come without the switch
+                # The fabric controllers picks the switches where
+                # they shall be installed
+               
+                participant = str(msg['auth_info']['participant']) 
+                if participant in self.config.participants:                    
+                    flow_mods = self.controller.distribute_participant_flows(flow_mods, self.config.participants[participant])
+
+                 # flow mod logging
                 if self.flow_mod_log:
                     self.flow_mod_log.write('BURST: ' + str(time()) + '\n')
                     self.flow_mod_log.write('PARTICIPANT: ' + str(msg['auth_info']['participant']) + '\n')
-                    for flow_mod in msg["flow_mods"]:
+                    for flow_mod in flow_mods:
                         self.flow_mod_log.write(json.dumps(flow_mod) + '\n')
                     self.flow_mod_log.write('\n')
 
                 self.logger.debug('BURST: ' + str(time()))
                 self.logger.debug('PARTICIPANT: ' + str(msg['auth_info']['participant']))
-                for flow_mod in msg["flow_mods"]:
+                for flow_mod in flow_mods:
                     self.logger.debug('FLOWMOD from ' + str(origin) + ': ' + json.dumps(flow_mod))
-
-
                 # push flow mods to the data plane
-                for flow_mod in msg["flow_mods"]:
+                for flow_mod in flow_mods:
                     if self.config.ofv == "1.0":
                         fm = OFP10FlowMod(self.config, origin, flow_mod)
                     elif self.config.ofv == "1.3":

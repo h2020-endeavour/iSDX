@@ -84,8 +84,8 @@ class Config(object):
 
         if "ARP Proxy" in config:
             switch = None
-            if "switch" in config["Route Server"]:
-                switch = config["Route Server"]["switch"]
+            if "switch" in config["ARP Proxy"]:
+                switch = config["ARP Proxy"]["switch"]
             self.arp_proxy = Peer("ARP", [Port(config["ARP Proxy"]["Port"], switch, config["ARP Proxy"]["MAC"], config["ARP Proxy"]["IP"])])
 
         if "Participants" in config:
