@@ -26,7 +26,7 @@ TCP_IP_PROTO = 6
 FLOW_MISS_PRIORITY = 0
 BGP = 179
 BGP_PRIORITY = 8
-ARP_PRIORITY = 8
+ARP_PRIORITY = 7
 # COOKIES
 NO_COOKIE = 0
 
@@ -373,7 +373,7 @@ class MultiHopController(Controller):
                                                 cookie=NO_COOKIE, cookie_mask=1,
                                                 table_id=table,
                                                 command=self.config.ofproto.OFPFC_ADD,
-                                                priority = BGP_PRIORITY,
+                                                priority = ARP_PRIORITY,
                                                 match=match, instructions=instructions)
         edge.send_msg(mod)    
 
