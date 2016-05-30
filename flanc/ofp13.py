@@ -125,6 +125,7 @@ class FlowMod(object):
         temp_goto_instructions = []
         temp_fwd_actions = []
         temp_actions = []
+        print "action: %s" % action
         for action, value in self.actions.iteritems():
             if action == "fwd":
                 if self.config.tables:
@@ -151,7 +152,7 @@ class FlowMod(object):
                 temp_actions.append(self.parser.OFPActionSetField(eth_dst=value))
             elif action == "meta":
                 metadata_mask = 0xffffffff
-                temp_actions.append(self.parser.OFPInstructionWriteMetadata(metadata[index], metadata_mask))
+                temp_actions.append(self.parser.OFPInstructionWriteMetadata(value, metadata_mask))
 
         if temp_fwd_actions:
             temp_actions.extend(temp_fwd_actions)
