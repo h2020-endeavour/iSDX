@@ -149,6 +149,9 @@ class FlowMod(object):
                 temp_actions.append(self.parser.OFPActionSetField(eth_src=value))
             elif action == "set_eth_dst":
                 temp_actions.append(self.parser.OFPActionSetField(eth_dst=value))
+            elif action == "meta":
+                metadata_mask = 0xffffffff
+                temp_actions.append(self.parser.OFPInstructionWriteMetadata(metadata[index], metadata_mask))
 
         if temp_fwd_actions:
             temp_actions.extend(temp_fwd_actions)
