@@ -125,7 +125,7 @@ class FlowMod(object):
         temp_goto_instructions = []
         temp_fwd_actions = []
         temp_actions = []
-        print "action: %s" % action
+        print "actions: %s" % self.actions
         for action, value in self.actions.iteritems():
             if action == "fwd":
                 if self.config.tables:
