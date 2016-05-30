@@ -153,6 +153,11 @@ class FlowMod(object):
             elif action == "meta":
                 metadata_mask = 0xffffffff
                 temp_actions.append(self.parser.OFPInstructionWriteMetadata(value, metadata_mask))
+            elif action == "goto":
+                tables = self.config.tables
+                umbrella_edge_table = tables[value]
+                print "value: %s" % value
+                temp_goto_instructions.append(self.parser.OFPInstructionGotoTable(umbrella_edge_table))
 
         if temp_fwd_actions:
             temp_actions.extend(temp_fwd_actions)
