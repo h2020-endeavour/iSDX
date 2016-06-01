@@ -189,6 +189,10 @@ class FlowMod(object):
                 validated_actions[action] = value
             elif action == "set_eth_dst":
                 validated_actions[action] = value
+            elif action == "meta":
+                validated_actions[action] = value
+            elif action == "goto":
+                validated_actions[action] = value
         return validated_actions
 
     def get_flow_mod(self, config):
