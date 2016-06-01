@@ -125,8 +125,10 @@ class FlowMod(object):
         temp_goto_instructions = []
         temp_fwd_actions = []
         temp_actions = []
+        acc = []
         print "actions: %s" % self.actions
         for action, value in self.actions.iteritems():
+            acc.append(action)
             if action == "fwd":
                 if self.config.tables:
                     for port in value:
@@ -159,7 +161,7 @@ class FlowMod(object):
                 umbrella_edge_table = tables[value]
                 print "goto_value: %s" % value
                 temp_goto_instructions.append(self.parser.OFPInstructionGotoTable(umbrella_edge_table))
-
+        print "acc: %s" % acc
         if temp_fwd_actions:
             temp_actions.extend(temp_fwd_actions)
 
