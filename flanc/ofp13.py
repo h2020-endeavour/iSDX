@@ -155,9 +155,8 @@ class FlowMod(object):
             elif action == "set_eth_dst":
                 temp_actions.append(self.parser.OFPActionSetField(eth_dst=value))
             elif action == "meta":
-                metadata_mask = 0xffffffff
                 # alternative temp_meta
-                temp_additional_instructions.append(self.parser.OFPInstructionWriteMetadata(value[0], metadata_mask))
+                temp_additional_instructions.append(self.parser.OFPInstructionWriteMetadata(value[0], value[1]))
                 print "metadata_value: %s" % value
             elif action == "goto":
                 tables = self.config.tables
