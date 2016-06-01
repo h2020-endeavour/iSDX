@@ -175,7 +175,7 @@ class FlowMod(object):
         if temp_meta:
             temp_instructions.append(temp_meta)
 
-        print "temp_instructions: %s" % temp.instructions
+        print "temp_instructions: %s" % temp_instructions
         return temp_instructions
 
     def validate_action(self, actions):
