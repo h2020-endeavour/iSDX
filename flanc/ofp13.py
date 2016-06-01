@@ -128,7 +128,6 @@ class FlowMod(object):
         temp_actions = []
         temp_meta = []
         acc = []
-        print "actions: %s" % self.actions
         for action, value in self.actions.iteritems():
             acc.append(action)
             if action == "fwd":
