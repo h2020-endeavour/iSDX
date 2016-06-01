@@ -173,7 +173,7 @@ class FlowMod(object):
             temp_instructions.extend(temp_goto_instructions)
     
         if temp_meta:
-            temp_instructions.append(temp_meta)
+            temp_instructions.extend(temp_meta)
 
         print "temp_instructions: %s" % temp_instructions
         return temp_instructions
