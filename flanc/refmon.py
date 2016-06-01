@@ -167,3 +167,9 @@ class RefMon(app_manager.RyuApp):
                     elif self.config.ofv == "1.3":
                         fm = OFP13FlowMod(self.config, origin, flow_mod)
                     self.controller.process_flow_mod(fm)
+
+    @set_ev_cls(ofp_event.EventOFPErrorMsg, MAIN_DISPATCHER)
+    def error_msg_handler(self, ev):
+        msg = ev.msg
+
+        print 'error msg type 0x%x code 0x%x' % (msg.type, msg.code)
