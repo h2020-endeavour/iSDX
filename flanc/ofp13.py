@@ -154,7 +154,7 @@ class FlowMod(object):
                 temp_actions.append(self.parser.OFPActionSetField(eth_dst=value))
             elif action == "meta":
                 metadata_mask = 0xffffffff
-                temp_fwd_actions.append(self.parser.OFPInstructionWriteMetadata(value, metadata_mask))
+                temp_meta = (self.parser.OFPInstructionWriteMetadata(int(value), metadata_mask))
                 print "metadata_value: %s" % value
             elif action == "goto":
                 tables = self.config.tables
@@ -170,7 +170,11 @@ class FlowMod(object):
 
         if len(temp_goto_instructions) > 0:
             temp_instructions.extend(temp_goto_instructions)
+    
+        if temp_meta:
+            temp_instructions.append(temp_meta)
 
+        print "temp_instructions: %s" % temp.instructions
         return temp_instructions
 
     def validate_action(self, actions):
