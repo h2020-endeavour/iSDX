@@ -122,7 +122,8 @@ class FlowMod(object):
 
     def make_instructions(self):
         temp_instructions = []
-        temp_goto_instructions = []
+        # merge goto an meta data instructions
+        temp_additional_instructions = []
         temp_fwd_actions = []
         temp_actions = []
         temp_meta = []
@@ -136,7 +137,7 @@ class FlowMod(object):
                         if isinstance( port, int ) or port.isdigit():
                             temp_fwd_actions.append(self.parser.OFPActionOutput(int(port)))
                         elif port in self.config.tables:
-                            temp_goto_instructions.append(self.parser.OFPInstructionGotoTable(self.config.tables[port]))
+                            temp_additional_instructions.append(self.parser.OFPInstructionGotoTable(self.config.tables[port]))
                         elif port in self.config.datapath_ports["main"]:
                             temp_fwd_actions.append(self.parser.OFPActionOutput(self.config.datapath_ports["main"][port]))
                         elif port in self.config.datapath_ports["arp"]:
@@ -156,13 +157,12 @@ class FlowMod(object):
             elif action == "meta":
                 metadata_mask = 0xffffffff
                 # alternative temp_meta
-                temp_goto_instructions.append(self.parser.OFPInstructionWriteMetadata(value, metadata_mask))
+                temp_additional_instructions.append(self.parser.OFPInstructionWriteMetadata(value[0], metadata_mask))
                 print "metadata_value: %s" % value
             elif action == "goto":
                 tables = self.config.tables
                 umbrella_edge_table = tables[value]
-                print "goto_value: %s" % value
-                temp_goto_instructions.append(self.parser.OFPInstructionGotoTable(umbrella_edge_table))
+                temp_additional_instructions.append(self.parser.OFPInstructionGotoTable(umbrella_edge_table))
         print "acc: %s" % acc
         if temp_fwd_actions:
             temp_actions.extend(temp_fwd_actions)
@@ -170,13 +170,9 @@ class FlowMod(object):
         if temp_actions:
             temp_instructions = [self.parser.OFPInstructionActions(self.config.ofproto.OFPIT_APPLY_ACTIONS, temp_actions)]
 
-        if len(temp_goto_instructions) > 0:
-            temp_instructions.extend(temp_goto_instructions)
-    
-        if temp_meta:
-            temp_instructions.extend(temp_meta)
+        if len(temp_additional_instructions) > 0:
+            temp_instructions.extend(temp_additional_instructions)
 
-        print "temp_instructions: %s" % temp_instructions
         return temp_instructions
 
     def validate_action(self, actions):
