@@ -127,9 +127,7 @@ class FlowMod(object):
         temp_fwd_actions = []
         temp_actions = []
         temp_meta = []
-        acc = []
         for action, value in self.actions.iteritems():
-            acc.append(action)
             if action == "fwd":
                 if self.config.tables:
                     for port in value:
@@ -154,14 +152,12 @@ class FlowMod(object):
             elif action == "set_eth_dst":
                 temp_actions.append(self.parser.OFPActionSetField(eth_dst=value))
             elif action == "meta":
-                # alternative temp_meta
                 temp_additional_instructions.append(self.parser.OFPInstructionWriteMetadata(value[0], value[1]))
-                print "metadata_value: %s" % value
             elif action == "goto":
                 tables = self.config.tables
                 umbrella_edge_table = tables[value]
                 temp_additional_instructions.append(self.parser.OFPInstructionGotoTable(umbrella_edge_table))
-        print "acc: %s" % acc
+
         if temp_fwd_actions:
             temp_actions.extend(temp_fwd_actions)
 
