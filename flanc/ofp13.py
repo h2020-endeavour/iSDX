@@ -135,6 +135,7 @@ class FlowMod(object):
                             temp_fwd_actions.append(self.parser.OFPActionOutput(int(port)))
                         elif port in self.config.tables:
                             temp_additional_instructions.append(self.parser.OFPInstructionGotoTable(self.config.tables[port]))
+                            print ("port: %s action: %s value: %s") % (port, action, value)
                         elif port in self.config.datapath_ports["main"]:
                             temp_fwd_actions.append(self.parser.OFPActionOutput(self.config.datapath_ports["main"][port]))
                         elif port in self.config.datapath_ports["arp"]:
