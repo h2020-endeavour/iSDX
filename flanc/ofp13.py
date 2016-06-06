@@ -135,7 +135,6 @@ class FlowMod(object):
                             temp_fwd_actions.append(self.parser.OFPActionOutput(int(port)))
                         elif port in self.config.tables:
                             temp_additional_instructions.append(self.parser.OFPInstructionGotoTable(self.config.tables[port]))
-                            print "port: %s action: %s value: %s" % (port, action, value)
                         elif port in self.config.datapath_ports["main"]:
                             temp_fwd_actions.append(self.parser.OFPActionOutput(self.config.datapath_ports["main"][port]))
                         elif port in self.config.datapath_ports["arp"]:
@@ -154,10 +153,6 @@ class FlowMod(object):
                 temp_actions.append(self.parser.OFPActionSetField(eth_dst=value))
             elif action == "meta":
                 temp_additional_instructions.append(self.parser.OFPInstructionWriteMetadata(value[0], value[1]))
-            elif action == "goto":
-                tables = self.config.tables
-                umbrella_edge_table = tables[value]
-                temp_additional_instructions.append(self.parser.OFPInstructionGotoTable(umbrella_edge_table))
 
         if temp_fwd_actions:
             temp_actions.extend(temp_fwd_actions)
@@ -167,8 +162,6 @@ class FlowMod(object):
 
         if len(temp_additional_instructions) > 0:
             temp_instructions.extend(temp_additional_instructions)
-
-        print "temp_instructions: %s" % temp_instructions
 
         return temp_instructions
 
