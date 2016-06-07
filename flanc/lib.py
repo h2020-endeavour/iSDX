@@ -381,6 +381,7 @@ class MultiHopController(Controller):
         tables = self.config.tables
         umbrella_core_table = tables["umbrella-core"]
         umbrella_edge_table = tables["umbrella-edge"]
+        lb_table = tables["load-balancer"]
         iSDX_tables = {x:tables[x] for x in tables if x.find("umbrella") < 0}
         # Need to init more tables in the edges
         datapaths = self.config.datapaths
@@ -392,7 +393,7 @@ class MultiHopController(Controller):
                 self.install_default_flow(edge, table_id)
             # TODO: Send these packets to the load-balancer table?
             self.install_default_flow(edge, umbrella_edge_table)
-            self.handle_BGP(edge, iSDX_tables["main-in"], umbrella_edge_table)
+            self.handle_BGP(edge, iSDX_tables["main-in"], lb_table)
             self.handle_ARP(edge, iSDX_tables["main-in"], umbrella_edge_table)
         # Only one table for the cores
         cores = [datapaths[x] for x in datapaths if x.find("core") == 0]

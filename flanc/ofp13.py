@@ -62,7 +62,7 @@ class FlowMod(object):
         validated_matches = {}
 
         for match, value in matches.iteritems():
-            if match == "eth_type":
+            if match == "eth_type" or match == "metadata":
                 validated_matches[match] = value
             elif match == "arp_tpa":
                 validated_matches[match] = value
