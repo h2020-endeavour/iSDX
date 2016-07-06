@@ -134,6 +134,8 @@ class FlowMod(object):
                         if isinstance( port, int ) or port.isdigit():
                             temp_fwd_actions.append(self.parser.OFPActionOutput(int(port)))
                         elif port in self.config.tables:
+                            print ("port: %s") % port
+                            print ("tables_port: %s") % self.config.tables[port]
                             temp_additional_instructions.append(self.parser.OFPInstructionGotoTable(self.config.tables[port]))
                         elif port in self.config.datapath_ports["main"]:
                             temp_fwd_actions.append(self.parser.OFPActionOutput(self.config.datapath_ports["main"][port]))
@@ -161,6 +163,7 @@ class FlowMod(object):
             temp_instructions = [self.parser.OFPInstructionActions(self.config.ofproto.OFPIT_APPLY_ACTIONS, temp_actions)]
 
         if len(temp_additional_instructions) > 0:
+            print ("temp_additional_instructions: %s") % temp_additional_instructions
             temp_instructions.extend(temp_additional_instructions)
 
         return temp_instructions
