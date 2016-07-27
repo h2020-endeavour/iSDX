@@ -123,31 +123,40 @@ def build_inbound_rules_for(participant_id, in_policies, ss_instance, final_swit
 
 
     for policy in in_policies:
-        if "fwd" not in policy["action"]:
-            continue
+        
+        if "fwd" is in policy["action"]:
+            port_num = policy["action"]["fwd"]
 
-        port_num = policy["action"]["fwd"]
-
-        # match on the next-hop
-        vmac_bitmask = vmac_next_hop_mask(ss_instance)
-        vmac = vmac_next_hop_match(participant_id, ss_instance)
-
-
-        match_args = policy["match"]
-        match_args["eth_dst"] = (vmac, vmac_bitmask)
+            # match on the next-hop
+            vmac_bitmask = vmac_next_hop_mask(ss_instance)
+            vmac = vmac_next_hop_match(participant_id, ss_instance)
 
 
-        port_num = policy["action"]["fwd"]
-        new_vmac = vmac_part_port_match(participant_id, port_num, ss_instance)
+            match_args = policy["match"]
+            match_args["eth_dst"] = (vmac, vmac_bitmask)
 
 
-        actions = {"set_eth_dst":new_vmac, "fwd":[final_switch]}
+            port_num = policy["action"]["fwd"]
+            new_vmac = vmac_part_port_match(participant_id, port_num, ss_instance)
 
-        rule = {"rule_type":"inbound", "priority":INBOUND_HIT_PRIORITY,
+
+            actions = {"set_eth_dst":new_vmac, "fwd":[final_switch]}
+
+            rule = {"rule_type":"inbound", "priority":INBOUND_HIT_PRIORITY,
                 "match":match_args, "action":actions, "mod_type":"insert",
                 "cookie":(policy["cookie"],2**16-1)}
 
-        rules.append(rule)
+            rules.append(rule)
+
+        # Build rule for dropping traffic 
+        if "drop" is in policy["action"]:
+            match_args = policy["match"]
+            actions = {}
+            rule = {"rule_type":"inbound", "priority":INBOUND_HIT_PRIORITY,
+                "match":match_args, "action":actions, "mod_type":"insert",
+                "cookie":(policy["cookie"],2**16-1)}
+
+            rules.append(rule)        
 
     return rules
 
