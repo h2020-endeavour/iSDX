@@ -121,10 +121,9 @@ def build_inbound_rules_for(participant_id, in_policies, ss_instance, final_swit
 
     rules = []
 
-
     for policy in in_policies:
         
-        if "fwd" is in policy["action"]:
+        if "fwd" in policy["action"]:
             port_num = policy["action"]["fwd"]
 
             # match on the next-hop
@@ -149,7 +148,7 @@ def build_inbound_rules_for(participant_id, in_policies, ss_instance, final_swit
             rules.append(rule)
 
         # Build rule for dropping traffic 
-        if "drop" is in policy["action"]:
+        if "drop" in policy["action"]:
             match_args = policy["match"]
             actions = {}
             rule = {"rule_type":"inbound", "priority":INBOUND_HIT_PRIORITY,
