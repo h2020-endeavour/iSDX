@@ -123,6 +123,9 @@ def build_inbound_rules_for(participant_id, in_policies, ss_instance, final_swit
 
     for policy in in_policies:
         
+        match_args = policy["match"]
+        actions = {}
+
         if "fwd" in policy["action"]:
             port_num = policy["action"]["fwd"]
 
@@ -131,7 +134,7 @@ def build_inbound_rules_for(participant_id, in_policies, ss_instance, final_swit
             vmac = vmac_next_hop_match(participant_id, ss_instance)
 
 
-            match_args = policy["match"]
+            
             match_args["eth_dst"] = (vmac, vmac_bitmask)
 
 
@@ -149,9 +152,7 @@ def build_inbound_rules_for(participant_id, in_policies, ss_instance, final_swit
 
         # Build rule for dropping traffic 
         if "drop" in policy["action"]:
-            match_args = policy["match"]
-            actions = {}
-            rule = {"rule_type":"inbound", "priority":INBOUND_HIT_PRIORITY,
+            rule = {"rule_type":"inbound", "priority":INBOUND_HIT_PRIORITY+1,
                 "match":match_args, "action":actions, "mod_type":"insert",
                 "cookie":(policy["cookie"],2**16-1)}
 
