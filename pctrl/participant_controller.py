@@ -119,8 +119,6 @@ class ParticipantController(object):
 
         port_count = len(self.cfg.ports)
 
-        self.logger.info("Before sanity %s" %self.policies)
-
         # sanitize the input policies
         if 'inbound' in self.policies:
             for policy in self.policies['inbound']:
@@ -129,8 +127,6 @@ class ParticipantController(object):
                 if 'fwd' in policy['action'] and int(policy['action']['fwd']) >= port_count:
                     policy['action']['fwd'] = 0
 
-
-        self.logger.info("After sanity check %s" %self.policies)
 
     def initialize_dataplane(self):
         "Read the config file and update the queued policy variable"
