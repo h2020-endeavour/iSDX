@@ -248,13 +248,12 @@ class ParticipantController(object):
 
         test_file = os.path.join(base_path, "blackholing_test.py")
         with open(test_file, 'r') as f:
-            policy_filenames = json.load(f)
+            data = json.load(f)
 
         i = 0
         while self.run:
 
             time.sleep( 60 )
-            self.logger.info(config_file)
             self.logger.debug("XRS_TEST received: %s", data)
             self.process_event(data)
             if (i==20):
