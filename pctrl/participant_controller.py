@@ -313,7 +313,7 @@ class ParticipantController(object):
             if 'removal_cookies' in element:
         
                 for cookie in element['removal_cookies']:
-                    cookie_id = cookie['cookie']
+                    cookie_id = (cookie['cookie'],65535)
                     match_args = cookie['match']
                     mod =  {"rule_type":"outbound", "priority":0,"match":match_args , "action":{}, "cookie":cookie_id, "mod_type":"remove"}
                     removal_msgs.append(mod)
