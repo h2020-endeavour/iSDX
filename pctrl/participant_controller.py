@@ -243,10 +243,9 @@ class ParticipantController(object):
     def start_xrs_test(self):
         self.logger.info("XRS_Test Handler started.")
         
-        base_path = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                "..","examples","test-mh","config"))
-        config_file = os.path.join(base_path, "blackholing_test.py")
-        with open(config_file, 'r') as f:
+        base_path = os.path.abspath(os.path.join(os.path.realpath(__file__)))
+        test_file = os.path.join(base_path, "blackholing_test.py")
+        with open(test_file, 'r') as f:
             policy_filenames = json.load(f)
 
         i = 0
