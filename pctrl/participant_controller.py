@@ -252,9 +252,10 @@ class ParticipantController(object):
         while self.run:
 
             time.sleep( 60 )
-            data = json.loads(config_file)
+            #data = json.loads(config_file)
+            self.logger.info(config_file)
             self.logger.debug("XRS_TEST received: %s", data)
-            self.process_event(data)
+            #self.process_event(data)
             if (i==20):
                 break
             i += 1
