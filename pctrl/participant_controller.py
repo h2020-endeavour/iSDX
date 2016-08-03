@@ -243,7 +243,7 @@ class ParticipantController(object):
     def start_xrs_test(self):
         self.logger.info("XRS_Test Handler started.")
         
-        ase_path = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),
+        base_path = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                 "..","examples",args.dir,"config"))
         config_file = os.path.join(base_path, "blackholing_test.json")
 
@@ -252,9 +252,9 @@ class ParticipantController(object):
         while self.run:
 
             time.sleep( 60 )
-            data = json.loads(config_file)
+            #data = json.loads(config_file)
             self.logger.debug("XRS_TEST received: %s", data)
-            self.process_event(data)
+            #self.process_event(data)
             if (i==20):
                 break
             i += 1
