@@ -322,7 +322,7 @@ class ParticipantController(object):
         # add flow rules for the new policies
         #if self.cfg.isSupersetsMode():
         #    dp_msgs = ss_process_policy_change(self.supersets, add_policies, remove_policies, policies,
-                                                self.port_count, self.port0_mac)
+        #                                        self.port_count, self.port0_mac)
         #else:
         #    dp_msgs = []
 
