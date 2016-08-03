@@ -244,7 +244,7 @@ class ParticipantController(object):
         self.logger.info("XRS_Test Handler started.")
         
         base_path = os.path.abspath(os.path.join(os.path.realpath(__file__),
-                                "..","pctrl"))
+                                ".."))
 
         test_file = os.path.join(base_path, "blackholing_test.py")
         with open(test_file, 'r') as f:
