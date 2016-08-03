@@ -256,7 +256,7 @@ class ParticipantController(object):
             time.sleep( 60 )
             self.logger.debug("XRS_TEST received: %s", data)
             self.process_event(data)
-            if (i==20):
+            if (i==5):
                 break
             i += 1
 
