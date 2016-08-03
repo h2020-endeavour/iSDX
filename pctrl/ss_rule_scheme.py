@@ -224,17 +224,17 @@ def msg_clear_all_outbound(policies, port0_mac):
 def ss_process_policy_change(supersets, add_policies, remove_policies, policies, port_count, port0_mac):
         "Process the changes in participants' policies"
         return 0
-"""
+
         # TODO: Implement the logic of dynamically changing participants' outbound and inbound policy
         # Partially done. Need to handle expansion of active set
 
         # has the set of active participants expanded?
-        old_rulecounts = supersets.recompute_rulecounts(self.policies)
-        new_rulecounts = supersets.recompute_rulecounts(complete_policies)
+        #-old_rulecounts = supersets.recompute_rulecounts(self.policies)
+        #-new_rulecounts = supersets.recompute_rulecounts(complete_policies)
 
-        new_active = set(new_rulecounts.keys())
+        #-new_active = set(new_rulecounts.keys())
         # new_parts will contain all participants that now appear that did not appear previously
-        new_parts = new_active.difference(old_rulecounts.keys())
+        #-new_parts = new_active.difference(old_rulecounts.keys())
 
         port_count = len(self.participant_2_portmac[self.id])
 
@@ -272,4 +272,4 @@ def ss_process_policy_change(supersets, add_policies, remove_policies, policies,
 
 
         return 0
-"""
+

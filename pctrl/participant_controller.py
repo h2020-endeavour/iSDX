@@ -84,7 +84,7 @@ class ParticipantController(object):
 
         # Route server client, Reference monitor client, Arp Proxy client
         self.xrs_client = self.cfg.get_xrs_client(self.logger)
-	self.xrs_client.send({'msgType': 'hello', 'id': self.cfg.id, 'peers_in': self.cfg.peers_in, 'peers_out': self.cfg.peers_out, 'ports': self.cfg.get_ports()})
+        self.xrs_client.send({'msgType': 'hello', 'id': self.cfg.id, 'peers_in': self.cfg.peers_in, 'peers_out': self.cfg.peers_out, 'ports': self.cfg.get_ports()})
 
         self.arp_client = self.cfg.get_arp_client(self.logger)
         self.arp_client.send({'msgType': 'hello', 'macs': self.cfg.get_macs()})
@@ -106,8 +106,13 @@ class ParticipantController(object):
         ps_thread_xrs.daemon = True
         ps_thread_xrs.start()
 
+        ps_thread_xrs_test = Thread(target=self.start_xrs_test)
+        ps_thread_xrs_test.daemon = True
+        ps_thread_xrs_test.start()
+
         ps_thread_arp.join()
         ps_thread_xrs.join()
+        ps_thread_xrs_test.join()
         self.logger.debug("Return from ps_thread.join()")
 
 
@@ -234,6 +239,26 @@ class ParticipantController(object):
         self.xrs_client.close()
         self.logger.debug("Exiting start_eh_xrs")
 
+    
+    def start_xrs_test(self):
+        self.logger.info("XRS_Test Handler started.")
+        
+        ase_path = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                "..","examples",args.dir,"config"))
+        config_file = os.path.join(base_path, "blackholing_test.json")
+
+
+        i = 0
+        while self.run:
+
+            time.sleep( 60 )
+            data = json.loads(config_file)
+            self.logger.debug("XRS_TEST received: %s", data)
+            self.process_event(data)
+            if (i==20):
+                break
+            i += 1
+
 
     def process_event(self, data):
         "Locally process each incoming network event"
@@ -266,37 +291,42 @@ class ParticipantController(object):
         # TODO: Implement the logic of dynamically changing participants' outbound and inbound policy
         '''
             change_info =
-            {
-                'removal_cookies' : [cookie1, ...], # Cookies of deleted policies
-                'new_policies' :
+            [
                 {
-                    <policy file format>
+                    'removal_cookies' : [cookie1, ...], # Cookies of deleted policies
+                }    
+                {
+                    'new_policies' :
+                    {
+                        <policy file format>
+                    }
                 }
-
-            }
+            ]
+            
         '''
+
         # remove flow rules for the old policies
         removal_msgs = []
+        for element in change_info:
 
-        '''
-        for cookie in change_info['removal_cookies']:
-            mod =  {"rule_type":"outbound", "priority":0,
-                    "match":match_args , "action":{},
-                    "cookie":cookie, "mod_type":"remove"}
-            removal_msgs.append(mod)
-        '''
-
-        self.dp_queued.extend(removal_msgs)
-
+            if 'removal_cookies' in element:
+        
+                for cookie in element['removal_cookies']:
+                    cookie_id = cookie['cookie']
+                    match_args = cookie['match']
+                    mod =  {"rule_type":"outbound", "priority":0,"match":match_args , "action":{}, "cookie":cookie_id, "mod_type":"remove"}
+                    removeemoval_msgs.append(mod)
+        
+            self.dp_queued.extend(removal_msgs)
 
         # add flow rules for the new policies
-        if self.cfg.isSupersetsMode():
-            dp_msgs = ss_process_policy_change(self.supersets, add_policies, remove_policies, policies,
+        #if self.cfg.isSupersetsMode():
+        #    dp_msgs = ss_process_policy_change(self.supersets, add_policies, remove_policies, policies,
                                                 self.port_count, self.port0_mac)
-        else:
-            dp_msgs = []
+        #else:
+        #    dp_msgs = []
 
-        self.dp_queued.extend(dp_msgs)
+        #self.dp_queued.extend(dp_msgs)
 
         self.push_dp()
 
