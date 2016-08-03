@@ -3,9 +3,9 @@
     {
       "removal_cookies": [
         {
-          "cookie": 1,
+          "cookie": 57,
           "match": {
-            "tcp_dst": 4321
+            "tcp_dst": 1111
           },
           "action": {
             "fwd": 0
@@ -13,9 +13,9 @@
         },
 
         {
-          "cookie": 2,
+          "cookie": 58,
           "match": {
-            "tcp_dst": 4322
+            "tcp_dst": 1111
           },
           "action": {
             "fwd": 1
@@ -23,9 +23,9 @@
         },
 
         {
-          "cookie": 3,
+          "cookie": 59,
           "match": {
-            "eth_src": "08:00:27:89:3b:9f"
+            "tcp_dst": 1111
           },
           "action": {
             "fwd": 1
