@@ -316,7 +316,7 @@ class ParticipantController(object):
                     cookie_id = cookie['cookie']
                     match_args = cookie['match']
                     mod =  {"rule_type":"outbound", "priority":0,"match":match_args , "action":{}, "cookie":cookie_id, "mod_type":"remove"}
-                    removeemoval_msgs.append(mod)
+                    removal_msgs.append(mod)
         
             self.dp_queued.extend(removal_msgs)
 
