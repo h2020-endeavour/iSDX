@@ -49,7 +49,6 @@ class FlowModMsgBuilder(object):
 
     def reset_flow_mod(self):
         self.flow_mods = []
-        return True
 
 #  request body format:
 #    {"auth_info": {
