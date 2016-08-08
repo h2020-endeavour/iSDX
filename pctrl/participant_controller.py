@@ -187,7 +187,7 @@ class ParticipantController(object):
 
         self.refmon_client.send(json.dumps(self.fm_builder.get_msg()))
         # reset flow_mods after send - self.flow_mods = []
-        self.fm_builder.reset_flow_mod
+        self.logger.info("Message from reset_flow_mod $s" % self.fm_builder.reset_flow_mod())
 
 
     def stop(self):
@@ -353,17 +353,17 @@ class ParticipantController(object):
             if 'outbound' in element:
                 outbound_policies = element
 
-        self.logger.debug("XRS_Test: INBOUND: %s" % inbound_policies)
-        self.logger.debug("XRS_Test: OUTBOUND: %s" % outbound_policies)
+        #self.logger.debug("XRS_Test: INBOUND: %s" % inbound_policies)
+        #self.logger.debug("XRS_Test: OUTBOUND: %s" % outbound_policies)
 
         rule_msgs = init_inbound_rules(self.id, inbound_policies,
                                         self.supersets, final_switch)
-        self.logger.debug("XRS_Test: Rule Messages to be %s INBOUND: %s" % (mod_type, str(rule_msgs)))
+        #self.logger.debug("XRS_Test: Rule Messages to be %s INBOUND: %s" % (mod_type, str(rule_msgs)))
 
 
         rule_msgs2 = init_outbound_rules(self, self.id, outbound_policies,
                                         self.supersets, final_switch)
-        self.logger.debug("XRS_Test: Rule Messages to be %s OUTBOUND: %s" % (mod_type, str(rule_msgs2)))
+        #self.logger.debug("XRS_Test: Rule Messages to be %s OUTBOUND: %s" % (mod_type, str(rule_msgs2)))
 
         if 'changes' in rule_msgs2:
             if 'changes' not in rule_msgs:
