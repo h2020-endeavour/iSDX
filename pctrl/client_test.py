@@ -51,7 +51,7 @@ def main():
     # locate config file
     # TODO: Separate the config files for each participant
     base_path = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                "..","examples","test-mh","config"))
+                                "..","..","endeavour","examples","test-mh","config"))
     config_file = os.path.join(base_path, "sdx_global.cfg")
 
     #logger = util.log.getLogger("P_" + str(args.id))
