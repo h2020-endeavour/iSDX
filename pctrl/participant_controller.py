@@ -363,7 +363,7 @@ class ParticipantController(object):
         #TODO: Initialize Outbound Policies from RIB
         self.logger.debug("Rule Messages:: "+str(rule_msgs))
 
-        for rule in rule_msgs:
+        for rule in rule_msgs['changes']:
             rule['mod_type'] = "remove"
 
 
