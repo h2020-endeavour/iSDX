@@ -254,7 +254,7 @@ class ParticipantController(object):
         while self.run:
 
             time.sleep( 60 )
-            self.logger.debug("XRS_TEST received: %s", data)
+            self.logger.info("XRS_Test received: %s", data)
             self.process_event(data)
             if (i==5):
                 break
