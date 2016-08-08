@@ -115,16 +115,6 @@ class ParticipantController(object):
         ps_thread_xrs_test.join()
         self.logger.debug("Return from ps_thread.join()")
 
-
-    def load_policies(self, policy_file):
-        # Load policies from file
-
-        with open(policy_file, 'r') as f:
-            policies = json.load(f)
-
-        return sanitize_policies(policies)
-
-
     def sanitize_policies(self, policies):
 
         port_count = len(self.cfg.ports)
@@ -138,6 +128,15 @@ class ParticipantController(object):
                     policy['action']['fwd'] = 0
 
         return policies
+
+
+    def load_policies(self, policy_file):
+        # Load policies from file
+
+        with open(policy_file, 'r') as f:
+            policies = json.load(f)
+
+        return sanitize_policies(policies)
 
 
     def initialize_dataplane(self):
@@ -337,7 +336,6 @@ class ParticipantController(object):
             final_switch = "main-out"
 
         #self.init_vnh_assignment()
-
 
         rule_msgs = init_inbound_rules(self.id, policies,
                                         self.supersets, final_switch)
