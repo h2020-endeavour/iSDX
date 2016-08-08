@@ -181,18 +181,22 @@ def main (argv):
     gc = json.load(fin)
     fin.close
     gc['Participants'] = participants
-    
+
     for p in sorted(participants):
-        ports = []
-        for r in participants[p]['Ports']:  # routers
-            ports.append(r['Id'])
-        #print ports
-        if len(ports) == 1:
-            gc['RefMon Settings']['fabric connections']['main'][p] = ports[0]
+        if config.mode != 'multi-hop':
+            ports = []
+            for r in participants[p]['Ports']:  # routers
+                ports.append(r['Id'])
+            #print ports
+            if len(ports) == 1:
+                gc['RefMon Settings']['fabric connections']['main'][p] = ports[0]
+            else:
+                gc['RefMon Settings']['fabric connections']['main'][p] = ports
         else:
-            gc['RefMon Settings']['fabric connections']['main'][p] = ports
-    # there are refmon settings for the fabric that assign the next port, but it doesn't seem to be used
-            
+            # Fabric connections are already defined in the template
+            pass
+        # there are refmon settings for the fabric that assign the next port, but it doesn't seem to be used
+
     with open(dst_file,'w') as f:
         json.dump(gc, f, indent=4, sort_keys=True)
     
@@ -206,6 +210,8 @@ def main (argv):
             q['ip'] = r['NET']
             q['mac'] = r['MAC']
             q['port'] = r['Id']     #switch port
+            if config.mode == 'multi-hop':
+                q['switch']= r['switch']
             q['networks'] = participants[p]['networks']
             q['announcements'] = participants[p]['announcements']
             

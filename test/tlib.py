@@ -165,7 +165,7 @@ class parser:
         routers = []
         index = 0
         while i < len(args):
-            port = self._checkport(args[i])
+            sw, port = self._checkport(args[i])
             mac = self._checkmac(args[i+1], ipart, index)
             ip = args[i+2]
             i += 3
@@ -174,7 +174,9 @@ class parser:
             router = {}
             router['hostname'] = part_router2host(part, index)
             self.bgprouters.append(part_router2host(part, index))
-            router['Id'] = int(port) # switch port
+            router['Id'] = port # switch port
+            if sw is not None:
+                router['switch'] = sw
             router['MAC'] = mac
             if len(ip.split('/')) != 2:
                 raise Exception('malformed network address ' + ip)
@@ -287,7 +289,7 @@ class parser:
     
     def _do_mode (self, args):        
         if len(args) != 2:
-            raise Exception('usage: mode multi-switch | multi-table')
+            raise Exception('usage: mode multi-switch | multi-table | multi-hop')
         if self.mode is not None:
             raise Exception('error: mode already set')
         
@@ -299,6 +301,10 @@ class parser:
         elif self.mode == 'multi-table':
             for i in ['1', '2']:
                 self._checkport(i)
+        elif self.mode == 'multi-hop':
+            # TODO
+            # What port to test? It should depend on the switch...
+            pass
         else:
             raise Exception('unknown mode')
     
@@ -471,13 +477,19 @@ class parser:
         if i in self.checkports:
             raise Exception('port ' + i + ' is already used')
         try:
-            ii = int(i)
+            ii = i.split(':')
+            sw = None
+            if len(ii) == 1:
+                port = ii[0]
+            else:
+                sw, port = ii
+            port = int(port)
         except:
             raise Exception(i + ' is an invalid port number')
-        if ii <= 0:
+        if port <= 0:
             raise Exception(i + ' is an invalid port number')
         self.checkports[i] = True
-        return i
+        return sw, port
         
     # see if there is a gap in the switch port sequence
     # this was/is a bug with mininext/mininet

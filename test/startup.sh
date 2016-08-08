@@ -1,6 +1,7 @@
 #!/bin/bash
 
 BASE=~/iSDX
+RUN_DIR=~/endeavour
 LOG_DIR=regress/regress.$$
 echo "Logging to $LOG_DIR"
 mkdir -p $LOG_DIR
@@ -122,6 +123,14 @@ do
 		echo starting xctrl
 		cd $BASE/xctrl/
 		python ./xctrl.py $EXAMPLES/$TEST/config/sdx_global.cfg
+
+		grep "Multi-Hop" $EXAMPLES/$TEST/config/sdx_global.cfg >/dev/null 2>&1
+		if [[ $? == "0" ]]
+		then
+			echo starting uctrl
+			cd $RUN_DIR/uctrl
+			python ./uctrl.py $EXAMPLES/$TEST/config/sdx_global.cfg
+		fi
 
 		echo starting arp proxy
 		cd $BASE/arproxy/
