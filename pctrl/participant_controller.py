@@ -256,18 +256,20 @@ class ParticipantController(object):
         with open(test_file, 'r') as f:
             data = json.load(f)
 
-        i = 0
+        mod_type = 'remove'
+
         while self.run:
-
-            time.sleep( 60 )
+            time.sleep( 30 )
             self.logger.info("XRS_Test received: %s", data)
-            self.process_event(data)
-            if (i==5):
-                break
-            i += 1
+            self.process_event(data, mod_type)
+            
+            if (mod_type == 'remove'):
+                mod_type = 'insert'
+            else:
+                mod_type = 'remove'
 
 
-    def process_event(self, data):
+    def process_event(self, data, mod_type):
         "Locally process each incoming network event"
 
 
@@ -282,7 +284,7 @@ class ParticipantController(object):
             # Process the event requesting change of participants' policies
             self.logger.debug("Event Received: Policy change.")
             change_info = data['policy']
-            self.process_policy_changes(change_info)
+            self.process_policy_changes(change_info, mod_type)
 
         elif 'arp' in data:
             (requester_srcmac, requested_vnh) = tuple(data['arp'])
@@ -293,7 +295,12 @@ class ParticipantController(object):
             self.logger.warn("UNKNOWN EVENT TYPE RECEIVED: "+str(data))
 
 
-    def process_policy_changes(self, change_info):
+        #self.mod_types = ["insert", "remove"]
+        #self.rule_types = ["inbound", "outbound", "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core"]
+
+
+
+    def process_policy_changes(self, change_info, mod_type):
         "Process the changes in participants' policies"
         '''
         Initializing inbound rules
@@ -343,17 +350,17 @@ class ParticipantController(object):
             if 'outbound' in element:
                 outbound_policies = element
 
-        self.logger.debug("INBOUND: %s" % inbound_policies)
-        self.logger.debug("OUTBOUND: %s" % outbound_policies)
+        self.logger.debug("XRS_Test: INBOUND: %s" % inbound_policies)
+        self.logger.debug("XRS_Test: OUTBOUND: %s" % outbound_policies)
 
         rule_msgs = init_inbound_rules(self.id, inbound_policies,
                                         self.supersets, final_switch)
-        self.logger.debug("Rule Messages to be removed INBOUND: "+str(rule_msgs))
+        self.logger.debug("XRS_Test: Rule Messages to be %s INBOUND: "+str(rule_msgs) % mod_type)
 
 
         rule_msgs2 = init_outbound_rules(self, self.id, outbound_policies,
                                         self.supersets, final_switch)
-        self.logger.debug("Rule Messages to be removed OUTBOUND: "+str(rule_msgs2))
+        self.logger.debug("XRS_Test: Rule Messages to be %s OUTBOUND: "+str(rule_msgs2) % mod_type)
 
         if 'changes' in rule_msgs2:
             if 'changes' not in rule_msgs:
@@ -362,7 +369,7 @@ class ParticipantController(object):
 
 
         for rule in rule_msgs['changes']:
-            rule['mod_type'] = "remove"
+            rule['mod_type'] = mod_type
 
 
         self.logger.debug("XRS_Test: Rule Msgs: %s" % rule_msgs)
@@ -371,6 +378,7 @@ class ParticipantController(object):
             self.dp_queued.extend(rule_msgs["changes"])
 
         self.push_dp()
+
 
     def process_arp_request(self, part_mac, vnh):
         vmac = ""
