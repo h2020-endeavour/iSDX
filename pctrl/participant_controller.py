@@ -269,7 +269,7 @@ class ParticipantController(object):
                 mod_type = 'remove'
 
 
-    def process_event(self, data, mod_type):
+    def process_event(self, data, mod_type=None):
         "Locally process each incoming network event"
 
 
