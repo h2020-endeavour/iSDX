@@ -298,7 +298,7 @@ def ss_process_policy_change_dev(remove_policies):
             removal_rules.extend(removal_out)
 
         if 'inbound' in remove_policies:
-            removal_in = build_inbound_rules_for(self.id, remove_policies['outbound'],
+            removal_in = build_inbound_rules_for(self.id, remove_policies['inbound'],
                                             self.supersets, port_count)
             removal_rules.extend(removal_in)
 
