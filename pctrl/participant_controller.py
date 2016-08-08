@@ -355,12 +355,12 @@ class ParticipantController(object):
 
         rule_msgs = init_inbound_rules(self.id, inbound_policies,
                                         self.supersets, final_switch)
-        self.logger.debug("XRS_Test: Rule Messages to be %s INBOUND: "+str(rule_msgs) % mod_type)
+        self.logger.debug("XRS_Test: Rule Messages to be %s INBOUND: %s" % (mod_type, str(rule_msgs)))
 
 
         rule_msgs2 = init_outbound_rules(self, self.id, outbound_policies,
                                         self.supersets, final_switch)
-        self.logger.debug("XRS_Test: Rule Messages to be %s OUTBOUND: "+str(rule_msgs2) % mod_type)
+        self.logger.debug("XRS_Test: Rule Messages to be %s OUTBOUND: %s" % (mod_type, str(rule_msgs2))
 
         if 'changes' in rule_msgs2:
             if 'changes' not in rule_msgs:
