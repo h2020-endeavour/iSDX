@@ -273,7 +273,7 @@ def ss_process_policy_change(supersets, add_policies, remove_policies, policies,
 
         return 0
 
-def ss_process_policy_change_dev(remove_policies):
+def ss_process_policy_change_dev(self, remove_policies):
 
         # TODO: Implement the logic of dynamically changing participants' outbound and inbound policy
         # Partially done. Need to handle expansion of active set
