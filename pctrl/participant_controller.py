@@ -360,8 +360,6 @@ class ParticipantController(object):
                 rule_msgs['changes'] = []
             rule_msgs['changes'] += rule_msgs2['changes']
 
-        #TODO: Initialize Outbound Policies from RIB
-        self.logger.debug("Rule Messages:: "+str(rule_msgs))
 
         for rule in rule_msgs['changes']:
             rule['mod_type'] = "remove"
@@ -372,6 +370,7 @@ class ParticipantController(object):
         if 'changes' in rule_msgs:
             self.dp_queued.extend(rule_msgs["changes"])
 
+        self.push_dp()
 
     def process_arp_request(self, part_mac, vnh):
         vmac = ""
