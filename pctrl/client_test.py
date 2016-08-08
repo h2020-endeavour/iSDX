@@ -11,10 +11,10 @@ from signal import signal, SIGTERM
 from sys import exit
 from threading import RLock, Thread
 from lib import PConfig
-
+import util.log
 
 class XRS_Client(object):
-    def __init__(self, id, config_file):
+    def __init__(self, id, config_file, logger):
         # participant id
         self.id = id
 
@@ -25,6 +25,8 @@ class XRS_Client(object):
         # Initialize participant params
         self.cfg = PConfig(config_file, self.id)
 
+        self.logger = logger
+
     def xstart(self, test_file):
         # Start all clients/listeners/whatevs
         print("Starting XRS_Client for participant %s" % self.id)
@@ -32,7 +34,7 @@ class XRS_Client(object):
 
         # Client
         print (self.cfg.get_xrs_info())
-        self.xrs_client = self.cfg.get_xrs_client()
+        self.xrs_client = self.cfg.get_xrs_client(self.logger)
         self.xrs_client.send(test_file)
 
 
@@ -59,8 +61,10 @@ def main():
 
     print ("Starting controller with config file: "+str(config_file))
 
+    logger = util.log.getLogger("P_" + str(args.id))
+
     # start controller
-    xrsctrlr = XRS_Client(args.id, config_file)
+    xrsctrlr = XRS_Client(args.id, config_file, logger)
     xrsctrlr_thread = Thread(target=xrsctrlr.xstart(test_file))
     xrsctrlr_thread.daemon = True
     xrsctrlr_thread.start()
