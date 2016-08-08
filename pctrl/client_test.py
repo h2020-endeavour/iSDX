@@ -31,6 +31,7 @@ class XRS_Client(object):
 
 
         # Client
+        print (self.cfg.get_xrs_info())
         self.xrs_client = self.cfg.get_xrs_client()
         self.xrs_client.send(test_file)
 

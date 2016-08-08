@@ -102,6 +102,13 @@ class PConfig(object):
         conn_info = config["Route Server"]
         return GenericClient2(conn_info["AH_SOCKET"][0], conn_info["AH_SOCKET"][1], '', logger, 'xrs')
 
+
+    def get_xrs_info(self, logger=None):
+        config = self.config
+        conn_info = config["Route Server"]
+        string = ("%s %s" % (conn_info["AH_SOCKET"][0], conn_info["AH_SOCKET"][1]))
+        return string
+
     def get_arp_client(self, logger):
         config = self.config
         conn_info = config["ARP Proxy"]
