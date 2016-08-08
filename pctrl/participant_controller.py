@@ -49,7 +49,7 @@ class ParticipantController(object):
         # self.cfg.dp_mode = config_file["dp_mode"]
 
 
-        self.load_policies(policy_file)
+        self.policies = self.load_policies(policy_file)
 
         # The port 0 MAC is used for tagging outbound rules as belonging to us
         self.port0_mac = self.cfg.port0_mac
@@ -120,17 +120,24 @@ class ParticipantController(object):
         # Load policies from file
 
         with open(policy_file, 'r') as f:
-            self.policies = json.load(f)
+            policies = json.load(f)
+
+        return sanitize_policies(policies)
+
+
+    def sanitize_policies(self, policies)
 
         port_count = len(self.cfg.ports)
 
         # sanitize the input policies
-        if 'inbound' in self.policies:
-            for policy in self.policies['inbound']:
+        if 'inbound' in policies:
+            for policy in policies['inbound']:
                 if 'action' not in policy:
                     continue
                 if 'fwd' in policy['action'] and int(policy['action']['fwd']) >= port_count:
                     policy['action']['fwd'] = 0
+
+        return policies
 
 
     def initialize_dataplane(self):
@@ -321,22 +328,44 @@ class ParticipantController(object):
         
         self.dp_queued.extend(removal_msgs)
         '''
-        ss_process_policy_change_dev(change_info)
+        #ss_process_policy_change_dev(change_info)
 
-        # add flow rules for the new policies
-        #if self.cfg.isSupersetsMode():
-        #    dp_msgs = ss_process_policy_change(self.supersets, add_policies, remove_policies, policies,
-        #                                        self.port_count, self.port0_mac)
-        #else:
-        #    dp_msgs = []
+        policies = self.sanitize_policies(change_info)
 
-        #self.dp_queued.extend(dp_msgs)
+        self.logger.info("Process policy change")
 
-        self.push_dp()
+        final_switch = "main-in"
+        if self.cfg.isMultiTableMode():
+            final_switch = "main-out"
 
-        return 0
+        #self.init_vnh_assignment()
 
 
+        rule_msgs = init_inbound_rules(self.id, policies,
+                                        self.supersets, final_switch)
+        self.logger.debug("Rule Messages to be removed INBOUND:: "+str(rule_msgs))
+
+
+        rule_msgs2 = init_outbound_rules(self, self.id, policies,
+                                        self.supersets, final_switch)
+        self.logger.debug("Rule Messages OUTBOUND:: "+str(rule_msgs2))
+
+        if 'changes' in rule_msgs2:
+            if 'changes' not in rule_msgs:
+                rule_msgs['changes'] = []
+            rule_msgs['changes'] += rule_msgs2['changes']
+
+        #TODO: Initialize Outbound Policies from RIB
+        self.logger.debug("Rule Messages:: "+str(rule_msgs))
+
+        for rule in rule_msgs:
+            rule['mod_type'] = "remove"
+
+
+        self.logger.debug("XRS_Test: Rule Msgs: %s" % rule_msgs)
+
+        if 'changes' in rule_msgs:
+            self.dp_queued.extend(rule_msgs["changes"])
 
 
     def process_arp_request(self, part_mac, vnh):
