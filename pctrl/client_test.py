@@ -37,6 +37,16 @@ class XRS_Client(object):
         self.xrs_client = self.cfg.get_xrs_client(self.logger)
         self.xrs_client.send(test_file)
 
+    def stop(self):
+    
+        print("Stopping Controller.")
+
+        # Signal Termination and close blocking listener
+        self.run = False
+
+        # TODO: confirm that this isn't silly
+        #self.refmon_client = None
+
 
 def main():
     parser = argparse.ArgumentParser()
