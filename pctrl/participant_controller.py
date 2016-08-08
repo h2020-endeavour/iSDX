@@ -264,8 +264,8 @@ class ParticipantController(object):
 
         while self.run:
             time.sleep( 30 )
-            self.logger.info("XRS_Test Event received: %s", data)
-            self.process_event(data, mod_type)
+            #self.logger.info("XRS_Test Event received: %s", data)
+            #self.process_event(data, mod_type)
             
             if (mod_type == 'remove'):
                 mod_type = 'insert'
