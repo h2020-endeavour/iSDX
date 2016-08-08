@@ -179,14 +179,15 @@ class ParticipantController(object):
 
         # it is crucial that dp_queued is traversed chronologically
         for flowmod in self.dp_queued:
-            self.logger.debug("MOD: "+str(flowmod))
+            self.logger.debug("MOD (len: %s): %s" % (len(self.dp_queued), str(flowmod)))
             self.fm_builder.add_flow_mod(**flowmod)
             self.dp_pushed.append(flowmod)
 
-        self.logger.debug("logger_debug: %s " % len(self.dp_queued))
         self.dp_queued = []
 
         self.refmon_client.send(json.dumps(self.fm_builder.get_msg()))
+        # reset flow_mods after send - self.flow_mods = []
+        self.fm_builder.reset_flow_mod
 
 
     def stop(self):
@@ -249,7 +250,7 @@ class ParticipantController(object):
 
     
     def start_xrs_test(self):
-        self.logger.info("XRS_Test Handler started.")
+        self.logger.info("XRS_Test Handler started. (Participants_ID: %s" % self.cfg.id)
         
         base_path = os.path.abspath(os.path.join(os.path.realpath(__file__),
                                 ".."))
