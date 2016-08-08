@@ -187,7 +187,7 @@ class ParticipantController(object):
 
         self.refmon_client.send(json.dumps(self.fm_builder.get_msg()))
         # reset flow_mods after send - self.flow_mods = []
-        self.logger.info("Message from reset_flow_mod $s" % self.fm_builder.reset_flow_mod())
+        self.logger.info("Message from reset_flow_mod $s" % str(self.fm_builder.reset_flow_mod()))
 
 
     def stop(self):
