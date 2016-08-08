@@ -30,7 +30,7 @@ class XRS_Client(object):
         print("Starting XRS_Client for participant %s" % self.id)
 
 
-        # Route server client, Reference monitor client, Arp Proxy client
+        # Client
         self.xrs_client = self.cfg.get_xrs_client()
         self.xrs_client.send(test_file)
 

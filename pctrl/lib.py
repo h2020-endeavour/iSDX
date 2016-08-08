@@ -97,7 +97,7 @@ class PConfig(object):
         return BGPPeer(self.id, self.asn, self.ports, self.peers_in, self.peers_out)
 
 
-    def get_xrs_client(self, logger):
+    def get_xrs_client(self, logger=None):
         config = self.config
         conn_info = config["Route Server"]
         return GenericClient2(conn_info["AH_SOCKET"][0], conn_info["AH_SOCKET"][1], '', logger, 'xrs')
