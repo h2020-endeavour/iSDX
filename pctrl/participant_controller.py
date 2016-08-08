@@ -334,6 +334,8 @@ class ParticipantController(object):
             final_switch = "main-out"
 
         #self.init_vnh_assignment()
+        inbound_policies = {}
+        outbound_policies = {}
 
         for element in policies:
             if 'inbound' in element:
@@ -346,12 +348,12 @@ class ParticipantController(object):
 
         rule_msgs = init_inbound_rules(self.id, inbound_policies,
                                         self.supersets, final_switch)
-        self.logger.debug("Rule Messages to be removed INBOUND:: "+str(rule_msgs))
+        self.logger.debug("Rule Messages to be removed INBOUND: "+str(rule_msgs))
 
 
         rule_msgs2 = init_outbound_rules(self, self.id, outbound_policies,
                                         self.supersets, final_switch)
-        self.logger.debug("Rule Messages OUTBOUND:: "+str(rule_msgs2))
+        self.logger.debug("Rule Messages to be removed OUTBOUND: "+str(rule_msgs2))
 
         if 'changes' in rule_msgs2:
             if 'changes' not in rule_msgs:
