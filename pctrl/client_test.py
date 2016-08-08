@@ -46,7 +46,7 @@ def main():
     # TODO: Separate the config files for each participant
     base_path = os.path.abspath(os.path.join(os.path.realpath(__file__),
                                 ".."))
-    test_file = os.path.join(base_path, args.config)
+    test_file = os.path.join(base_path, args.test_file)
 
     # locate config file
     # TODO: Separate the config files for each participant
