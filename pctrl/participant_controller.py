@@ -296,6 +296,7 @@ class ParticipantController(object):
 
     def process_policy_changes(self, change_info):
         "Process the changes in participants' policies"
+        '''
         Initializing inbound rules
                 {
                     'removal_cookies' : [cookie1, ...], # Cookies of deleted policies
