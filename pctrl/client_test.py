@@ -25,7 +25,7 @@ class XRS_Client(object):
         # Initialize participant params
         self.cfg = PConfig(config_file, self.id)
 
-def xstart(self, test_file):
+    def xstart(self, test_file):
         # Start all clients/listeners/whatevs
         print("Starting XRS_Client for participant %s" % self.id)
 
