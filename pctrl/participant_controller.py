@@ -329,21 +329,27 @@ class ParticipantController(object):
 
         policies = self.sanitize_policies(change_info)
 
-        self.logger.info("Process policy change: %s" % policies)
-        self.logger.info("Inbound policies %s" % policies['inbound'])
-
         final_switch = "main-in"
         if self.cfg.isMultiTableMode():
             final_switch = "main-out"
 
         #self.init_vnh_assignment()
 
-        rule_msgs = init_inbound_rules(self.id, policies,
+        for element in policies:
+            if 'inbound' in element:
+                inbound_policies = element
+            if 'outbound' in element:
+                outbound_policies = element
+
+        self.logger.debug("INBOUND: %s" % inbound_policies)
+        self.logger.debug("OUTBOUND: %s" % outbound_policies)
+
+        rule_msgs = init_inbound_rules(self.id, inbound_policies,
                                         self.supersets, final_switch)
         self.logger.debug("Rule Messages to be removed INBOUND:: "+str(rule_msgs))
 
 
-        rule_msgs2 = init_outbound_rules(self, self.id, policies,
+        rule_msgs2 = init_outbound_rules(self, self.id, outbound_policies,
                                         self.supersets, final_switch)
         self.logger.debug("Rule Messages OUTBOUND:: "+str(rule_msgs2))
 
