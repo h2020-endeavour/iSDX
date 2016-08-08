@@ -329,7 +329,7 @@ class ParticipantController(object):
 
         policies = self.sanitize_policies(change_info)
 
-        self.logger.info("Process policy change")
+        self.logger.info("Process policy change: %s" % policies)
 
         final_switch = "main-in"
         if self.cfg.isMultiTableMode():
