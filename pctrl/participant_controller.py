@@ -183,7 +183,9 @@ class ParticipantController(object):
             self.fm_builder.add_flow_mod(**flowmod)
             self.dp_pushed.append(flowmod)
 
+        self.logger.debug("logger_debug: %s " % len(self.dp_queued))
         self.dp_queued = []
+
         self.refmon_client.send(json.dumps(self.fm_builder.get_msg()))
 
 
