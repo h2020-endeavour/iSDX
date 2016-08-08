@@ -136,7 +136,7 @@ class ParticipantController(object):
         with open(policy_file, 'r') as f:
             policies = json.load(f)
 
-        return sanitize_policies(policies)
+        return self.sanitize_policies(policies)
 
 
     def initialize_dataplane(self):
