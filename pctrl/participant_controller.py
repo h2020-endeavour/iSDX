@@ -307,6 +307,7 @@ class ParticipantController(object):
         '''
 
         # remove flow rules for the old policies
+        '''
         removal_msgs = []
         for element in change_info:
 
@@ -319,6 +320,8 @@ class ParticipantController(object):
                     removal_msgs.append(mod)
         
         self.dp_queued.extend(removal_msgs)
+        '''
+        ss_process_policy_change_dev(change_info)
 
         # add flow rules for the new policies
         #if self.cfg.isSupersetsMode():
