@@ -125,7 +125,7 @@ class ParticipantController(object):
         return sanitize_policies(policies)
 
 
-    def sanitize_policies(self, policies)
+    def sanitize_policies(self, policies):
 
         port_count = len(self.cfg.ports)
 
@@ -296,10 +296,7 @@ class ParticipantController(object):
 
     def process_policy_changes(self, change_info):
         "Process the changes in participants' policies"
-        # TODO: Implement the logic of dynamically changing participants' outbound and inbound policy
-        '''
-            change_info =
-            [
+        Initializing inbound rules
                 {
                     'removal_cookies' : [cookie1, ...], # Cookies of deleted policies
                 }    
