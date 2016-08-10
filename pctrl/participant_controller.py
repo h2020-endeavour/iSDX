@@ -176,11 +176,8 @@ class ParticipantController(object):
         (2) Send the queued policies to reference monitor
         '''
 
-        self.logger.debug("Pushing current flow mod queue:")
-
         # it is crucial that dp_queued is traversed chronologically
         for flowmod in self.dp_queued:
-            self.logger.debug("FLOW_MOD in QUEUE: %s" %  str(flowmod))
             self.fm_builder.add_flow_mod(**flowmod)
             self.dp_pushed.append(flowmod)
 
@@ -188,6 +185,7 @@ class ParticipantController(object):
         self.dp_queued = []
 
         self.refmon_client.send(json.dumps(self.fm_builder.get_msg()))
+        
         # reset flow_mods after send - self.flow_mods = []
         self.fm_builder.reset_flow_mod()
 
