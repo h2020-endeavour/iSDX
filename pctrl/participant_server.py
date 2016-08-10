@@ -13,7 +13,6 @@ import sys
 class ParticipantServer(object):
 
     def __init__(self, address, port, logger):
-        self.id
         self.logger = logger
         self.listener = Listener((address, port), backlog=100)
 
