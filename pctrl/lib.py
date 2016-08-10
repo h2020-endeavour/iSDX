@@ -122,6 +122,12 @@ class PConfig(object):
         string = ("%s %s" % (conn_info["EH_SOCKET"][0], conn_info["EH_SOCKET"][1]))
         return string
 
+    def get_participant_config(self, id, logger):
+        config = self.config
+        conn_info = config["Participants"] 
+        return conn_info[str(id)]
+
+
     # arp client
     def get_arp_client(self, logger):
         config = self.config

@@ -12,6 +12,7 @@ from signal import signal, SIGTERM
 from sys import exit
 from threading import RLock, Thread
 import time
+from participant_server import ParticipantServer
 
 import sys
 np = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -88,6 +89,17 @@ class ParticipantController(object):
 
         self.arp_client = self.cfg.get_arp_client(self.logger)
         self.arp_client.send({'msgType': 'hello', 'macs': self.cfg.get_macs()})
+
+
+        # Participant Server for dynamic route updates
+        part_info = self.cfg.get_participant_config(self.id, self.logger)
+        self.participant_server = ParticipantServer(self, part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], logger)
+        self.participant_server.start()
+
+
+        # Participant Server for dynamic route updates
+        #self.participant_server = self.cfg.get_participant_server(self.id, self.logger)
+        #self.participant_server.start()
 
         self.refmon_client = self.cfg.get_refmon_client(self.logger)
          # class for building flow mod msgs to the reference monitor
