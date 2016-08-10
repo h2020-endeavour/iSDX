@@ -12,15 +12,15 @@ import sys
 ''' Server for Participants to handle Policy Updates '''
 class ParticipantServer(object):
 
-    def __init__(self, participant_controller, address, port, logger):
+    def __init__(self, address, port, logger):
         self.logger = logger
-        self.controller = participant_controller
-
-        self.logger.debug('participant_server(%s): start server' % self.controller.id)
+        self.logger.debug('participant_server(%s): start server' % self.id)
         self.listener = Listener((address, port), backlog=100)
 
-    def start(self):
+    def start(self, participant_controller):
         self.receive = True
+        self.controller = participant_controller
+
         self.receiver = Thread(target=self.receiver)
         self.receiver.start()
 

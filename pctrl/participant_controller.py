@@ -95,7 +95,7 @@ class ParticipantController(object):
 
 
         self.participant_server = self.cfg.get_participant_server(self.logger)
-        self.participant_server.start()
+        self.participant_server.start(self)
 
 
         # Future Implementation of Participant Server
@@ -263,7 +263,7 @@ class ParticipantController(object):
         self.xrs_client.close()
         self.logger.debug("Exiting start_eh_xrs")
 
-
+    ## REMOVE THIS PART
     # Test remove - insert policy update implementation    
     def start_xrs_test(self):
         self.logger.info("XRS_Test Handler started. (Participants_ID: %s)" % self.cfg.id)
@@ -290,7 +290,7 @@ class ParticipantController(object):
         # possible types
         #self.mod_types = ["insert", "remove"]
         #self.rule_types = ["inbound", "outbound", 
-        # // "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core"]
+    ## // "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core"]
 
     def process_event(self, data, mod_type=None):
         "Locally process each incoming network event"

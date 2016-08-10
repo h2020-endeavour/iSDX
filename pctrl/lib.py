@@ -128,11 +128,11 @@ class PConfig(object):
     #    conn_info = config["Participants"] 
     #    return conn_info[str(id)]
 
-    def get_participant_server(self, logger):
+    def get_participant_server(self, id, logger):
         config = self.config
-        conn_info = config["Participants"] 
-        part_info = conn_info[self.id]
-        return ParticipantServer(self, part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], logger)
+        conn_info = config["Participants"]
+        part_info = conn_info[str(id)]
+        return ParticipantServer(part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], logger)
 
     # arp client
     def get_arp_client(self, logger):
