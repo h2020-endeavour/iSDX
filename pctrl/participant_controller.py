@@ -90,18 +90,10 @@ class ParticipantController(object):
         self.arp_client.send({'msgType': 'hello', 'macs': self.cfg.get_macs()})
 
         # Participant Server for dynamic route updates
-        #part_info = self.cfg.get_participant_config(self.id, self.logger)
-        #self.participant_server = ParticipantServer(self, part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], self.logger)
-
-
         self.participant_server = self.cfg.get_participant_server(self.id, self.logger)
         self.participant_server.start(self)
 
-
-        # Future Implementation of Participant Server
-        #self.participant_server = self.cfg.get_participant_server(self.id, self.logger)
-        #self.participant_server.start()
-
+        # RefMon Instance
         self.refmon_client = self.cfg.get_refmon_client(self.logger)
         
          # class for building flow mod msgs to the reference monitor
@@ -120,13 +112,8 @@ class ParticipantController(object):
         ps_thread_xrs.daemon = True
         ps_thread_xrs.start()
 
-        ps_thread_xrs_test = Thread(target=self.start_xrs_test)
-        ps_thread_xrs_test.daemon = True
-        ps_thread_xrs_test.start()
-
         ps_thread_arp.join()
         ps_thread_xrs.join()
-        ps_thread_xrs_test.join()
         self.logger.debug("Return from ps_thread.join()")
 
     def sanitize_policies(self, policies):
@@ -263,34 +250,6 @@ class ParticipantController(object):
         self.xrs_client.close()
         self.logger.debug("Exiting start_eh_xrs")
 
-    ## REMOVE THIS PART
-    # Test remove - insert policy update implementation    
-    def start_xrs_test(self):
-        self.logger.info("XRS_Test Handler started. (Participants_ID: %s)" % self.cfg.id)
-        
-        base_path = os.path.abspath(os.path.join(os.path.realpath(__file__),
-                                ".."))
-
-        test_file = os.path.join(base_path, "blackholing_test.py")
-        with open(test_file, 'r') as f:
-            data = json.load(f)
-
-        mod_type = 'remove'
-
-        while self.run:
-            time.sleep( 30 )
-            #self.logger.info("XRS_Test Event received: %s", data)
-            #self.process_event(data, mod_type)
-            
-            if (mod_type == 'remove'):
-                mod_type = 'insert'
-            else:
-                mod_type = 'remove'
-
-        # possible types
-        #self.mod_types = ["insert", "remove"]
-        #self.rule_types = ["inbound", "outbound", 
-    ## // "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core"]
 
     def process_event(self, data, mod_type=None):
         "Locally process each incoming network event"
@@ -324,28 +283,8 @@ class ParticipantController(object):
             self.logger.warn("UNKNOWN EVENT TYPE RECEIVED: "+str(data))
 
 
-        
-
-
-
     def process_policy_changes(self, change_info, mod_type):
-        "Process the changes in participants' policies"
-        '''
-        Initializing inbound rules
-                {
-                    'removal_cookies' : [cookie1, ...], # Cookies of deleted policies
-                }    
-                {
-                    'new_policies' :
-                    {
-                        <policy file format>
-                    }
-                }
-            ]
-            
-        '''
-
-        # remove flow rules for the old policies
+        # idea to remove flow rules for the old policies with cookies
         '''
         removal_msgs = []
         for element in change_info:
@@ -361,9 +300,7 @@ class ParticipantController(object):
         self.dp_queued.extend(removal_msgs)
         '''
 
-
-        # json file format for change_info 
-        # mod_type = remove or insert
+        # json file format for change_info - mod_type = remove or insert
         '''
         {
             "policy": [
@@ -400,7 +337,7 @@ class ParticipantController(object):
         }
         '''
 
-        #ss_process_policy_change_dev(change_info)
+        #ss_process_policy_change_dev(change_info) // not used
 
         policies = self.sanitize_policies(change_info)
 
@@ -408,7 +345,7 @@ class ParticipantController(object):
         if self.cfg.isMultiTableMode():
             final_switch = "main-out"
 
-        #self.init_vnh_assignment()
+        #self.init_vnh_assignment() // not used
         inbound_policies = {}
         outbound_policies = {}
         

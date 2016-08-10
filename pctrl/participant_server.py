@@ -9,7 +9,7 @@ from threading import Thread
 import os
 import sys
 
-''' Server for Participants to handle Policy Updates '''
+''' server for participants to handle policy updates '''
 class ParticipantServer(object):
 
     def __init__(self, address, port, logger):

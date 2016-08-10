@@ -116,18 +116,7 @@ class PConfig(object):
         conn_info = conn_info[str(id)]
         return GenericClient2(conn_info["EH_SOCKET"][0], conn_info["EH_SOCKET"][1], '', logger, 'participant')
 
-    #def get_participant_info(self, id, logger=None):
-    #    config = self.config
-    #    conn_info = config["Participants"]
-    #    conn_info = conn_info[str(id)]
-    #    string = ("%s %s" % (conn_info["EH_SOCKET"][0], conn_info["EH_SOCKET"][1]))
-    #    return string
-
-    #def get_participant_config(self, id, logger):
-    #    config = self.config
-    #    conn_info = config["Participants"] 
-    #    return conn_info[str(id)]
-
+    # participant server
     def get_participant_server(self, id, logger):
         config = self.config
         conn_info = config["Participants"]

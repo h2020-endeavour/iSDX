@@ -13,86 +13,78 @@ from threading import RLock, Thread
 from lib import PConfig
 import util.log
 
-class XRS_Client(object):
+''' client for participants to send policy updates '''
+class ParticipantClient(object):
+    
     def __init__(self, id, config_file, logger):
         # participant id
         self.id = id
 
         # used to signal termination
         self.run = True
-        self.prefix_lock = {}
+        #self.prefix_lock = {}
 
-        # Initialize participant params
+        # Initialize participant params and logger
         self.cfg = PConfig(config_file, self.id)
-
         self.logger = logger
 
     def xstart(self, test_file):
 
-        # Client
-        print("Starting XRS_Client for participant %s" % self.id)
-        #print (self.cfg.get_xrs_info())
-        #self.xrs_client = self.cfg.get_xrs_client(self.logger)
-        self.xrs_client = self.cfg.get_participant_client(self.id, self.logger)
+        # Initalize participant client
+        self.logger.debug("participant_client(%s): start client" % self.id)
+        self.client = self.cfg.get_participant_client(self.id, self.logger)
         
         # Open File and Send
         with open(test_file, 'r') as f:
             data = json.load(f)
 
-        print ("MSG to Send: %s" % data)
-        self.xrs_client.send(data)
+        self.logger.debug("participant_client(%s): send: %s" % (self.id, data))
+        self.client.send(data)
 
 
     def stop(self):
-    
-        print("Stopping Controller.")
-
-        # Signal Termination and close blocking listener
+        
+        # Stop participant client
+        self.logger.debug("participant_client(%s): close connection"  % self.id)
         self.run = False
-
-        # TODO: confirm that this isn't silly
-        #self.refmon_client = None
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('test_file', help='the test file')
+    parser.add_argument('policy_file', help='the policy change file')
     parser.add_argument('id', type=int,
                    help='participant id (integer)')
     args = parser.parse_args()
 
-    # locate test file
-    # TODO: Separate the config files for each participant
+    # locate policy changefile
+    # TODO: atm same path as this program
     base_path = os.path.abspath(os.path.join(os.path.realpath(__file__),
                                 ".."))
-    test_file = os.path.join(base_path, args.test_file)
+    policy_change_file = os.path.join(base_path, args.test_file)
 
     # locate config file
-    # TODO: Separate the config files for each participant
+    # TODO: hard coded destination to global config file
     base_path = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                 "..","..","endeavour","examples","test-mh","config"))
     config_file = os.path.join(base_path, "sdx_global.cfg")
 
-    #logger = util.log.getLogger("P_" + str(args.id))
-
-    print ("Starting controller with config file: "+str(config_file))
-
     logger = util.log.getLogger("P_" + str(args.id))
+    logger.debug ("Starting controller with config file: "+str(config_file))
 
     # start controller
-    xrsctrlr = XRS_Client(args.id, config_file, logger)
-    xrsctrlr_thread = Thread(target=xrsctrlr.xstart(test_file))
-    xrsctrlr_thread.daemon = True
-    xrsctrlr_thread.start()
+    prtclnt = ParticipantClient(args.id, config_file, logger)
+    prtclnt_thread = Thread(target=prtclnt.xstart(policy_change_file))
+    prtclnt_thread.daemon = True
+    prtclnt_thread.start()
 
-    atexit.register(xrsctrlr.stop)
+    atexit.register(prtclnt.stop)
     signal(SIGTERM, lambda signum, stack_frame: exit(1))
 
-    while xrsctrlr_thread.is_alive():
+    while prtclnt_thread.is_alive():
         try:
-            xrsctrlr_thread.join(1)
+            prtclnt_thread.join(1)
         except KeyboardInterrupt:
-            xrsctrlr.stop()
+            prtclnt.stop()
 
     print ("Xrsctrlr exiting")
 
