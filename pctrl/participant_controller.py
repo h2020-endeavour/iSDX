@@ -91,8 +91,11 @@ class ParticipantController(object):
         self.arp_client.send({'msgType': 'hello', 'macs': self.cfg.get_macs()})
 
         # Participant Server for dynamic route updates
-        part_info = self.cfg.get_participant_config(self.id, self.logger)
-        self.participant_server = ParticipantServer(self, part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], self.logger)
+        #part_info = self.cfg.get_participant_config(self.id, self.logger)
+        #self.participant_server = ParticipantServer(self, part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], self.logger)
+
+
+        self.participant_server = self.cfg.get_participant_server(self.logger)
         self.participant_server.start()
 
 
