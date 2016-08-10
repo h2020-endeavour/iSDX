@@ -94,7 +94,7 @@ class ParticipantController(object):
         #self.participant_server = ParticipantServer(self, part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], self.logger)
 
 
-        self.participant_server = self.cfg.get_participant_server(self.logger)
+        self.participant_server = self.cfg.get_participant_server(self.id, self.logger)
         self.participant_server.start(self)
 
 
