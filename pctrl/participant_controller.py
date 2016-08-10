@@ -362,9 +362,8 @@ class ParticipantController(object):
 
         self.logger.debug("PART_Test: POLICIES Before: %s" % change_info)
 
-        for element in change_info:
-            if mod_type in element:
-                change = element
+        change = change_info[mod_type]
+
         self.logger.debug("PART_Test: POLICIES Middle (%s): %s" % (mod_type, change))
 
 
