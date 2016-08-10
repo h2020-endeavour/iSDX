@@ -374,8 +374,8 @@ class ParticipantController(object):
             if 'outbound' in element:
                 outbound_policies = element
 
-        #self.logger.debug("XRS_Test: INBOUND: %s" % inbound_policies)
-        #self.logger.debug("XRS_Test: OUTBOUND: %s" % outbound_policies)
+        self.logger.debug("XRS_Test: INBOUND: %s" % inbound_policies)
+        self.logger.debug("XRS_Test: OUTBOUND: %s" % outbound_policies)
 
         rule_msgs = init_inbound_rules(self.id, inbound_policies,
                                         self.supersets, final_switch)
