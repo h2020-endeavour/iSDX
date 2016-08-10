@@ -13,13 +13,16 @@ import sys
 class ParticipantServer(object):
 
     def __init__(self, address, port, logger):
+        self.id
         self.logger = logger
-        self.logger.debug('participant_server(%s): start server' % self.id)
         self.listener = Listener((address, port), backlog=100)
 
     def start(self, participant_controller):
         self.receive = True
         self.controller = participant_controller
+
+        self.id = self.controller.id
+        self.logger.debug('participant_server(%s): start server' % self.id)
 
         self.receiver = Thread(target=self.receiver)
         self.receiver.start()
@@ -27,7 +30,7 @@ class ParticipantServer(object):
     def receiver(self):
         while self.receive:
             conn = self.listener.accept()
-            self.logger.debug('participant_server(%s) accepted connection from %s' % (self.controller.id, self.listener.last_accepted))
+            self.logger.debug('participant_server(%s) accepted connection from %s' % (self.id, self.listener.last_accepted))
 
             msg = None
             while msg is None:
@@ -35,11 +38,11 @@ class ParticipantServer(object):
                     msg = conn.recv()
                 except:
                     pass
-            self.logger.debug('participant_server(%s): received message' % self.controller.id)
+            self.logger.debug('participant_server(%s): received message' % self.id)
             self.controller.process_event(json.loads(msg))
 
             conn.close()
-            self.logger.debug('participant_server(%s): closed connection' % self.controller.id)
+            self.logger.debug('participant_server(%s): closed connection' % self.id)
 
     def stop(self):
         self.receive = False
