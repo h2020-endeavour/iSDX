@@ -28,14 +28,14 @@ class ParticipantClient(object):
         self.cfg = PConfig(config_file, self.id)
         self.logger = logger
 
-    def xstart(self, test_file):
+    def xstart(self, policy_file):
 
         # Initalize participant client
         self.logger.debug("participant_client(%s): start client" % self.id)
         self.client = self.cfg.get_participant_client(self.id, self.logger)
         
         # Open File and Send
-        with open(test_file, 'r') as f:
+        with open(policy_file, 'r') as f:
             data = json.load(f)
 
         self.logger.debug("participant_client(%s): send: %s" % (self.id, data))
@@ -60,7 +60,7 @@ def main():
     # TODO: atm same path as this program
     base_path = os.path.abspath(os.path.join(os.path.realpath(__file__),
                                 ".."))
-    policy_change_file = os.path.join(base_path, args.test_file)
+    policy_change_file = os.path.join(base_path, args.policy_file)
 
     # locate config file
     # TODO: hard coded destination to global config file
