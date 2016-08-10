@@ -97,11 +97,10 @@ class PConfig(object):
         return BGPPeer(self.id, self.asn, self.ports, self.peers_in, self.peers_out)
 
 
-    def get_xrs_client(self, logger=None):
+    def get_xrs_client(self, logger):
         config = self.config
         conn_info = config["Route Server"]
         return GenericClient2(conn_info["AH_SOCKET"][0], conn_info["AH_SOCKET"][1], '', logger, 'xrs')
-
 
     def get_xrs_info(self, logger=None):
         config = self.config
@@ -109,6 +108,19 @@ class PConfig(object):
         string = ("%s %s" % (conn_info["AH_SOCKET"][0], conn_info["AH_SOCKET"][1]))
         return string
 
+    # participant client
+    def get_participant_client(self, id, logger):
+        config = self.config
+        conn_info = config["Participants"][id]
+        return GenericClient2(conn_info["EH_SOCKET"][0], conn_info["EH_SOCKET"][1], '', logger, 'part')
+
+    def get_participant_info(self, id, logger=None):
+        config = self.config
+        conn_info = config["Participants"][id]
+        string = ("%s %s" % (conn_info["EH_SOCKET"][0], conn_info["EH_SOCKET"][1]))
+        return string
+
+    # arp client
     def get_arp_client(self, logger):
         config = self.config
         conn_info = config["ARP Proxy"]

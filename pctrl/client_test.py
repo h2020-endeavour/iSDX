@@ -28,17 +28,21 @@ class XRS_Client(object):
         self.logger = logger
 
     def xstart(self, test_file):
-        # Start all clients/listeners/whatevs
-        print("Starting XRS_Client for participant %s" % self.id)
-
 
         # Client
-        print (self.cfg.get_xrs_info())
-        self.xrs_client = self.cfg.get_xrs_client(self.logger)
+        print("Starting XRS_Client for participant %s" % self.id)
+        #print (self.cfg.get_xrs_info())
+        #self.xrs_client = self.cfg.get_xrs_client(self.logger)
+        print (self.cfg.get_participant_info(self.id))
+        self.xrs_client = self.cfg.get_participant_client(self.id, self.logger)
         
-        print ("MSG to Send: %s" % test_file)
+        # Open File and Send
+        with open(test_file, 'r') as f:
+            data = json.load(f)
 
-        self.xrs_client.send(test_file)
+        print ("MSG to Send: %s" % data)
+        self.xrs_client.send(data)
+
 
     def stop(self):
     
