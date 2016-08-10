@@ -31,10 +31,10 @@ class XRS_Client(object):
 
         # Client
         print("Starting XRS_Client for participant %s" % self.id)
-        print (self.cfg.get_xrs_info())
-        self.xrs_client = self.cfg.get_xrs_client(self.logger)
-        #print (self.cfg.get_participant_info(self.id))
-        #self.xrs_client = self.cfg.get_participant_client(self.id, self.logger)
+        #print (self.cfg.get_xrs_info())
+        #self.xrs_client = self.cfg.get_xrs_client(self.logger)
+        print (self.cfg.get_participant_info(self.id))
+        self.xrs_client = self.cfg.get_participant_client(self.id, self.logger)
         
         # Open File and Send
         with open(test_file, 'r') as f:
