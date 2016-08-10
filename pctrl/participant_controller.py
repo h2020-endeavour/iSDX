@@ -90,18 +90,18 @@ class ParticipantController(object):
         self.arp_client = self.cfg.get_arp_client(self.logger)
         self.arp_client.send({'msgType': 'hello', 'macs': self.cfg.get_macs()})
 
-
         # Participant Server for dynamic route updates
         part_info = self.cfg.get_participant_config(self.id, self.logger)
         self.participant_server = ParticipantServer(self, part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], self.logger)
         self.participant_server.start()
 
 
-        # Participant Server for dynamic route updates
+        # Future Implementation of Participant Server
         #self.participant_server = self.cfg.get_participant_server(self.id, self.logger)
         #self.participant_server.start()
 
         self.refmon_client = self.cfg.get_refmon_client(self.logger)
+        
          # class for building flow mod msgs to the reference monitor
         self.fm_builder = FlowModMsgBuilder(self.id, self.refmon_client.key)
 
@@ -261,7 +261,8 @@ class ParticipantController(object):
         self.xrs_client.close()
         self.logger.debug("Exiting start_eh_xrs")
 
-    
+
+    # Test remove - insert policy update implementation    
     def start_xrs_test(self):
         self.logger.info("XRS_Test Handler started. (Participants_ID: %s)" % self.cfg.id)
         
@@ -284,6 +285,10 @@ class ParticipantController(object):
             else:
                 mod_type = 'remove'
 
+        # possible types
+        #self.mod_types = ["insert", "remove"]
+        #self.rule_types = ["inbound", "outbound", 
+        # // "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core"]
 
     def process_event(self, data, mod_type=None):
         "Locally process each incoming network event"
@@ -300,7 +305,11 @@ class ParticipantController(object):
             # Process the event requesting change of participants' policies
             self.logger.debug("Event Received: Policy change.")
             change_info = data['policy']
-            self.process_policy_changes(change_info, mod_type)
+            for element in change_info:
+                if 'remove' in element:
+                    self.process_policy_changes(element, 'remove')
+                if 'insert' in element:
+                    self.process_policy_changes(element, 'insert')
 
         elif 'arp' in data:
             (requester_srcmac, requested_vnh) = tuple(data['arp'])
@@ -311,8 +320,7 @@ class ParticipantController(object):
             self.logger.warn("UNKNOWN EVENT TYPE RECEIVED: "+str(data))
 
 
-        #self.mod_types = ["insert", "remove"]
-        #self.rule_types = ["inbound", "outbound", "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core"]
+        
 
 
 
