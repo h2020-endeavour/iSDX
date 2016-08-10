@@ -12,7 +12,6 @@ from signal import signal, SIGTERM
 from sys import exit
 from threading import RLock, Thread
 import time
-from participant_server import ParticipantServer
 
 import sys
 np = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
