@@ -360,11 +360,11 @@ class ParticipantController(object):
         '''
         #ss_process_policy_change_dev(change_info)
 
-        self.logger.debug("PART_Test: POLICIES Before: %s" % policies)
+        self.logger.debug("PART_Test: POLICIES Before: %s" % change_info)
 
-        for element in policies:
+        for element in change_info:
             if mod_type in element:
-                policies = element
+                change_info = element
 
         policies = self.sanitize_policies(change_info)
         self.logger.debug("PART_Test: POLICIES After: %s" % policies)
