@@ -307,11 +307,11 @@ class ParticipantController(object):
             change_info = data['policy']
             for element in change_info:
                 if 'remove' in element:
-                    self.process_policy_changes(element, 'remove')
-                    self.logger.debug("PART_Test: REMOVE: %s" % element)
+                    self.process_policy_changes(element['remove'], 'remove')
+                    #self.logger.debug("PART_Test: REMOVE: %s" % element)
                 if 'insert' in element:
-                    self.process_policy_changes(element, 'insert')
-                    self.logger.debug("PART_Test: INSERT: %s" % element)
+                    self.process_policy_changes(element['insert'], 'insert')
+                    #self.logger.debug("PART_Test: INSERT: %s" % element)
 
         elif 'arp' in data:
             (requester_srcmac, requested_vnh) = tuple(data['arp'])
@@ -358,17 +358,49 @@ class ParticipantController(object):
         
         self.dp_queued.extend(removal_msgs)
         '''
+
+
+        # json file format for change_info 
+        # mod_type = remove or insert
+        '''
+        {
+            "policy": [
+            {
+                mod_type: [ 
+        
+        # change_info begin
+
+                    {
+                        "inbound": [
+                            { cookie1 ... match ... action }
+                            { cookie2 ... match ... action }
+                        ]
+                    }
+
+                    {
+                        "outbound": [
+                            { cookie1 ... match ... action }
+                            { cookie2 ... match ... action }
+                        ]
+                    }
+
+        # change_info end
+                
+                ]           // end mod_type-array
+            }, 
+            
+            {
+                mod_type: ...
+
+            }
+
+            ]               // end policy-array
+        }
+        '''
+
         #ss_process_policy_change_dev(change_info)
 
-        self.logger.debug("PART_Test: POLICIES Before: %s" % change_info)
-
-        change = change_info[mod_type]
-
-        self.logger.debug("PART_Test: POLICIES Middle (%s): %s" % (mod_type, change))
-
-
-        policies = self.sanitize_policies(change)
-        self.logger.debug("PART_Test: POLICIES After: %s" % policies)
+        policies = self.sanitize_policies(change_info)
 
         final_switch = "main-in"
         if self.cfg.isMultiTableMode():
@@ -377,7 +409,6 @@ class ParticipantController(object):
         #self.init_vnh_assignment()
         inbound_policies = {}
         outbound_policies = {}
-
         
         for element in policies:
             if 'inbound' in element:
@@ -385,17 +416,14 @@ class ParticipantController(object):
             if 'outbound' in element:
                 outbound_policies = element
 
-        self.logger.debug("PART_Test: INBOUND: %s" % inbound_policies)
-        self.logger.debug("PART_Test: OUTBOUND: %s" % outbound_policies)
+        #self.logger.debug("PART_Test: INBOUND: %s" % inbound_policies)
+        #self.logger.debug("PART_Test: OUTBOUND: %s" % outbound_policies)
 
         rule_msgs = init_inbound_rules(self.id, inbound_policies,
                                         self.supersets, final_switch)
-        #self.logger.debug("XRS_Test: Rule Messages to be %s INBOUND: %s" % (mod_type, str(rule_msgs)))
-
 
         rule_msgs2 = init_outbound_rules(self, self.id, outbound_policies,
                                         self.supersets, final_switch)
-        #self.logger.debug("XRS_Test: Rule Messages to be %s OUTBOUND: %s" % (mod_type, str(rule_msgs2)))
 
         if 'changes' in rule_msgs2:
             if 'changes' not in rule_msgs:
@@ -407,7 +435,7 @@ class ParticipantController(object):
             rule['mod_type'] = mod_type
 
 
-        self.logger.debug("PART_Test: Rule Msgs: %s" % rule_msgs)
+        #self.logger.debug("PART_Test: Rule Msgs: %s" % rule_msgs)
 
         if 'changes' in rule_msgs:
             self.dp_queued.extend(rule_msgs["changes"])
