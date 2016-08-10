@@ -35,11 +35,11 @@ class ParticipantServer(object):
                     msg = conn.recv()
                 except:
                     pass
-            self.logger.debug('participant_server(%s): received message' % pself.controller.id)
+            self.logger.debug('participant_server(%s): received message' % self.controller.id)
             self.controller.process_event(json.loads(msg))
 
             conn.close()
-            self.logger.debug('participant_server(%s): closed connection' % pself.controller.id)
+            self.logger.debug('participant_server(%s): closed connection' % self.controller.id)
 
     def stop(self):
         self.receive = False
