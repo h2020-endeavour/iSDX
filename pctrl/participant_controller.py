@@ -364,9 +364,11 @@ class ParticipantController(object):
 
         for element in change_info:
             if mod_type in element:
-                change_info = element
+                change = element
+        self.logger.debug("PART_Test: POLICIES Middle (%s): %s" % (mod_type, change))
 
-        policies = self.sanitize_policies(change_info)
+
+        policies = self.sanitize_policies(change)
         self.logger.debug("PART_Test: POLICIES After: %s" % policies)
 
         final_switch = "main-in"
