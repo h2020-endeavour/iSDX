@@ -360,7 +360,14 @@ class ParticipantController(object):
         '''
         #ss_process_policy_change_dev(change_info)
 
+        self.logger.debug("PART_Test: POLICIES Before: %s" % policies)
+
+        for element in policies:
+            if mod_type in element:
+                policies = element
+
         policies = self.sanitize_policies(change_info)
+        self.logger.debug("PART_Test: POLICIES After: %s" % policies)
 
         final_switch = "main-in"
         if self.cfg.isMultiTableMode():
@@ -370,7 +377,7 @@ class ParticipantController(object):
         inbound_policies = {}
         outbound_policies = {}
 
-        self.logger.debug("PART_Test: POLICIES: %s" % policies)
+        
         for element in policies:
             if 'inbound' in element:
                 inbound_policies = element
