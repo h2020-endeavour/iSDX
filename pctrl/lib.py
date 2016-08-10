@@ -111,12 +111,14 @@ class PConfig(object):
     # participant client
     def get_participant_client(self, id, logger):
         config = self.config
-        conn_info = config["Participants"][id]
+        conn_info = config["Participants"]
+        conn_info = conn_info[str(id)]
         return GenericClient2(conn_info["EH_SOCKET"][0], conn_info["EH_SOCKET"][1], '', logger, 'part')
 
     def get_participant_info(self, id, logger=None):
         config = self.config
-        conn_info = config["Participants"][id]
+        conn_info = config["Participants"]
+        conn_info = conn_info[str(id)]
         string = ("%s %s" % (conn_info["EH_SOCKET"][0], conn_info["EH_SOCKET"][1]))
         return string
 
