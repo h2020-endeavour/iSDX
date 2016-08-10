@@ -308,8 +308,10 @@ class ParticipantController(object):
             for element in change_info:
                 if 'remove' in element:
                     self.process_policy_changes(element, 'remove')
+                    self.logger.debug("PART_Test: REMOVE: %s" % element)
                 if 'insert' in element:
                     self.process_policy_changes(element, 'insert')
+                    self.logger.debug("PART_Test: INSERT: %s" % element)
 
         elif 'arp' in data:
             (requester_srcmac, requested_vnh) = tuple(data['arp'])
@@ -368,14 +370,15 @@ class ParticipantController(object):
         inbound_policies = {}
         outbound_policies = {}
 
+        self.logger.debug("PART_Test: POLICIES: %s" % policies)
         for element in policies:
             if 'inbound' in element:
                 inbound_policies = element
             if 'outbound' in element:
                 outbound_policies = element
 
-        self.logger.debug("XRS_Test: INBOUND: %s" % inbound_policies)
-        self.logger.debug("XRS_Test: OUTBOUND: %s" % outbound_policies)
+        self.logger.debug("PART_Test: INBOUND: %s" % inbound_policies)
+        self.logger.debug("PART_Test: OUTBOUND: %s" % outbound_policies)
 
         rule_msgs = init_inbound_rules(self.id, inbound_policies,
                                         self.supersets, final_switch)
@@ -396,7 +399,7 @@ class ParticipantController(object):
             rule['mod_type'] = mod_type
 
 
-        self.logger.debug("XRS_Test: Rule Msgs: %s" % rule_msgs)
+        self.logger.debug("PART_Test: Rule Msgs: %s" % rule_msgs)
 
         if 'changes' in rule_msgs:
             self.dp_queued.extend(rule_msgs["changes"])
