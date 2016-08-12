@@ -89,7 +89,13 @@ class ParticipantController(object):
         self.arp_client = self.cfg.get_arp_client(self.logger)
         self.arp_client.send({'msgType': 'hello', 'macs': self.cfg.get_macs()})
 
+        # Participant Server for dynamic route updates
+        self.participant_server = self.cfg.get_participant_server(self.id, self.logger)
+        self.participant_server.start(self)
+
+        # RefMon Instance
         self.refmon_client = self.cfg.get_refmon_client(self.logger)
+        
          # class for building flow mod msgs to the reference monitor
         self.fm_builder = FlowModMsgBuilder(self.id, self.refmon_client.key)
 
@@ -106,13 +112,8 @@ class ParticipantController(object):
         ps_thread_xrs.daemon = True
         ps_thread_xrs.start()
 
-        ps_thread_xrs_test = Thread(target=self.start_xrs_test)
-        ps_thread_xrs_test.daemon = True
-        ps_thread_xrs_test.start()
-
         ps_thread_arp.join()
         ps_thread_xrs.join()
-        ps_thread_xrs_test.join()
         self.logger.debug("Return from ps_thread.join()")
 
     def sanitize_policies(self, policies):
@@ -175,16 +176,18 @@ class ParticipantController(object):
         (2) Send the queued policies to reference monitor
         '''
 
-        self.logger.debug("Pushing current flow mod queue:")
-
         # it is crucial that dp_queued is traversed chronologically
         for flowmod in self.dp_queued:
-            self.logger.debug("MOD: "+str(flowmod))
             self.fm_builder.add_flow_mod(**flowmod)
             self.dp_pushed.append(flowmod)
 
+        # reset queue
         self.dp_queued = []
+
         self.refmon_client.send(json.dumps(self.fm_builder.get_msg()))
+        
+        # reset flow_mods after send - self.flow_mods = []
+        self.fm_builder.reset_flow_mod()
 
 
     def stop(self):
@@ -245,29 +248,8 @@ class ParticipantController(object):
         self.xrs_client.close()
         self.logger.debug("Exiting start_eh_xrs")
 
-    
-    def start_xrs_test(self):
-        self.logger.info("XRS_Test Handler started.")
-        
-        base_path = os.path.abspath(os.path.join(os.path.realpath(__file__),
-                                ".."))
 
-        test_file = os.path.join(base_path, "blackholing_test.py")
-        with open(test_file, 'r') as f:
-            data = json.load(f)
-
-        i = 0
-        while self.run:
-
-            time.sleep( 60 )
-            self.logger.info("XRS_Test received: %s", data)
-            self.process_event(data)
-            if (i==5):
-                break
-            i += 1
-
-
-    def process_event(self, data):
+    def process_event(self, data, mod_type=None):
         "Locally process each incoming network event"
 
 
@@ -282,7 +264,13 @@ class ParticipantController(object):
             # Process the event requesting change of participants' policies
             self.logger.debug("Event Received: Policy change.")
             change_info = data['policy']
-            self.process_policy_changes(change_info)
+            for element in change_info:
+                if 'remove' in element:
+                    self.process_policy_changes(element['remove'], 'remove')
+                    #self.logger.debug("PART_Test: REMOVE: %s" % element)
+                if 'insert' in element:
+                    self.process_policy_changes(element['insert'], 'insert')
+                    #self.logger.debug("PART_Test: INSERT: %s" % element)
 
         elif 'arp' in data:
             (requester_srcmac, requested_vnh) = tuple(data['arp'])
@@ -293,24 +281,8 @@ class ParticipantController(object):
             self.logger.warn("UNKNOWN EVENT TYPE RECEIVED: "+str(data))
 
 
-    def process_policy_changes(self, change_info):
-        "Process the changes in participants' policies"
-        '''
-        Initializing inbound rules
-                {
-                    'removal_cookies' : [cookie1, ...], # Cookies of deleted policies
-                }    
-                {
-                    'new_policies' :
-                    {
-                        <policy file format>
-                    }
-                }
-            ]
-            
-        '''
-
-        # remove flow rules for the old policies
+    def process_policy_changes(self, change_info, mod_type):
+        # idea to remove flow rules for the old policies with cookies
         '''
         removal_msgs = []
         for element in change_info:
@@ -325,7 +297,45 @@ class ParticipantController(object):
         
         self.dp_queued.extend(removal_msgs)
         '''
-        #ss_process_policy_change_dev(change_info)
+
+        # json file format for change_info - mod_type = remove or insert
+        '''
+        {
+            "policy": [
+            {
+                mod_type: [ 
+        
+        # change_info begin
+
+                    {
+                        "inbound": [
+                            { cookie1 ... match ... action }
+                            { cookie2 ... match ... action }
+                        ]
+                    }
+
+                    {
+                        "outbound": [
+                            { cookie1 ... match ... action }
+                            { cookie2 ... match ... action }
+                        ]
+                    }
+
+        # change_info end
+                
+                ]           // end mod_type-array
+            }, 
+            
+            {
+                mod_type: ...
+
+            }
+
+            ]               // end policy-array
+        }
+        '''
+
+        #ss_process_policy_change_dev(change_info) // not used
 
         policies = self.sanitize_policies(change_info)
 
@@ -333,27 +343,24 @@ class ParticipantController(object):
         if self.cfg.isMultiTableMode():
             final_switch = "main-out"
 
-        #self.init_vnh_assignment()
+        #self.init_vnh_assignment() // not used
         inbound_policies = {}
         outbound_policies = {}
-
+        
         for element in policies:
             if 'inbound' in element:
                 inbound_policies = element
             if 'outbound' in element:
                 outbound_policies = element
 
-        self.logger.debug("INBOUND: %s" % inbound_policies)
-        self.logger.debug("OUTBOUND: %s" % outbound_policies)
+        #self.logger.debug("PART_Test: INBOUND: %s" % inbound_policies)
+        #self.logger.debug("PART_Test: OUTBOUND: %s" % outbound_policies)
 
         rule_msgs = init_inbound_rules(self.id, inbound_policies,
                                         self.supersets, final_switch)
-        self.logger.debug("Rule Messages to be removed INBOUND: "+str(rule_msgs))
-
 
         rule_msgs2 = init_outbound_rules(self, self.id, outbound_policies,
                                         self.supersets, final_switch)
-        self.logger.debug("Rule Messages to be removed OUTBOUND: "+str(rule_msgs2))
 
         if 'changes' in rule_msgs2:
             if 'changes' not in rule_msgs:
@@ -362,15 +369,16 @@ class ParticipantController(object):
 
 
         for rule in rule_msgs['changes']:
-            rule['mod_type'] = "remove"
+            rule['mod_type'] = mod_type
 
 
-        self.logger.debug("XRS_Test: Rule Msgs: %s" % rule_msgs)
+        #self.logger.debug("PART_Test: Rule Msgs: %s" % rule_msgs)
 
         if 'changes' in rule_msgs:
             self.dp_queued.extend(rule_msgs["changes"])
 
         self.push_dp()
+
 
     def process_arp_request(self, part_mac, vnh):
         vmac = ""
