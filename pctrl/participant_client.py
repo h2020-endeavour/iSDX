@@ -69,7 +69,7 @@ def main():
     config_file = os.path.join(base_path, "sdx_global.cfg")
 
     logger = util.log.getLogger("P_" + str(args.id))
-    logger.debug ("Starting controller with config file: "+str(config_file))
+    logger.debug ("Starting participant_client with config file: "+str(config_file))
 
     # start controller
     prtclnt = ParticipantClient(args.id, config_file, logger)
@@ -86,7 +86,8 @@ def main():
         except KeyboardInterrupt:
             prtclnt.stop()
 
-    print ("Xrsctrlr exiting")
+    logger.debug ("participant_client extiting")
+    print ("done")
 
 
 if __name__ == '__main__':
