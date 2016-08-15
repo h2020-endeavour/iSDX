@@ -36,7 +36,7 @@ class ParticipantClient(object):
         
         # Open File and Send
         with open(policy_file, 'r') as f:
-            data = json.load(f)
+            data = json.load('{ "policy": [ %s ] }' % f)
 
         self.logger.debug("participant_client(%s): send: %s" % (self.id, data))
         self.client.send(data)
@@ -54,6 +54,7 @@ def main():
     parser.add_argument('policy_file', help='the policy change file')
     parser.add_argument('id', type=int,
                    help='participant id (integer)')
+    parser.add_argument('action', help='use remove or insert')
     args = parser.parse_args()
 
     # locate policy changefile
