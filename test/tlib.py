@@ -94,7 +94,7 @@ class parser:
         elif args[2] == '<<':
             self._inbound(args[1], args[3])
         # c2 | src_mac 
-        elif args[2] == '|'
+        elif args[2] == '|':
             self._blackholing(args[1], args[3])
         else:
             raise Exception('bad flow format')
