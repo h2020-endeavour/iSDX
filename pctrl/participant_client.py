@@ -6,12 +6,12 @@ import argparse
 import atexit
 import json
 import os
-import util.log
 from multiprocessing.connection import Client
 from signal import signal, SIGTERM
 from sys import exit
 from threading import Thread
 from lib import PConfig
+import util.log
 
 ''' client for participants to send policy updates '''
 class ParticipantClient(object):
