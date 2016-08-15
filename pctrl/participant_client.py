@@ -28,7 +28,11 @@ class ParticipantClient(object):
         self.cfg = PConfig(config_file, self.id)
         self.logger = logger
 
-    def xstart(self, policy_file):
+    def xstart(self, policy_file, action):
+
+        validate_actions = {"remove", "insert"}
+        if action in validate_actions:
+            self.logger.debug("found %s in validate_actions" % action)
 
         # Initalize participant client
         self.logger.debug("participant_client(%s): start client" % self.id)
@@ -36,7 +40,8 @@ class ParticipantClient(object):
         
         # Open File and Send
         with open(policy_file, 'r') as f:
-            data = json.load('{ "policy": [ %s ] }' % f)
+            raw_data = json.load(f)
+            data = '{ "policy": [ { "%s": [ %s ] } ] }' % (action, raw_data)
 
         self.logger.debug("participant_client(%s): send: %s" % (self.id, data))
         self.client.send(data)
@@ -74,7 +79,7 @@ def main():
 
     # start controller
     prtclnt = ParticipantClient(args.id, config_file, logger)
-    prtclnt_thread = Thread(target=prtclnt.xstart(policy_change_file))
+    prtclnt_thread = Thread(target=prtclnt.xstart(policy_change_file, action))
     prtclnt_thread.daemon = True
     prtclnt_thread.start()
 
