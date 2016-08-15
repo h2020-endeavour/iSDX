@@ -27,27 +27,17 @@ class ParticipantClient(object):
         self.cfg = PConfig(config_file, self.id)
         self.logger = logger
 
-        # Set valid actions
-        self.valid_actions = {"remove", "insert"}
 
+    def send(self, policy_file, action):  
+        # Open File and Parse
+        with open(policy_file, 'r') as f:
+            raw_data=f.read()
+            data = json.loads('{ "policy": [ { "%s": [ %s ] } ] }' % (action, raw_data))
 
-    def xstart(self, policy_file, action):
-        # Check if action is valid
-        if action in self.valid_actions:
-            self.client = self.cfg.get_participant_client(self.id, self.logger)
-        
-            # Open File and Parse
-            with open(policy_file, 'r') as f:
-                raw_data=f.read()
-                data = json.loads('{ "policy": [ { "%s": [ %s ] } ] }' % (action, raw_data))
+        # Send data
+        self.logger.debug("participant_client(%s): send: %s" % (self.id, data))
+        self.client.send(data)
 
-            # Send data
-            self.logger.debug("participant_client(%s): send: %s" % (self.id, data))
-            self.client.send(data)
-        else:
-            # Not a valid action
-            self.logger.debug("participant_client(%s): action (%s) not found" % (self.id, action))
-            self.prtclnt.stop()
 
     def stop(self):
         # Stop participant client
@@ -56,7 +46,10 @@ class ParticipantClient(object):
 
 
 def main():
-    
+    # Set valid actions
+    valid_actions = {"remove", "insert"}
+
+    # Parse arugments
     parser = argparse.ArgumentParser()
     parser.add_argument('policy_file', help='the policy change file')
     parser.add_argument('id', type=int,
@@ -68,7 +61,7 @@ def main():
     # TODO: atm same path as this program
     base_path = os.path.abspath(os.path.join(os.path.realpath(__file__),
                                 ".."))
-    policy_change_file = os.path.join(base_path, args.policy_file)
+    policy_file = os.path.join(base_path, args.policy_file)
 
     # locate config file
     # TODO: hard coded destination to global config file
@@ -76,12 +69,13 @@ def main():
                                 "..","..","endeavour","examples","test-mh","config"))
     config_file = os.path.join(base_path, "sdx_global.cfg")
 
+    # logger
     logger = util.log.getLogger("P_" + str(args.id))
     logger.debug ("Starting participant_client(%s) with config file: %s" % (args.id, config_file))
 
     # start controller
     prtclnt = ParticipantClient(args.id, config_file, logger)
-    prtclnt_thread = Thread(target=prtclnt.xstart(policy_change_file, args.action))
+    prtclnt_thread = Thread(target=prtclnt.send(policy_file, args.action))
     prtclnt_thread.daemon = True
     prtclnt_thread.start()
 
