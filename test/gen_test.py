@@ -23,6 +23,7 @@ import tlib         # iSDX parser
 
 noisy = False                   # print extra output for debugging
 policies = {}                   # details on participant policies (flow rules)
+bh_policies = {}                # blackholing policies per participant
 participants = {}               # details on each participant
 outdir = 'output'               # base directory for results, will have XXXXX from XXXXX.spec added to it
 template_dir = 'templates'      # directory for templates for configurations
@@ -49,6 +50,7 @@ def main (argv):
     
     participants = config.participants
     policies = config.policies
+    bh_policies = config.bh_policies
     sdx_mininet_template = os.path.join(template_dir, config.mode + '-sdx_mininet.py')
     sdx_global_template = os.path.join(template_dir, config.mode + '-sdx_global.cfg')
         
@@ -137,7 +139,7 @@ def main (argv):
     sdx_policies = {}
     
     for p in policies:
-        participant_file = 'participant_' + p + '.cfg'
+        participant_file = 'participant_' + p + '.cfg
         dir_participant_file = os.path.join(policies_dir, participant_file)
         print 'generating configuration file ' + dir_participant_file
                 
@@ -152,6 +154,25 @@ def main (argv):
         with open(dir_participant_file,'w') as f:
             json.dump(policies[p], f, indent=4, sort_keys=True)
         sdx_policies[p] = participant_file
+
+
+    # generate blackholing policies
+    for p in bh_policies:
+        participant_file = 'participant_' + p + '_blackholing.cfg
+        dir_participant_file = os.path.join(policies_dir, participant_file)
+        print 'generating configuration file ' + dir_participant_file
+        print json.dumps(bh_policies[p], indent=4, sort_keys=True)
+        
+        # don't include empty inbound or outbound definitions (sigh)
+        if len(bh_policies[p]['outbound']) == 0:
+            bh_policies[p].pop('outbound')
+        if len(bh_policies[p]['inbound']) == 0:
+            bh_policies[p].pop('inbound')
+        if noisy:              
+            print json.dumps(bh_policies[p], indent=4, sort_keys=True)
+        
+        with open(dir_participant_file,'w') as f:
+            json.dump(bh_policies[p], f, indent=4, sort_keys=True)
     
     policy_file = 'sdx_policies.cfg'
     policy_file = os.path.join(config_dir, policy_file)
