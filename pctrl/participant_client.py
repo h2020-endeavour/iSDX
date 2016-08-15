@@ -30,24 +30,25 @@ class ParticipantClient(object):
 
     def xstart(self, policy_file, action):
 
-        validate_actions = {"remove", "insert"}
-        if action in validate_actions:
-            self.logger.debug("found %s in validate_actions" % action)
-
         # Initalize participant client
-        self.logger.debug("participant_client(%s): start client" % self.id)
-        self.client = self.cfg.get_participant_client(self.id, self.logger)
+        valid_actions = {"remove", "insert"}
         
-        # Open File and Send
-        with open(policy_file, 'r') as f:
-            #raw_data = json.load(f)
-            #data = '{ "policy": [ { "%s": [ %s ] } ] }' % (action, raw_data)
+        # Check if action is valid
+        if action in valid_actions:
+            self.client = self.cfg.get_participant_client(self.id, self.logger)
+        
+            # Open File and Parse
+            with open(policy_file, 'r') as f:
+                raw_data=f.read()
+                data = json.loads('{ "policy": [ { "%s": [ %s ] } ] }' % (action, raw_data))
 
-            raw_data=f.read()
-            data = json.loads('{ "policy": [ { "%s": [ %s ] } ] }' % (action, raw_data))
-
-        self.logger.debug("participant_client(%s): send: %s" % (self.id, data))
-        self.client.send(data)
+            # Send data
+            self.logger.debug("participant_client(%s): send: %s" % (self.id, data))
+            self.client.send(data)
+        else:
+            # Not a valid action
+            self.logger.debug("participant_client(%s): action (%s) not found" % (self.id, action))
+            self.prtclnt.stop()
 
 
     def stop(self):
@@ -62,7 +63,7 @@ def main():
     parser.add_argument('policy_file', help='the policy change file')
     parser.add_argument('id', type=int,
                    help='participant id (integer)')
-    parser.add_argument('action', help='use remove or insert')
+    parser.add_argument('action', type=str, choices={"remove", "insert"}, help='use remove or insert')
     args = parser.parse_args()
 
     # locate policy changefile
@@ -78,7 +79,7 @@ def main():
     config_file = os.path.join(base_path, "sdx_global.cfg")
 
     logger = util.log.getLogger("P_" + str(args.id))
-    logger.debug ("Starting participant_client with config file: "+str(config_file))
+    logger.debug ("Starting participant_client (%s) with config file: %s" % (self.id, config_file))
 
     # start controller
     prtclnt = ParticipantClient(args.id, config_file, logger)
