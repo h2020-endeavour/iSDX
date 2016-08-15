@@ -1,3 +1,4 @@
+sudo rm -r output/
 mkdir output
 for i in specs/*.spec
 do
