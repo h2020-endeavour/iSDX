@@ -199,6 +199,7 @@ class parser:
         
         p = self.participants.get(part, {})
         p['ASN'] = asn
+        p['EH_SOCKET'] = ['localhost',5553]
         routers = []
         index = 0
         while i < len(args):
