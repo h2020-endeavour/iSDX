@@ -35,14 +35,12 @@ test regress {
 	exec a1 ip -s -s neigh flush all
 	delay 2
 	test xfer
-	local python ~/vagrant/iSDX/pctrl/participant_client.py blackholing_test.py 3 insert
+	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/pctrl/blackholing_test.py 3 insert
 	local pwd
-	local eval echo ~$USER
 	delay 2
 	test xfer
-	local python ~/vagrant/iSDX/pctrl/participant_client.py blackholing_test.py 3 remove
+	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/pctrl/blackholing_test.py 3 remove
 	local pwd
-	local eval echo ~$USER
 	delay 2
 	test xfer
 }
