@@ -5,13 +5,13 @@
 import argparse
 import atexit
 import json
-from multiprocessing.connection import Listener, Client
 import os
+import util.log
+from multiprocessing.connection import Client
 from signal import signal, SIGTERM
 from sys import exit
-from threading import RLock, Thread
+from threading import Thread
 from lib import PConfig
-import util.log
 
 ''' client for participants to send policy updates '''
 class ParticipantClient(object):
@@ -28,7 +28,11 @@ class ParticipantClient(object):
         self.logger = logger
 
 
-    def send(self, policy_file, action):  
+    def send(self, policy_file, action):
+
+        # Connect to participant client
+        self.client = self.cfg.get_participant_client(self.id, self.logger)
+        
         # Open File and Parse
         with open(policy_file, 'r') as f:
             raw_data=f.read()
@@ -45,6 +49,7 @@ class ParticipantClient(object):
         self.run = False
 
 
+''' participant client useage: participant_client.py policy_file participant_id insert/remove '''
 def main():
     # Set valid actions
     valid_actions = {"remove", "insert"}
@@ -52,8 +57,7 @@ def main():
     # Parse arugments
     parser = argparse.ArgumentParser()
     parser.add_argument('policy_file', help='the policy change file')
-    parser.add_argument('id', type=int,
-                   help='participant id (integer)')
+    parser.add_argument('id', type=int, help='participant id (integer)')
     parser.add_argument('action', type=str, choices=valid_actions, help='use remove or insert')
     args = parser.parse_args()
 
