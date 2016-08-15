@@ -79,7 +79,7 @@ def main():
 
     # start controller
     prtclnt = ParticipantClient(args.id, config_file, logger)
-    prtclnt_thread = Thread(target=prtclnt.xstart(policy_change_file, action))
+    prtclnt_thread = Thread(target=prtclnt.xstart(policy_change_file, args.action))
     prtclnt_thread.daemon = True
     prtclnt_thread.start()
 
