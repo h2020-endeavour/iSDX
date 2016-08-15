@@ -121,33 +121,42 @@ def build_inbound_rules_for(participant_id, in_policies, ss_instance, final_swit
 
     rules = []
 
-
     for policy in in_policies:
-        if "fwd" not in policy["action"]:
-            continue
-
-        port_num = policy["action"]["fwd"]
-
-        # match on the next-hop
-        vmac_bitmask = vmac_next_hop_mask(ss_instance)
-        vmac = vmac_next_hop_match(participant_id, ss_instance)
-
-
+        
         match_args = policy["match"]
-        match_args["eth_dst"] = (vmac, vmac_bitmask)
+        actions = {}
+
+        if "fwd" in policy["action"]:
+            port_num = policy["action"]["fwd"]
+
+            # match on the next-hop
+            vmac_bitmask = vmac_next_hop_mask(ss_instance)
+            vmac = vmac_next_hop_match(participant_id, ss_instance)
 
 
-        port_num = policy["action"]["fwd"]
-        new_vmac = vmac_part_port_match(participant_id, port_num, ss_instance)
+            
+            match_args["eth_dst"] = (vmac, vmac_bitmask)
 
 
-        actions = {"set_eth_dst":new_vmac, "fwd":[final_switch]}
+            port_num = policy["action"]["fwd"]
+            new_vmac = vmac_part_port_match(participant_id, port_num, ss_instance)
 
-        rule = {"rule_type":"inbound", "priority":INBOUND_HIT_PRIORITY,
+
+            actions = {"set_eth_dst":new_vmac, "fwd":[final_switch]}
+
+            rule = {"rule_type":"inbound", "priority":INBOUND_HIT_PRIORITY,
                 "match":match_args, "action":actions, "mod_type":"insert",
                 "cookie":(policy["cookie"],2**16-1)}
 
-        rules.append(rule)
+            rules.append(rule)
+
+        # Build rule for dropping traffic 
+        if "drop" in policy["action"]:
+            rule = {"rule_type":"inbound", "priority":INBOUND_HIT_PRIORITY+1,
+                "match":match_args, "action":actions, "mod_type":"insert",
+                "cookie":(policy["cookie"],2**16-1)}
+
+            rules.append(rule)        
 
     return rules
 
@@ -215,17 +224,17 @@ def msg_clear_all_outbound(policies, port0_mac):
 def ss_process_policy_change(supersets, add_policies, remove_policies, policies, port_count, port0_mac):
         "Process the changes in participants' policies"
         return 0
-"""
+
         # TODO: Implement the logic of dynamically changing participants' outbound and inbound policy
         # Partially done. Need to handle expansion of active set
 
         # has the set of active participants expanded?
-        old_rulecounts = supersets.recompute_rulecounts(self.policies)
-        new_rulecounts = supersets.recompute_rulecounts(complete_policies)
+        #-old_rulecounts = supersets.recompute_rulecounts(self.policies)
+        #-new_rulecounts = supersets.recompute_rulecounts(complete_policies)
 
-        new_active = set(new_rulecounts.keys())
+        #-new_active = set(new_rulecounts.keys())
         # new_parts will contain all participants that now appear that did not appear previously
-        new_parts = new_active.difference(old_rulecounts.keys())
+        #-new_parts = new_active.difference(old_rulecounts.keys())
 
         port_count = len(self.participant_2_portmac[self.id])
 
@@ -263,4 +272,55 @@ def ss_process_policy_change(supersets, add_policies, remove_policies, policies,
 
 
         return 0
-"""
+
+def ss_process_policy_change_dev(self, remove_policies):
+
+        # TODO: Implement the logic of dynamically changing participants' outbound and inbound policy
+        # Partially done. Need to handle expansion of active set
+
+        # has the set of active participants expanded?
+        #-old_rulecounts = supersets.recompute_rulecounts(self.policies)
+        #-new_rulecounts = supersets.recompute_rulecounts(complete_policies)
+
+        #-new_active = set(new_rulecounts.keys())
+        # new_parts will contain all participants that now appear that did not appear previously
+        #-new_parts = new_active.difference(old_rulecounts.keys())
+
+        port_count = len(self.participant_2_portmac[self.id])
+        self.logger.debug("Policy change port count: %s" %port_count)
+        # we remove rules first, because the supersets might change when adding rules
+
+        removal_rules = []
+
+        if 'outbound' in remove_policies:
+            removal_out = build_outbound_rules_for(remove_policies['outbound'],
+                                     self.supersets, self.port0_mac)
+            removal_rules.extend(removal_out)
+
+        if 'inbound' in remove_policies:
+            removal_in = build_inbound_rules_for(self.id, remove_policies['outbound'],
+                                            self.supersets, port_count)
+            removal_rules.extend(removal_in)
+
+        # set the mod type of these rules to make them deletions, not additions
+        for rule in removal_rules:
+            rule['mod_type'] = "remove"
+
+        self.dp_queued.extend(removal_rules)
+
+        '''
+        addition_rules = []
+
+        if 'outbound' in add_policies:
+            addition_out = build_outbound_rules_for(add_policies['outbound'],
+                                     self.supersets, self.port0_mac)
+            addition_rules.extend(removal_out)
+
+        if 'inbound' in add_policies:
+            addition_in = build_inbound_rules_for(self.id, add_policies['outbound'],
+                                            self.supersets, port_count)
+            addition_rules.extend(addition_in)
+        '''
+
+        return 0
+
