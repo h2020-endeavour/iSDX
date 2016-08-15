@@ -161,7 +161,6 @@ def main (argv):
         participant_file = 'participant_' + p + '_bh.cfg'
         dir_participant_file = os.path.join(policies_dir, participant_file)
         print 'generating configuration file ' + dir_participant_file
-        print json.dumps(bh_policies[p], indent=4, sort_keys=True)
         
         # don't include empty inbound or outbound definitions (sigh)
         if len(bh_policies[p]['outbound']) == 0:
