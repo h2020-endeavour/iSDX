@@ -40,8 +40,11 @@ class ParticipantClient(object):
         
         # Open File and Send
         with open(policy_file, 'r') as f:
-            raw_data = json.load(f)
-            data = '{ "policy": [ { "%s": [ %s ] } ] }' % (action, raw_data)
+            #raw_data = json.load(f)
+            #data = '{ "policy": [ { "%s": [ %s ] } ] }' % (action, raw_data)
+
+            raw_data=f.read()
+            data = json.loads('{ "policy": [ { "%s": [ %s ] } ] }' % (action, raw_data))
 
         self.logger.debug("participant_client(%s): send: %s" % (self.id, data))
         self.client.send(data)
