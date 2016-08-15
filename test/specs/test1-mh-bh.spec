@@ -39,10 +39,10 @@ test regress {
 	delay 3
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 3
-	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/pctrl/blackholing_test.py 3 insert
+	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/examples/test1-mh-bh/policies/participant_3_blackholing.cfg 3 insert
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 3
-	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/pctrl/blackholing_test.py 3 remove
+	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/examples/test1-mh-bh/policies/participant_3_blackholing.cfg 3 remove
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 
 	delay 2
