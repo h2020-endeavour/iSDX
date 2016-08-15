@@ -79,7 +79,7 @@ def main():
     config_file = os.path.join(base_path, "sdx_global.cfg")
 
     logger = util.log.getLogger("P_" + str(args.id))
-    logger.debug ("Starting participant_client (%s) with config file: %s" % (self.id, config_file))
+    logger.debug ("Starting participant_client (%s) with config file: %s" % (args.id, config_file))
 
     # start controller
     prtclnt = ParticipantClient(args.id, config_file, logger)
@@ -96,7 +96,7 @@ def main():
         except KeyboardInterrupt:
             prtclnt.stop()
 
-    logger.debug ("participant_client extiting")
+    logger.debug ("participant_client(%s): extiting" % args.id)
     print ("done")
 
 
