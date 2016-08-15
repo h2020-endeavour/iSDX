@@ -22,19 +22,18 @@ class ParticipantClient(object):
 
         # used to signal termination
         self.run = True
-        #self.prefix_lock = {}
 
         # Initialize participant params and logger
         self.cfg = PConfig(config_file, self.id)
         self.logger = logger
 
-    def xstart(self, policy_file, action):
+        # Set valid actions
+        self.valid_actions = {"remove", "insert"}
 
-        # Initalize participant client
-        valid_actions = {"remove", "insert"}
-        
+
+    def xstart(self, policy_file, action):
         # Check if action is valid
-        if action in valid_actions:
+        if action in self.valid_actions:
             self.client = self.cfg.get_participant_client(self.id, self.logger)
         
             # Open File and Parse
@@ -50,20 +49,19 @@ class ParticipantClient(object):
             self.logger.debug("participant_client(%s): action (%s) not found" % (self.id, action))
             self.prtclnt.stop()
 
-
     def stop(self):
-        
         # Stop participant client
         self.logger.debug("participant_client(%s): close connection"  % self.id)
         self.run = False
 
 
 def main():
+    
     parser = argparse.ArgumentParser()
     parser.add_argument('policy_file', help='the policy change file')
     parser.add_argument('id', type=int,
                    help='participant id (integer)')
-    parser.add_argument('action', type=str, choices={"remove", "insert"}, help='use remove or insert')
+    parser.add_argument('action', type=str, choices=valid_actions, help='use remove or insert')
     args = parser.parse_args()
 
     # locate policy changefile
@@ -79,7 +77,7 @@ def main():
     config_file = os.path.join(base_path, "sdx_global.cfg")
 
     logger = util.log.getLogger("P_" + str(args.id))
-    logger.debug ("Starting participant_client (%s) with config file: %s" % (args.id, config_file))
+    logger.debug ("Starting participant_client(%s) with config file: %s" % (args.id, config_file))
 
     # start controller
     prtclnt = ParticipantClient(args.id, config_file, logger)
