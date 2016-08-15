@@ -36,11 +36,11 @@ test regress {
 	delay 2
 	test xfer
 	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/pctrl/blackholing_test.py 3 insert
-	local pwd
+	local ovs-ofctl dump-flows edge-1
 	delay 2
 	test xfer
 	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/pctrl/blackholing_test.py 3 remove
-	local pwd
+	local ovs-ofctl dump-flows edge-1
 	delay 2
 	test xfer
 }
