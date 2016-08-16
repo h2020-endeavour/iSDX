@@ -63,7 +63,7 @@ def main (argv):
     except Exception, e:
         log.error('Bad configuration: ' + repr(e))
         exit()
-        
+
     hosts = config.listeners
     tests = config.tests
     bgprouters = config.bgprouters
@@ -228,6 +228,19 @@ def participant (args):
         cmd += arg + ' '
     log.info('MM:00 PARTICIPANT: ' + cmd)
     log.info('args: %s' % args)
+
+    part_id = args[1]
+    log.info('part_id: %s' % part_id)
+    part_action = args[2]
+    log.info('part_action: %s' % part_action)
+
+    cmd = []
+    cmd.append('python')
+    cmd.append('/home/vagrant/endeavour/pclnt/participant_client.py')
+    cmd.appenn(part_id)
+    cmd.appenn(part_action)
+    log.info('cmd: %s' % cmd)
+    
     #participant 3 remove/insert
     #log.info('MM:00 PARTICIPANT: ' + args)
     #try:
