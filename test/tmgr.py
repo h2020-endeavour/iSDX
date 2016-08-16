@@ -237,8 +237,8 @@ def participant (args):
     cmd = []
     cmd.append('python')
     cmd.append('/home/vagrant/endeavour/pclnt/participant_client.py')
-    cmd.appenn(part_id)
-    cmd.appenn(part_action)
+    cmd.append(part_id)
+    cmd.append(part_action)
     log.info('cmd: %s' % cmd)
     
     #participant 3 remove/insert
