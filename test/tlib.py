@@ -139,7 +139,7 @@ class parser:
         # forward to participant number: convert name to assumed number (a=1)
         tmp_policy["action"] = {"drop": 0}
         
-        blackholing_policy["outbound"].append(tmp_policy)
+        blackholing_policy["inbound"].append(tmp_policy)
 
 
 
