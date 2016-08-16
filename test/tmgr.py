@@ -223,20 +223,21 @@ def participant (args):
         log.error('MM:00 EXEC: ERROR usage: participant participant_id remove/insert ...')
         return
     
+    client_path = '/home/vagrant/endeavour/pclnt/participant_client.py'
+    config_file = 'participant_' + part_id + '_bh.cfg'
+
     cmd = ''
     for arg in args:
         cmd += arg + ' '
-    log.info('MM:00 PARTICIPANT: ' + cmd)
+    log.info('MM:00 PARTICIPANT: ' + cmd + ' ' + config_file)
 
     part_id = args[0]
     part_action = args[1]
 
-    client_path = '/home/vagrant/endeavour/pclnt/participant_client.py'
     policy_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "policies"))
-    config_file = 'participant_' + part_id + '_bh.cfg'
-    config_file = os.path.join(policy_path, config_file)
+    config_path = os.path.join(policy_path, config_file)
 
-    cmd = ['python', client_path, config_file, part_id, part_action]
+    cmd = ['python', client_path, config_path, part_id, part_action]
     local(cmd)
 
 
