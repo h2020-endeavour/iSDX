@@ -236,10 +236,6 @@ def participant (args):
     policy_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "policies"))
     config_file = 'participant_' + part_id + '_bh.cfg'
     config_file = os.path.join(policy_path, config_file)
-    
-    log.info('base_path: %s' % base_path)
-    
-    local('python', )
 
     cmd = []
     cmd.append('python', client_path, config_file, part_id, part_action)
