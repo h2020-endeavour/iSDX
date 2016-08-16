@@ -28,15 +28,19 @@ flow c1 | 08:00:27:89:3b:9f
 listener AUTOGEN 80 4321 4322 8888
 
 test regress {	
+	xfer
 	delay 2
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	blackholing 3 insert
 	delay 3
+	xfer
+	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 3
 	blackholing 3 remove
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
-	delay 2	
+	delay 2
+	info
 }
 	
 test init {
