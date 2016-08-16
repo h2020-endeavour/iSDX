@@ -1,4 +1,4 @@
-sudo rm -r output/
+
 mkdir output
 for i in specs/*.spec
 do
@@ -8,4 +8,5 @@ do
 	rm -rf output/$file
 	python gen_test.py $i
 	mv output/$file ../examples
+	rm -r output/
 done
