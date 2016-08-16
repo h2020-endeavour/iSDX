@@ -63,7 +63,7 @@ def main (argv):
     except Exception, e:
         log.error('Bad configuration: ' + repr(e))
         exit()
-    
+
     hosts = config.listeners
     tests = config.tests
     bgprouters = config.bgprouters
@@ -78,6 +78,7 @@ def main (argv):
         'delay': delay,
         'exec': remote, 'x': remote, 'remote': remote,
         'local': local, 'll': local,
+        'participant': participant, 'p':participant,
         'pending': pending, 'p': pending,
         'send': send, 's': send,
         'comment': comment, 'c': comment,
@@ -213,6 +214,29 @@ def local (args):
         err = 'Command Failed: ' + repr(e)
     r = out + err
     log.debug('MM:00 LOCAL: output = \n' + r.strip())
+    
+
+# execute a command remotely
+
+def participant (args):
+    if len(args) < 1:
+        log.error('MM:00 EXEC: ERROR usage: local cmd arg ...')
+        return
+    
+    cmd = ''
+    for arg in args:
+        cmd += arg + ' '
+    log.info('MM:00 PARTICIPANT: ' + cmd)
+    #participant 3 remove/insert
+    log.info('MM:00 PARTICIPANT: ' + args)
+    #try:
+    #    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #    out, err = p.communicate()
+    #except Exception, e:
+    #    out = ''
+    #    err = 'Command Failed: ' + repr(e)
+    #r = out + err
+    #log.debug('MM:00 LOCAL: output = \n' + r.strip())
     
 
 # execute a command remotely

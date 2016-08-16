@@ -42,6 +42,7 @@ test regress {
 	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/examples/test1-mh-bh/policies/participant_3_bh.cfg 3 insert
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 3
+	participant 3 remove
 	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/examples/test1-mh-bh/policies/participant_3_bh.cfg 3 remove
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 
