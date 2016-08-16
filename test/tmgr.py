@@ -217,7 +217,7 @@ def local (args):
     log.debug('MM:00 LOCAL: output = \n' + r.strip())
     
 
-# execute a command remotely
+# execute participant client
 
 def participant (args):
     if len(args) < 1:
@@ -237,7 +237,7 @@ def participant (args):
 
     base_path = os.path.abspath(os.path.join(os.path.realpath(__file__), ".."))
     log.info('base_path: %s' % base_path)
-    base_path = os.path.abspath(os.path.join(os.path.realpath(argv[1]), ".."))
+    base_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), ".."))
     log.info('base_path: %s' % base_path)
 
     cmd = []
@@ -246,7 +246,7 @@ def participant (args):
     cmd.append(part_id)
     cmd.append(part_action)
     log.info('cmd: %s' % cmd)
-    
+
     #participant 3 remove/insert
     #log.info('MM:00 PARTICIPANT: ' + args)
     #try:
