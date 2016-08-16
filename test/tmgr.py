@@ -235,14 +235,15 @@ def participant (args):
     part_action = args[1]
     log.info('part_action: %s' % part_action)
 
-    base_path = os.path.abspath(os.path.join(os.path.realpath(__file__), ".."))
+    base_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "policies"))
     log.info('base_path: %s' % base_path)
-    base_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), ".."))
-    log.info('base_path: %s' % base_path)
+    config_file = 'participant_' + part_id + '_bh.cfg'
+    config_file = os.path.join(base_path, config_file)
 
     cmd = []
     cmd.append('python')
     cmd.append('/home/vagrant/endeavour/pclnt/participant_client.py')
+    cmd.append(config_file)
     cmd.append(part_id)
     cmd.append(part_action)
     log.info('cmd: %s' % cmd)
