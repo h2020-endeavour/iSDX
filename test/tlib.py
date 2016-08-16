@@ -135,7 +135,7 @@ class parser:
     
         # Match
         tmp_policy["match"] = {}
-        tmp_policy["match"]["eth_src"] = src
+        tmp_policy["match"]["eth_src"] = src_mac
         # forward to participant number: convert name to assumed number (a=1)
         tmp_policy["action"] = {"drop": 0}
         
