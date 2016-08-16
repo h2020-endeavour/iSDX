@@ -49,8 +49,8 @@ test init {
 
 test xfer {
 	verify a1_100 c1_140 80
-	verify b1_100 c1_140 4321
-	verify b1_100 c2_140 4322
+	verify b1_140 c1_140 4321
+	verify b1_140 c2_140 4322
 }
 
 test info {
