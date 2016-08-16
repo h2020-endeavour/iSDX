@@ -413,7 +413,7 @@ class parser:
             if args[0] == 'announce' or args[0] == 'withdraw':
                 continue
 
-            if args[0] == 'participant'
+            if args[0] == 'participant':
                 continue
             
             if args[0] == 'delay':
