@@ -119,9 +119,8 @@ class parser:
             policy["inbound"] = []
             self.bh_policies[name] = policy
         return policy
-<<<<<<< HEAD
     
-    # TODO: Implement additional matching capabilities 
+    # TODO: Implement additional matching capabilities         
     def _blackholing (self, dst, src_mac):        
             
         das, dasport = host2as_router(dst)
@@ -129,38 +128,18 @@ class parser:
         
         blackholing_policy = self._get_bh_policy(n)
         tmp_policy = {}
-    
-=======
-    
-        
-    def _blackholing (self, dst, src_mac):        
-            
-        das, dasport = host2as_router(dst)
-        n = as2part(das)
-        
-        blackholing_policy = self._get_bh_policy(n)
-        tmp_policy = {}
-    
->>>>>>> 7b8047e524a973c963bc32d420bfb65807b49e2f
+
         # Assign Cookie ID
         tmp_policy["cookie"] = self.cookie_id
         self.cookie_id += 1
     
         # Match
         tmp_policy["match"] = {}
-<<<<<<< HEAD
-        tmp_policy["match"]["eth_src"] = src_mac
-        # forward to participant number: convert name to assumed number (a=1)
-        tmp_policy["action"] = {"drop": 0}
-        
-        blackholing_policy["inbound"].append(tmp_policy)
-=======
         tmp_policy["match"]["eth_src"] = src
         # forward to participant number: convert name to assumed number (a=1)
         tmp_policy["action"] = {"drop": 0}
         
         blackholing_policy["outbound"].append(tmp_policy)
->>>>>>> 7b8047e524a973c963bc32d420bfb65807b49e2f
 
 
 

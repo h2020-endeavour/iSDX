@@ -22,11 +22,7 @@ flow a1 4321 >> c
 flow a1 4322 >> c
 flow c1 << 4321
 flow c2 << 4322
-<<<<<<< HEAD
 flow c1 | 08:00:27:89:3b:9f
-=======
-flow c | 08:00:27:89:3b:9f
->>>>>>> 7b8047e524a973c963bc32d420bfb65807b49e2f
 
 listener AUTOGEN 80 4321 4322 8888
 
