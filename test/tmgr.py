@@ -237,8 +237,7 @@ def participant (args):
     config_file = 'participant_' + part_id + '_bh.cfg'
     config_file = os.path.join(policy_path, config_file)
 
-    cmd = []
-    cmd.append('python', client_path, config_file, part_id, part_action)
+    cmd = ['python', client_path, config_file, part_id, part_action]
     log.info('cmd: %s' % cmd)
 
     local(cmd)
