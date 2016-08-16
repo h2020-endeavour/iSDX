@@ -187,7 +187,6 @@ def main (argv):
         part['Flanc Key'] = 'Part' + p + 'Key'
         part['ASN'] = int(part['ASN'])
         
-    print 'participants'
     if noisy:
         print json.dumps(participants, indent=4, sort_keys=True)
     

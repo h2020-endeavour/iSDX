@@ -206,7 +206,6 @@ def local (args):
     for arg in args:
         cmd += arg + ' '
     log.info('MM:00 LOCAL: ' + cmd)
-    log.info('args: %s' % args)
     try:
         p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
@@ -214,7 +213,7 @@ def local (args):
         out = ''
         err = 'Command Failed: ' + repr(e)
     r = out + err
-    log.debug('MM:00 LOCAL: output = \n' + r.strip())
+    log.debug('MM:00 LOCAL: output = ' + r.strip())
     
 
 # execute participant client
@@ -238,21 +237,8 @@ def participant (args):
     config_file = os.path.join(policy_path, config_file)
 
     cmd = ['python', client_path, config_file, part_id, part_action]
-    log.info('cmd: %s' % cmd)
-
     local(cmd)
 
-    #participant 3 remove/insert
-    #log.info('MM:00 PARTICIPANT: ' + args)
-    #try:
-    #    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    #    out, err = p.communicate()
-    #except Exception, e:
-    #    out = ''
-    #    err = 'Command Failed: ' + repr(e)
-    #r = out + err
-    #log.debug('MM:00 LOCAL: output = \n' + r.strip())
-    
 
 # execute a command remotely
 
@@ -450,7 +436,7 @@ def listener3(host, bind, port):
 def delay (args):
     if len(args) == 1:
         try:
-            log.info('MM:00: DELAY ' + args[0])
+            log.info('MM:00 DELAY ' + args[0])
             time.sleep(float(args[0]))
         except Exception, e:
             log.error('MM:00 ERROR: DELAY: exception: ' + repr(e))
@@ -541,6 +527,7 @@ def usage (args):
     'delay seconds                   # pause for things to settle\n'
     'exec anynode cmd arg arg        # execute cmd on node\n'
     'local cmd arg arg               # execute cmd on local machine\n'
+    'participant id insert/remove    # execute participant_client insert/remove policy\n'
     'pending anyhost                 # check if any pending or unclaimed data transfers are on host\n'
     'send host bind daddr port       # send data xmit request to source node\n'
     'comment commentary ...          # log a comment\n'
