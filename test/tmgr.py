@@ -63,7 +63,7 @@ def main (argv):
     except Exception, e:
         log.error('Bad configuration: ' + repr(e))
         exit()
-
+        
     hosts = config.listeners
     tests = config.tests
     bgprouters = config.bgprouters
@@ -227,8 +227,9 @@ def participant (args):
     for arg in args:
         cmd += arg + ' '
     log.info('MM:00 PARTICIPANT: ' + cmd)
+    log.info('args: %s' % args)
     #participant 3 remove/insert
-    log.info('MM:00 PARTICIPANT: ' + args)
+    #log.info('MM:00 PARTICIPANT: ' + args)
     #try:
     #    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     #    out, err = p.communicate()
