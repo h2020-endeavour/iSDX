@@ -206,6 +206,7 @@ def local (args):
     for arg in args:
         cmd += arg + ' '
     log.info('MM:00 LOCAL: ' + cmd)
+    log.info('args: %s' % args)
     try:
         p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
@@ -233,6 +234,11 @@ def participant (args):
     log.info('part_id: %s' % part_id)
     part_action = args[1]
     log.info('part_action: %s' % part_action)
+
+    base_path = os.path.abspath(os.path.join(os.path.realpath(__file__), ".."))
+    log.info('base_path: %s' % base_path)
+    base_path = os.path.abspath(os.path.join(os.path.realpath(argv[1]), ".."))
+    log.info('base_path: %s' % base_path)
 
     cmd = []
     cmd.append('python')
