@@ -38,13 +38,12 @@ test regress {
 	test xfer
 	delay 3
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
-	participant 3 insert
+	blackholing 3 insert
 	delay 3
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 3
-	participant 3 remove
+	blackholing 3 remove
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
-
 	delay 2
 }
 	

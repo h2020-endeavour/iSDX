@@ -78,7 +78,7 @@ def main (argv):
         'delay': delay,
         'exec': remote, 'x': remote, 'remote': remote,
         'local': local, 'll': local,
-        'participant': participant, 'p':participant,
+        'blackholing': blackholing, 'b': blackholing,
         'pending': pending, 'p': pending,
         'send': send, 's': send,
         'comment': comment, 'c': comment,
@@ -213,12 +213,12 @@ def local (args):
         out = ''
         err = 'Command Failed: ' + repr(e)
     r = out + err
-    log.debug('MM:00 LOCAL: output = ' + r.strip())
+    log.debug('MM:00 LOCAL: output =\n' + r.strip())
     
 
 # execute participant client
 
-def participant (args):
+def blackholing (args):
     if len(args) < 2:
         log.error('MM:00 EXEC: ERROR usage: participant participant_id remove/insert ...')
         return
@@ -231,7 +231,7 @@ def participant (args):
     cmd = ''
     for arg in args:
         cmd += arg + ' '
-    log.info('MM:00 PARTICIPANT: ' + cmd + ' ' + config_file)
+    log.info('MM:00 BLACKHOLING: ' + cmd + config_file)
 
     policy_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "policies"))
     config_path = os.path.join(policy_path, config_file)
