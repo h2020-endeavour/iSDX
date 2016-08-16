@@ -193,8 +193,6 @@ class parser:
         part = args[1]
         ipart = int(part)
         asn = args[2]
-        print 'arguments per parcipant:'
-        print args
         i = 3
         
         p = self.participants.get(part, {})
