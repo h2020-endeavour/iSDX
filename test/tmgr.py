@@ -220,33 +220,32 @@ def local (args):
 # execute participant client
 
 def participant (args):
-    if len(args) < 1:
-        log.error('MM:00 EXEC: ERROR usage: local cmd arg ...')
+    if len(args) < 2:
+        log.error('MM:00 EXEC: ERROR usage: participant participant_id remove/insert ...')
         return
     
     cmd = ''
     for arg in args:
         cmd += arg + ' '
     log.info('MM:00 PARTICIPANT: ' + cmd)
-    log.info('args: %s' % args)
 
     part_id = args[0]
-    log.info('part_id: %s' % part_id)
     part_action = args[1]
-    log.info('part_action: %s' % part_action)
 
-    base_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "policies"))
-    log.info('base_path: %s' % base_path)
+    client_path = '/home/vagrant/endeavour/pclnt/participant_client.py'
+    policy_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "policies"))
     config_file = 'participant_' + part_id + '_bh.cfg'
     config_file = os.path.join(base_path, config_file)
+    
+    log.info('base_path: %s' % base_path)
+    
+    local('python', )
 
     cmd = []
-    cmd.append('python')
-    cmd.append('/home/vagrant/endeavour/pclnt/participant_client.py')
-    cmd.append(config_file)
-    cmd.append(part_id)
-    cmd.append(part_action)
+    cmd.append('python', client_path, config_file, part_id, part_action)
     log.info('cmd: %s' % cmd)
+
+    local(cmd)
 
     #participant 3 remove/insert
     #log.info('MM:00 PARTICIPANT: ' + args)
