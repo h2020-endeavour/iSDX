@@ -235,7 +235,7 @@ def participant (args):
     client_path = '/home/vagrant/endeavour/pclnt/participant_client.py'
     policy_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "policies"))
     config_file = 'participant_' + part_id + '_bh.cfg'
-    config_file = os.path.join(base_path, config_file)
+    config_file = os.path.join(policy_path, config_file)
     
     log.info('base_path: %s' % base_path)
     
