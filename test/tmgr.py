@@ -229,9 +229,9 @@ def participant (args):
     log.info('MM:00 PARTICIPANT: ' + cmd)
     log.info('args: %s' % args)
 
-    part_id = args[1]
+    part_id = args[0]
     log.info('part_id: %s' % part_id)
-    part_action = args[2]
+    part_action = args[1]
     log.info('part_action: %s' % part_action)
 
     cmd = []
