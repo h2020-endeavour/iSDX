@@ -139,7 +139,7 @@ def main (argv):
     sdx_policies = {}
     
     for p in policies:
-        participant_file = 'participant_' + p + '.cfg'
+        participant_file = 'participant_' + p + '.cfg
         dir_participant_file = os.path.join(policies_dir, participant_file)
         print 'generating configuration file ' + dir_participant_file
                 

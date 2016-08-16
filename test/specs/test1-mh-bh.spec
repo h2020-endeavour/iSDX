@@ -22,7 +22,11 @@ flow a1 4321 >> c
 flow a1 4322 >> c
 flow c1 << 4321
 flow c2 << 4322
+<<<<<<< HEAD
 flow c1 | 08:00:27:89:3b:9f
+=======
+flow c | 08:00:27:89:3b:9f
+>>>>>>> 7b8047e524a973c963bc32d420bfb65807b49e2f
 
 listener AUTOGEN 80 4321 4322 8888
 
@@ -39,10 +43,17 @@ test regress {
 	delay 3
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 3
+<<<<<<< HEAD
 	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/examples/test1-mh-bh/policies/participant_3_bh.cfg 3 insert
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 3
 	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/examples/test1-mh-bh/policies/participant_3_bh.cfg 3 remove
+=======
+	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/pctrl/blackholing_test.py 3 insert
+	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
+	delay 3
+	local python /home/vagrant/iSDX/pctrl/participant_client.py /home/vagrant/iSDX/pctrl/blackholing_test.py 3 remove
+>>>>>>> 7b8047e524a973c963bc32d420bfb65807b49e2f
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 
 	delay 2
