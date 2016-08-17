@@ -7,11 +7,12 @@ mode multi-hop
 participants 3
 peers 1 2 3
 
-participant 1 100 edge-1:5 MAC 172.0.0.1/16
-participant 2 200 edge-2:5 MAC 172.0.0.11/16
-participant 3 300 edge-3:5 MAC 172.0.0.21/16 edge-4:5 MAC 172.0.0.22/16
+participant 1 100 edge-1:5 08:00:27:89:3b:9f 172.0.0.1/16
+participant 2 200 edge-2:5 08:00:27:92:18:1f 172.0.0.11/16
+participant 3 300 edge-3:5 08:00:27:54:56:ea 172.0.0.21/16 edge-4:5 08:00:27:bd:f8:b2 172.0.0.22/16
 
-host AS ROUTER _ IP           # host names of form a1_100 a1_110
+#host AS ROUTER _ IP           # host names of form a1_100 a1_110
+host h NETNUMB _ AS ROUTER
 
 announce 1 100.0.0.0/24 110.0.0.0/24
 announce 2 140.0.0.0/24 150.0.0.0/24
@@ -25,37 +26,40 @@ flow c1 << 4321
 flow c2 << 4322
 flow c1 | 08:00:27:89:3b:9f
 
-listener AUTOGEN 80 4321 4322 8888
+listener AUTOGEN 80 4321 4322
+	
+test init {
+	listener
+}
 
 test regress {	
 	delay 2
 	test xfer
-	delay 2
+	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	blackholing 3 insert
 	delay 3
 	test xfer
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
-	delay 3
 	blackholing 3 remove
+	delay 3
+	test xfer
+	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 2
 }
-	
-test init {
-	listener
-}
 
 test xfer {
-	verify a1_100 c1_140 80
-	verify b1_140 c1_140 4321
-	verify b1_140 c2_140 4322
+	verify h1_a1 h1_c1 80
+	verify h1_b1 h1_c1 4321
+	verify h1_b1 h1_c2 4322
 }
 
 test info {
-	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 >> log.txt
+	local ovs-ofctl dump-flows edge-1 -O OpenFlow13
 	exec a1 ip route
+	exec a1 ifconfig
 	exec b1 ip route
 	exec c1 ip route
 	exec c2 ip route
