@@ -26,7 +26,7 @@ flow c1 << 4321
 flow c2 << 4322
 flow c1 | 08:00:27:89:3b:9f
 
-listener AUTOGEN 80 4321 4322
+#listener AUTOGEN 80 4321 4322
 	
 test init {
 	listener
@@ -35,23 +35,25 @@ test init {
 test regress {	
 	delay 2
 	test netstat
-	test traffic
+	test traffic0
 	delay 2
-	test xfer
+	test netstat
+	test traffic1
+	#test xfer
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	blackholing 3 insert
 	delay 3
-	test xfer
+	#test xfer
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	blackholing 3 remove
 	delay 3
-	test xfer
+	#test xfer
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 2
-	#test traffic2
+	test traffic2
 	delay 2
 }
 
@@ -61,13 +63,17 @@ test xfer {
 	verify h1_b1 h1_c2 4322
 }
 
-test traffic {
+test traffic0 {
 	exec h1_c1 iperf -s -B 140.0.0.1 -p 80
 	exec h1_c1 iperf -s -B 140.0.0.1 -p 4321
 	exec h1_c2 iperf -s -B 140.0.0.1 -p 4322
-	#exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -b 100000 &
-	#exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -b 100000 &
-	#exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -b 100000 &
+
+}
+
+test traffic1 {
+	exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -t 5 &
+	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -t 5 &
+	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -t 5 &
 }
 
 test traffic2 {
