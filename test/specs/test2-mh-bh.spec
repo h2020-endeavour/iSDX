@@ -34,6 +34,8 @@ test init {
 
 test regress {	
 	delay 2
+	test traffic
+	delay 2
 	test xfer
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
@@ -48,12 +50,29 @@ test regress {
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 2
+	test traffic2
+	delay 2
 }
 
 test xfer {
 	verify h1_a1 h1_c1 80
 	verify h1_b1 h1_c1 4321
 	verify h1_b1 h1_c2 4322
+}
+
+test traffic {
+	exec h1_c1 iperf -s -B 140.0.0.1 -p 80 &
+	exec h1_c1 iperf -s -B 140.0.0.1 -p 4321 &
+	exec h1_c2 iperf -s -B 140.0.0.1 -p 4322 &
+	exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -b 100000 &
+	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -b 100000 &
+	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -b 100000 &
+}
+
+test traffic2 {
+	exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -b 100000 -t 2
+	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -b 100000 -t 2
+	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -b 100000 -t 2
 }
 
 test info {
