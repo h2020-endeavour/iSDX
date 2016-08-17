@@ -26,7 +26,7 @@ flow c1 << 4321
 flow c2 << 4322
 flow c1 | 08:00:27:89:3b:9f
 
-listener AUTOGEN
+listener AUTOGEN 8888
 	
 test init {
 	listener
