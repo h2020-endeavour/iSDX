@@ -26,11 +26,11 @@ flow c1 << 4321
 flow c2 << 4322
 flow c1 | 08:00:27:89:3b:9f
 
-#listener AUTOGEN 80 4321 4322
+listener AUTOGEN
 	
-#test init {
-#	listener
-#}
+test init {
+	listener
+}
 
 test regress {	
 	delay 2
