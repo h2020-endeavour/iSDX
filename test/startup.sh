@@ -3,8 +3,14 @@
 BASE=~/iSDX
 RUN_DIR=~/endeavour
 LOG_DIR=regress/regress.$$
+
 echo "Logging to $LOG_DIR"
 mkdir -p $LOG_DIR
+
+if [ $1 = '--stats' ]; then
+    shift
+    STATS=1
+fi
 
 EXAMPLES=$BASE/test/output
 # for now, tests must run from examples folder
@@ -117,7 +123,11 @@ do
 
 		echo starting ryu
 		cd $BASE/flanc
-		ryu-manager ryu.app.ofctl_rest refmon.py --refmon-config $EXAMPLES/$TEST/config/sdx_global.cfg >/dev/null 2>&1 &
+		if [ -n "$STATS" ]; then
+                        export GAUGE_CONFIG=$EXAMPLES/$TEST/config/gauge.conf
+                        STATS_APP=stats/gauge.py
+                fi
+		ryu-manager $STATS_APP ryu.app.ofctl_rest refmon.py --refmon-config $EXAMPLES/$TEST/config/sdx_global.cfg >/dev/null 2>&1 &
 		#sleep 2
 
 		echo starting xctrl
