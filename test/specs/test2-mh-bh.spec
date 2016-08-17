@@ -54,7 +54,7 @@ test xfer {
 }
 
 test info {
-	local ovs-ofctl dump-flows edge-1
+	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 >> log.txt
 	exec a1 ip route
 	exec b1 ip route
 	exec c1 ip route
