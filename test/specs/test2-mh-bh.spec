@@ -34,7 +34,7 @@ test init {
 
 test regress {	
 	delay 2
-	#test traffic
+	test traffic
 	delay 2
 	test xfer
 	delay 5
@@ -61,18 +61,18 @@ test xfer {
 }
 
 test traffic {
-	exec h1_c1 iperf -s -B 140.0.0.1 -p 80 &
-	exec h1_c1 iperf -s -B 140.0.0.1 -p 4321 &
-	exec h1_c2 iperf -s -B 140.0.0.1 -p 4322 &
-	exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -b 100000 &
-	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -b 100000 &
-	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -b 100000 &
+	exec h1_c1 iperf -s -B 140.0.0.1 -p 80
+	exec h1_c1 iperf -s -B 140.0.0.1 -p 4321
+	exec h1_c2 iperf -s -B 140.0.0.1 -p 4322
+	#exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -b 100000 &
+	#exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -b 100000 &
+	#exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -b 100000 &
 }
 
 test traffic2 {
-	exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -b 100000 -t 2
-	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -b 100000 -t 2
-	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -b 100000 -t 2
+	exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -t 2
+	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -t 2
+	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -t 2
 }
 
 test info {
