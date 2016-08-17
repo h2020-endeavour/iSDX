@@ -34,7 +34,7 @@ test init {
 
 test regress {	
 	delay 2
-	test traffic
+	#test traffic
 	delay 2
 	test xfer
 	delay 5
@@ -50,7 +50,7 @@ test regress {
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 2
-	test traffic2
+	#test traffic2
 	delay 2
 }
 
@@ -82,4 +82,6 @@ test info {
 	exec b1 ip route
 	exec c1 ip route
 	exec c2 ip route
+	exec h1_c1 ifconfig
+	exec h1_c2 ifconfig
 }
