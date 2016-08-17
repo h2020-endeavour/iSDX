@@ -64,9 +64,9 @@ test xfer {
 }
 
 test traffic0 {
-	exec h1_c1 iperf -s -B 140.0.0.1 -p 80
-	exec h1_c1 iperf -s -B 140.0.0.1 -p 4321
-	exec h1_c2 iperf -s -B 140.0.0.1 -p 4322
+	exec h1_c1 iperf -s -B 140.0.0.1 -p 80 &
+	exec h1_c1 iperf -s -B 140.0.0.1 -p 4321 &
+	exec h1_c2 iperf -s -B 140.0.0.1 -p 4322 &
 
 }
 
@@ -83,9 +83,8 @@ test traffic2 {
 }
 
 test netstat {
-	exec h1_c1 netstat -ntlp | grep 80 | grep -v grep
-	exec h1_c1 netstat -ntlp | grep 4321 | grep -v grep
-	exec h1_c2 netstat -ntlp | grep 4322 | grep -v grep
+	exec h1_c1 netstat -ntlp
+	exec h1_c2 netstat -ntlp
 }
 
 test info {
