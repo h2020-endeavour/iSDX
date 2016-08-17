@@ -15,7 +15,7 @@ participant 3 300 edge-3:5 08:00:27:54:56:ea 172.0.0.21/16 edge-4:5 08:00:27:bd:
 host h NETNUMB _ AS ROUTER
 
 announce 1 100.0.0.0/24 110.0.0.0/24
-announce 2 140.0.0.0/24 150.0.0.0/24
+announce 2 120.0.0.0/24 130.0.0.0/24
 announce 3 140.0.0.0/24 150.0.0.0/24
 
 flow a1 80 >> c
