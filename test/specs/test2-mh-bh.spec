@@ -34,6 +34,7 @@ test init {
 
 test regress {	
 	delay 2
+	test netstat
 	test traffic
 	delay 2
 	test xfer
@@ -73,6 +74,12 @@ test traffic2 {
 	exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -t 2
 	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -t 2
 	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -t 2
+}
+
+test netstat {
+	exec h1_c1 netstat -ntlp | grep 80 | grep -v grep
+	exec h1_c1 netstat -ntlp | grep 4321 | grep -v grep
+	exec h1_c2 netstat -ntlp | grep 4322 | grep -v grep
 }
 
 test info {
