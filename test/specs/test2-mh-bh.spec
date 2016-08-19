@@ -18,13 +18,7 @@ announce 1 100.0.0.0/24 110.0.0.0/24
 announce 2 120.0.0.0/24 130.0.0.0/24
 announce 3 140.0.0.0/24 150.0.0.0/24
 
-flow a1 80 >> c
-flow b1 4321 >> c
-flow b1 4322 >> c
-flow c1 << 80
-flow c1 << 4321
-flow c2 << 4322
-flow c1 | 08:00:27:89:3b:9f
+flow b1 | 08:00:27:89:3b:9f
 
 listener AUTOGEN 8888
 	
@@ -34,30 +28,19 @@ test init {
 
 test regress {	
 	delay 2
-	test netstat
-	test traffic0
+	test start_sender
 	delay 2
-	test netstat
-	test traffic1
-	#test xfer
-	delay 5
+	test send_traffic
+	delay 10
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	blackholing 3 insert
-	delay 3
-	#test xfer
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	blackholing 3 remove
-	delay 3
-	#test xfer
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
-	delay 2
-	test traffic2
-	delay 2
-	killp h1_c1 IPERF1
-	killp h1_c1 IPERF2
-	killp h1_c2 IPERF1
+	delay 5
+	test stop_sender
 }
 
 test xfer {
@@ -66,23 +49,16 @@ test xfer {
 	verify h1_b1 h1_c2 8888
 }
 
-test traffic0 {
-	exec h1_c1 iperf -s -B 140.0.0.1 -p 80 &IPERF1
-	exec h1_c1 iperf -s -B 140.0.0.1 -p 4321 &IPERF2
-	exec h1_c2 iperf -s -B 140.0.0.1 -p 4322 &IPERF1
-
+test start_sender {
+	exec h1_b1 iperf -s -B 120.0.0.1 -p 80 &IPERF1
 }
 
-test traffic1 {
-	exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -t 5
-	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -t 5
-	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -t 5
+test send_traffic {
+	exec h1_a1 iperf -c 120.0.0.1 -B 100.0.0.1 -p 80 -t 25
 }
 
-test traffic2 {
-	exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -t 2
-	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -t 2
-	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -t 2
+test stop_sender {
+	killp h1_b1 IPERF1
 }
 
 test netstat {
