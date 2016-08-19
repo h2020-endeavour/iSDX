@@ -13,6 +13,7 @@ class parser:
     tests = {}                      # holds details for named tests
     mode = None                     # multi-switch or multi-table
     policies = {}                   # details on participant policies (flow rules)
+    bh_policies = {}                # blackholing policies per particitpant 
     participants = {}               # details on each participant
     cookie_id = 1                   # common cookie ID for flow rules (should this be per participant?)
 
@@ -92,6 +93,9 @@ class parser:
             self._outbound(args[1], args[2], args[4])
         elif args[2] == '<<':
             self._inbound(args[1], args[3])
+        # c2 | src_mac 
+        elif args[2] == '|':
+            self._blackholing(args[1], args[3])
         else:
             raise Exception('bad flow format')
         
@@ -105,8 +109,40 @@ class parser:
             policy["inbound"] = []
             self.policies[name] = policy
         return policy
+
+    def _get_bh_policy (self, name):        
+        try:
+            policy = self.bh_policies[name]
+        except:
+            policy = {}
+            policy["outbound"] = []
+            policy["inbound"] = []
+            self.bh_policies[name] = policy
+        return policy
     
-                  
+    # TODO: Implement additional matching capabilities         
+    def _blackholing (self, dst, src_mac):        
+            
+        das, dasport = host2as_router(dst)
+        n = as2part(das)
+        
+        blackholing_policy = self._get_bh_policy(n)
+        tmp_policy = {}
+
+        # Assign Cookie ID
+        tmp_policy["cookie"] = self.cookie_id
+        self.cookie_id += 1
+    
+        # Match
+        tmp_policy["match"] = {}
+        tmp_policy["match"]["eth_src"] = src_mac
+        # forward to participant number: convert name to assumed number (a=1)
+        tmp_policy["action"] = {"drop": 0}
+        
+        blackholing_policy["inbound"].append(tmp_policy)
+
+
+
     def _inbound (self, dst, port):        
         #print 'inbound: dst=' + dst + ' port=' + port
         das, dasport = host2as_router(dst)
@@ -157,11 +193,11 @@ class parser:
         part = args[1]
         ipart = int(part)
         asn = args[2]
-        
         i = 3
         
         p = self.participants.get(part, {})
         p['ASN'] = asn
+        p['EH_SOCKET'] = ['localhost',5550+int(part)]
         routers = []
         index = 0
         while i < len(args):
@@ -370,11 +406,17 @@ class parser:
                 if host in self.listeners or host in self.bgprouters:
                     continue
                 raise Exception('bad run command: unknown host: ' + host)
-            
+
+            if args[0] == 'killp':
+                continue
+
             if args[0] == 'dump':
                 continue
             
             if args[0] == 'announce' or args[0] == 'withdraw':
+                continue
+
+            if args[0] == 'blackholing':
                 continue
             
             if args[0] == 'delay':

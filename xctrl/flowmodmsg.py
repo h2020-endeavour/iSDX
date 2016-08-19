@@ -47,6 +47,9 @@ class FlowModMsgBuilder(object):
 
         return msg
 
+    def reset_flow_mod(self):
+        self.flow_mods = []
+
 #  request body format:
 #    {"auth_info": {
 #            "participant": 1,

@@ -63,7 +63,7 @@ def main (argv):
     except Exception, e:
         log.error('Bad configuration: ' + repr(e))
         exit()
-    
+
     hosts = config.listeners
     tests = config.tests
     bgprouters = config.bgprouters
@@ -77,7 +77,9 @@ def main (argv):
         'bgp': bgp,
         'delay': delay,
         'exec': remote, 'x': remote, 'remote': remote,
+        'killp': killp,
         'local': local, 'll': local,
+        'blackholing': blackholing, 'b': blackholing,
         'pending': pending, 'p': pending,
         'send': send, 's': send,
         'comment': comment, 'c': comment,
@@ -212,14 +214,38 @@ def local (args):
         out = ''
         err = 'Command Failed: ' + repr(e)
     r = out + err
-    log.debug('MM:00 LOCAL: output = \n' + r.strip())
+    log.debug('MM:00 LOCAL: output =\n' + r.strip())
     
+
+# execute participant client
+
+def blackholing (args):
+    if len(args) < 2:
+        log.error('MM:00 EXEC: ERROR usage: participant participant_id remove/insert ...')
+        return
+    
+    part_id = args[0]
+    part_action = args[1]
+    client_path = '/home/vagrant/endeavour/pclnt/participant_client.py'
+    config_file = 'participant_' + part_id + '_bh.cfg'
+
+    cmd = ''
+    for arg in args:
+        cmd += arg + ' '
+    log.info('MM:00 BLACKHOLING: ' + cmd + config_file)
+
+    policy_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "policies"))
+    config_path = os.path.join(policy_path, config_file)
+
+    cmd = ['python', client_path, config_path, part_id, part_action]
+    local(cmd)
+
 
 # execute a command remotely
 
 def remote (args):
     if len(args) < 2:
-        log.error('MM:00 EXEC: ERROR: usage: exec cmd arg ...')
+        log.error('MM:00 EXEC: ERROR: usage: exec anynode cmd arg ...')
         return
     host = args[0]
     del args[0]
@@ -230,8 +256,24 @@ def remote (args):
     r = generic(host, 'REXEC', 'exec ' + cmd + '\n')
     if r is not None:
         log.debug('MM:' + host + ' REXEC: output = \n' + r.strip())
-        
-        
+
+# terminate a remote background process
+
+def killp(args):
+    if len(args) < 2:
+        log.error('MM:00 EXEC: ERROR: usage: killp anynode ID ...')
+        return
+    host = args[0]
+    del args[0]
+    cmd = ''
+    for arg in args:
+        cmd += arg + ' '
+    log.info('MM:' + host + ' KILLP: ' + cmd)
+    r = generic(host, 'KILLP', 'killp ' + cmd + '\n')
+    if r is not None:
+        log.debug('MM:' + host + ' KILLP: output = \n' + r.strip())
+
+
 # generic command interface to a tnode - send cmd, capture data
 # return None id cannot connect or socket error
 # return '' if no data
@@ -411,7 +453,7 @@ def listener3(host, bind, port):
 def delay (args):
     if len(args) == 1:
         try:
-            log.info('MM:00: DELAY ' + args[0])
+            log.info('MM:00 DELAY ' + args[0])
             time.sleep(float(args[0]))
         except Exception, e:
             log.error('MM:00 ERROR: DELAY: exception: ' + repr(e))
@@ -500,8 +542,10 @@ def usage (args):
     'withdraw bgprouter network ...  # withdraw BGP route\n'
     'bgp bgprouter                   # show advertised bgp routes\n'
     'delay seconds                   # pause for things to settle\n'
-    'exec anynode cmd arg arg        # execute cmd on node\n'
+    'exec anynode cmd arg ... [&ID]  # execute cmd on node\n'
+    'killp anynode ID                # terminate background process\n'
     'local cmd arg arg               # execute cmd on local machine\n'
+    'participant id insert/remove    # execute participant_client insert/remove policy\n'
     'pending anyhost                 # check if any pending or unclaimed data transfers are on host\n'
     'send host bind daddr port       # send data xmit request to source node\n'
     'comment commentary ...          # log a comment\n'

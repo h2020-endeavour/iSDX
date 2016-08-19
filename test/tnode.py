@@ -29,6 +29,8 @@ completed = { }         # completed data reception results
 pending = { }           # pending data reception results
 connection_timeout = 5  # for sending/eating data
 
+bg_processes = {}       # PIDs of background processes
+
 def main (argv):
     global host, hosts, tests
     
@@ -164,13 +166,13 @@ def interface_thread(conn, fromto):
 # on-demand thread to process a command
 
 def cmd_thread(conn):
-    global generation
+    global generation, bg_processes
     data = conn.recv(1024)
     
     if len(data) == 0:
         conn.sendall(host + ':XX ERROR: No data\n')
         conn.close()
-        return;
+        return
     
     tokens = data.split()
     tokens = shlex.split(data)
@@ -178,7 +180,7 @@ def cmd_thread(conn):
     if n == 0:
         conn.sendall(host + ':XX ERROR: Null data\n')
         conn.close()
-        return;
+        return
     
     cmd = tokens[0]
     
@@ -191,22 +193,52 @@ def cmd_thread(conn):
         while not outq.empty():
             conn.sendall(outq.get())
         conn.close()
-        return;
+        return
     
     if cmd == 'exec':
         tokens.pop(0)
+        p = None
+        bg_p = False
         try:
-            p = subprocess.Popen(tokens, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            out, err = p.communicate()
+            if tokens[-1].startswith('&'):
+                bg_p = True
+                pname = tokens[-1].lstrip('&')
+                tokens.pop()
+                p = subprocess.Popen(tokens, stdout=None, stderr=None)
+                if pname is not None:
+                    bg_processes[pname] = p
+                out = 'Process (' + str(p.pid) + ') started\n'
+                err = ''
+            else:
+                p = subprocess.Popen(tokens, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                out, err = p.communicate()
         except:
             out = 'Command Failed\n'
             err = ''
+            p = None
         conn.sendall(out)
         conn.sendall(err)
         # DEBUG conn.sendall(str(tokens))
+        conn.shutdown(socket.SHUT_RDWR)
+        conn.close()
+        # if p is not None and bg_p is True:
+        #     p.wait()
+        return
+
+    if cmd == 'killp' and n == 2:
+        p_name = tokens[1]
+        if p_name in bg_processes:
+            p = bg_processes[p_name]
+            pid = str(p.pid)
+            p.terminate()
+            ret = p.wait()
+            conn.sendall('Process ' + p_name + '(' + pid + ') terminated with code ' + str(ret) + '\n')
+        else:
+            conn.sendall('Process ' + p_name + ' not found on host ' + host + '\n')
+
         conn.close()
         return
-    
+
     if cmd == 'listener' and n == 3:
         addr = tokens[1]
         port = tokens[2]
@@ -214,7 +246,7 @@ def cmd_thread(conn):
         if len(r) > 0:
             conn.sendall(host +':00' + ' ' + r + '\n')
         conn.close()
-        return;
+        return
     
     if cmd == 'test' and n == 5:
         rand = tokens[1]
@@ -242,7 +274,7 @@ def cmd_thread(conn):
         
         conn.sendall(host + ':XX OK: ' + 'TEST ' + m + ' TRANSFER COMPLETE\n')     
         conn.close()
-        return;
+        return
     
     if cmd == 'result' and n == 2:
         rid = tokens[1]
@@ -267,7 +299,7 @@ def cmd_thread(conn):
         generation += 1
         conn.sendall(host + ':XX OK: ' + 'RESET new generation = ' + str(generation) + '\n')     
         conn.close()
-        return;
+        return
     
     if cmd == 'result' and n == 1:
         lock.acquire()

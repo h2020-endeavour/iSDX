@@ -8,3 +8,4 @@ do
 	python gen_test.py $i
 	mv output/$file ../examples
 done
+rm -r output/
