@@ -33,10 +33,10 @@ test regress {
 	test send_traffic
 	delay 10
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
-	blackholing 3 insert
+	blackholing 2 insert
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
-	blackholing 3 remove
+	blackholing 2 remove
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 5
