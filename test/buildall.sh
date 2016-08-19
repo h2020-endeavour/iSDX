@@ -9,3 +9,6 @@ do
 	mv output/$file ../examples
 done
 rm -r output/
+
+#workaround for yaml files
+sudo cp /home/vagrant/iSDX/test/templates/grafana/* /home/vagrant/iSDX/examples/test2-mh-bh/config
