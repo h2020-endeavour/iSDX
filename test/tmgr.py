@@ -77,6 +77,7 @@ def main (argv):
         'bgp': bgp,
         'delay': delay,
         'exec': remote, 'x': remote, 'remote': remote,
+        'killp': killp,
         'local': local, 'll': local,
         'blackholing': blackholing, 'b': blackholing,
         'pending': pending, 'p': pending,
@@ -244,7 +245,7 @@ def blackholing (args):
 
 def remote (args):
     if len(args) < 2:
-        log.error('MM:00 EXEC: ERROR: usage: exec cmd arg ...')
+        log.error('MM:00 EXEC: ERROR: usage: exec anynode cmd arg ...')
         return
     host = args[0]
     del args[0]
@@ -255,8 +256,24 @@ def remote (args):
     r = generic(host, 'REXEC', 'exec ' + cmd + '\n')
     if r is not None:
         log.debug('MM:' + host + ' REXEC: output = \n' + r.strip())
-        
-        
+
+# terminate a remote background process
+
+def killp(args):
+    if len(args) < 2:
+        log.error('MM:00 EXEC: ERROR: usage: killp anynode ID ...')
+        return
+    host = args[0]
+    del args[0]
+    cmd = ''
+    for arg in args:
+        cmd += arg + ' '
+    log.info('MM:' + host + ' KILLP: ' + cmd)
+    r = generic(host, 'KILLP', 'killp ' + cmd + '\n')
+    if r is not None:
+        log.debug('MM:' + host + ' KILLP: output = \n' + r.strip())
+
+
 # generic command interface to a tnode - send cmd, capture data
 # return None id cannot connect or socket error
 # return '' if no data
@@ -525,7 +542,8 @@ def usage (args):
     'withdraw bgprouter network ...  # withdraw BGP route\n'
     'bgp bgprouter                   # show advertised bgp routes\n'
     'delay seconds                   # pause for things to settle\n'
-    'exec anynode cmd arg arg        # execute cmd on node\n'
+    'exec anynode cmd arg ... [&ID]  # execute cmd on node\n'
+    'killp anynode ID                # terminate background process\n'
     'local cmd arg arg               # execute cmd on local machine\n'
     'participant id insert/remove    # execute participant_client insert/remove policy\n'
     'pending anyhost                 # check if any pending or unclaimed data transfers are on host\n'

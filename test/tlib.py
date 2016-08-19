@@ -406,7 +406,10 @@ class parser:
                 if host in self.listeners or host in self.bgprouters:
                     continue
                 raise Exception('bad run command: unknown host: ' + host)
-            
+
+            if args[0] == 'killp':
+                continue
+
             if args[0] == 'dump':
                 continue
             

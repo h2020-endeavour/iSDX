@@ -55,6 +55,9 @@ test regress {
 	delay 2
 	test traffic2
 	delay 2
+	killp h1_c1 IPERF1
+	killp h1_c1 IPERF2
+	killp h1_c2 IPERF1
 }
 
 test xfer {
@@ -64,16 +67,16 @@ test xfer {
 }
 
 test traffic0 {
-	exec h1_c1 iperf -s -B 140.0.0.1 -p 80 &
-	exec h1_c1 iperf -s -B 140.0.0.1 -p 4321 &
-	exec h1_c2 iperf -s -B 140.0.0.1 -p 4322 &
+	exec h1_c1 iperf -s -B 140.0.0.1 -p 80 &IPERF1
+	exec h1_c1 iperf -s -B 140.0.0.1 -p 4321 &IPERF2
+	exec h1_c2 iperf -s -B 140.0.0.1 -p 4322 &IPERF1
 
 }
 
 test traffic1 {
-	exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -t 5 &
-	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -t 5 &
-	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -t 5 &
+	exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -t 5
+	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4321 -t 5
+	exec h1_b1 iperf -c 140.0.0.1 -B 120.0.0.1 -p 4322 -t 5
 }
 
 test traffic2 {
