@@ -18,7 +18,7 @@ announce 1 100.0.0.0/24 110.0.0.0/24
 announce 2 120.0.0.0/24 130.0.0.0/24
 announce 3 140.0.0.0/24 150.0.0.0/24
 
-flow b1 | 08:00:27:89:3b:9f
+flow c1 | 08:00:27:89:3b:9f
 
 listener AUTOGEN 8888
 	
@@ -33,10 +33,10 @@ test regress {
 	test send_traffic
 	delay 10
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
-	blackholing 2 insert
+	blackholing 3 insert
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
-	blackholing 2 remove
+	blackholing 3 remove
 	delay 5
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 5
@@ -50,11 +50,11 @@ test xfer {
 }
 
 test start_sender {
-	exec h1_b1 iperf -s -B 120.0.0.1 -p 80 &IPERF1
+	exec h1_c1 iperf -s -B 140.0.0.1 -p 80 &IPERF1
 }
 
 test send_traffic {
-	exec h1_a1 iperf -c 120.0.0.1 -B 100.0.0.1 -p 80 -t 25
+	exec h1_a1 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -t 25
 }
 
 test stop_sender {
