@@ -1,7 +1,7 @@
 {
   "id": 2,
-  "title": "iSDX-beta",
-  "originalTitle": "iSDX-beta",
+  "title": "blackholing-demo",
+  "originalTitle": "blackholing-demo",
   "tags": [],
   "style": "dark",
   "timezone": "browser",
