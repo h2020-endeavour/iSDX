@@ -49,7 +49,7 @@ test regress {
 	test show_table_2
 	delay 40
 	test stop_send
-	delay 20
+	delay 40
 	test info
 }
 
@@ -64,7 +64,7 @@ test show_table_2 {
 
 test start_send {
     exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 50M &IPERF1
-    delay 20
+    delay 40
     exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 70M &IPERF1
 }
 
