@@ -32,7 +32,7 @@ test init {
 test regress {
 	delay 5
 	test xfer
-	delay 60
+	delay 40
 #start
 	test start_send
 	delay 5
@@ -63,9 +63,9 @@ test show_table_2 {
 }
 
 test start_send {
-    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 50M &IPERF1
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 50M &IPERF1
     delay 40
-    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 70M &IPERF1
+    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 70M &IPERF1
 }
 
 test stop_send {
