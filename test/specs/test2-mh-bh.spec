@@ -17,8 +17,8 @@ announce 1 100.0.0.0/24 110.0.0.0/24
 announce 2 120.0.0.0/24 130.0.0.0/24
 announce 3 140.0.0.0/24 150.0.0.0/24
 
-flow a1 80 >> c1
-flow b1 80 >> c1
+flow a1 80 >> c
+flow b1 80 >> c
 flow c1 << 80
 flow c1 << 8888
 flow c1 | 08:00:bb:bb:01:00
