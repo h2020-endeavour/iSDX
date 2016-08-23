@@ -63,9 +63,9 @@ test show_table_2 {
 }
 
 test start_send {
-    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 50M &PERF1
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 50M &IPERF1
     delay 20
-    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 70M &PERF1
+    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 70M &IPERF1
 }
 
 test stop_send {
@@ -76,7 +76,5 @@ test stop_send {
 test info {
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13
 	exec a1 ip route
-	exec a1 ifconfig
 	exec b1 ip route
-	exec b1 ipconfig
 }
