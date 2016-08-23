@@ -17,7 +17,10 @@ announce 1 100.0.0.0/24 110.0.0.0/24
 announce 2 120.0.0.0/24 130.0.0.0/24
 announce 3 140.0.0.0/24 150.0.0.0/24
 
-flow a1 80 >> b
+flow a1 80 >> c1
+flow b1 80 >> c1
+flow c1 << 80
+flow c1 << 8888
 flow c1 | 08:00:bb:bb:01:00
 
 listener AUTOGEN 8888
@@ -27,44 +30,47 @@ test init {
 }
 
 test regress {
-	delay 60
-	#start
-	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 5
-	exec a1_100 iperf -c 120.0.0.1 -B 100.0.0.1 -p 80 -u -n 100 -t 300 -l 30 &PERF1
-	delay 30
-	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
-	#insert
+	test xfer
+	delay 60
+#start
+	test start_send
+	delay 5
+    test show_table_2
+    delay 20
+#insert
 	blackholing 3 insert
-	delay 10
-	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
+	delay 5
+	test show_table_2
 	delay 60
-	#remove
-	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
+#remove
 	blackholing 3 remove
-	delay 10
-	local ovs-ofctl dump-flows edge-1 -O Openflow13 table=2
-	delay 30
-	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
-	#stop
-	delay 60
+	delay 5
+	test show_table_2
+	delay 40
+	test stop_send
+	delay 40
 	test info
 }
 
 test xfer {
-	verify a1_100 b1_120 8888
+	verify a1_100 c1_140 8888
+	verify b1_120 c1_140 8888
 }
 
-test start_sender {
-	exec b1_120 iperf -s -u -B 120.0.0.1 -p 80 &IPERF1
-	exec b1_120 iperf -s -u -B 120.0.0.1 -p 4323 &IPERF2
-	exec b1_120 iperf -s -u -B 120.0.0.1 -p 4324 &IPERF3
+test show_table_2 {
+    local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 }
 
-test stop_sender {
+test start_send {
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 50M &PERF1
+    delay 20
+    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 70M &PERF1
+}
+
+test stop_send {
+	killp a1_100 IPERF1
 	killp b1_120 IPERF1
-	killp b1_120 IPERF2
-	killp b1_120 IPERF3
 }
 
 test info {
