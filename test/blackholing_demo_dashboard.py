@@ -1,7 +1,7 @@
 {
   "id": 2,
-  "title": "blackholing-demo",
-  "originalTitle": "blackholing-demo",
+  "title": "iSDX-beta",
+  "originalTitle": "iSDX-beta",
   "tags": [],
   "style": "dark",
   "timezone": "browser",
@@ -12,7 +12,7 @@
     {
       "collapse": false,
       "editable": true,
-      "height": "250px",
+      "height": "300px",
       "panels": [
         {
           "title": "Packet Counts",
@@ -32,6 +32,12 @@
                   "key": "port_name",
                   "operator": "=",
                   "value": "A"
+                },
+                {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge-1"
                 }
               ],
               "groupBy": [
@@ -44,7 +50,7 @@
                 {
                   "type": "fill",
                   "params": [
-                    "none"
+                    "null"
                   ]
                 }
               ],
@@ -79,6 +85,12 @@
                   "key": "port_name",
                   "operator": "=",
                   "value": "B"
+                },
+                {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge-2"
                 }
               ],
               "groupBy": [
@@ -91,7 +103,7 @@
                 {
                   "type": "fill",
                   "params": [
-                    "none"
+                    "null"
                   ]
                 }
               ],
@@ -126,6 +138,12 @@
                   "key": "port_name",
                   "operator": "=",
                   "value": "C"
+                },
+                {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge 3"
                 }
               ],
               "groupBy": [
@@ -138,7 +156,7 @@
                 {
                   "type": "fill",
                   "params": [
-                    "none"
+                    "null"
                   ]
                 }
               ],
@@ -273,7 +291,7 @@
                 },
                 {
                   "params": [
-                    "none"
+                    "null"
                   ],
                   "type": "fill"
                 }
@@ -306,6 +324,12 @@
                   "key": "port_name",
                   "operator": "=",
                   "value": "A"
+                },
+                {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge-1"
                 }
               ]
             },
@@ -321,7 +345,7 @@
                 },
                 {
                   "params": [
-                    "none"
+                    "null"
                   ],
                   "type": "fill"
                 }
@@ -356,6 +380,12 @@
                   "key": "port_name",
                   "operator": "=",
                   "value": "B"
+                },
+                {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge-2"
                 }
               ]
             },
@@ -368,6 +398,12 @@
                   "key": "port_name",
                   "operator": "=",
                   "value": "C"
+                },
+                {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge 3"
                 }
               ],
               "groupBy": [
@@ -380,7 +416,7 @@
                 {
                   "type": "fill",
                   "params": [
-                    "none"
+                    "null"
                   ]
                 }
               ],
@@ -445,7 +481,7 @@
     {
       "collapse": false,
       "editable": true,
-      "height": "250px",
+      "height": "300px",
       "panels": [
         {
           "aliasColors": {},
@@ -707,7 +743,7 @@
     },
     {
       "title": "New row",
-      "height": "350px",
+      "height": "300px",
       "editable": true,
       "collapse": false,
       "panels": [
@@ -731,10 +767,22 @@
                   "value": "A"
                 },
                 {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge-1"
+                },
+                {
                   "condition": "OR",
                   "key": "port_name",
                   "operator": "=",
                   "value": "B"
+                },
+                {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge-2"
                 }
               ],
               "groupBy": [
@@ -747,7 +795,7 @@
                 {
                   "type": "fill",
                   "params": [
-                    "none"
+                    "null"
                   ]
                 }
               ],
@@ -764,8 +812,10 @@
                     "params": []
                   },
                   {
-                    "type": "difference",
-                    "params": []
+                    "type": "non_negative_derivative",
+                    "params": [
+                      "10s"
+                    ]
                   }
                 ]
               ],
@@ -782,6 +832,12 @@
                   "key": "port_name",
                   "operator": "=",
                   "value": "C"
+                },
+                {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge 3"
                 }
               ],
               "groupBy": [
@@ -794,7 +850,7 @@
                 {
                   "type": "fill",
                   "params": [
-                    "none"
+                    "null"
                   ]
                 }
               ],
@@ -900,10 +956,22 @@
                   "value": "A"
                 },
                 {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge-1"
+                },
+                {
                   "condition": "OR",
                   "key": "port_name",
                   "operator": "=",
                   "value": "B"
+                },
+                {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge-2"
                 }
               ],
               "groupBy": [
@@ -916,7 +984,7 @@
                 {
                   "type": "fill",
                   "params": [
-                    "none"
+                    "null"
                   ]
                 }
               ],
@@ -933,8 +1001,10 @@
                     "params": []
                   },
                   {
-                    "type": "difference",
-                    "params": []
+                    "type": "non_negative_derivative",
+                    "params": [
+                      "10s"
+                    ]
                   }
                 ]
               ],
@@ -946,7 +1016,19 @@
               "policy": "default",
               "dsType": "influxdb",
               "resultFormat": "time_series",
-              "tags": [],
+              "tags": [
+                {
+                  "key": "port_name",
+                  "operator": "=",
+                  "value": "C"
+                },
+                {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge 3"
+                }
+              ],
               "groupBy": [
                 {
                   "type": "time",
@@ -957,7 +1039,7 @@
                 {
                   "type": "fill",
                   "params": [
-                    "none"
+                    "null"
                   ]
                 }
               ],
@@ -1047,8 +1129,8 @@
     }
   ],
   "time": {
-    "from": "2016-08-23T13:35:38.251Z",
-    "to": "2016-08-23T13:39:19.941Z"
+    "from": "2016-08-23T14:53:40.284Z",
+    "to": "2016-08-23T14:58:31.811Z"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -1083,6 +1165,6 @@
   },
   "refresh": false,
   "schemaVersion": 12,
-  "version": 2,
+  "version": 4,
   "links": []
 }
