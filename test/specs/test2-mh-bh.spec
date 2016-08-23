@@ -37,7 +37,7 @@ test regress {
 	test start_send
 	delay 5
     test show_table_2
-    delay 20
+    delay 40
 #insert
 	blackholing 3 insert
 	delay 5
@@ -49,7 +49,7 @@ test regress {
 	test show_table_2
 	delay 40
 	test stop_send
-	delay 40
+	delay 20
 	test info
 }
 
@@ -63,9 +63,9 @@ test show_table_2 {
 }
 
 test start_send {
-    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 50M &IPERF1
+    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 50M &IPERF1
     delay 20
-    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 70M &IPERF1
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 70M &IPERF1
 }
 
 test stop_send {
