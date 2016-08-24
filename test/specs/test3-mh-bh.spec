@@ -41,13 +41,19 @@ test regress {
 	delay 5
     test show_table_2
     delay 40
-#insert
-	blackholing 3 insert
+#insert 1
+	blackholing 1 insert
 	delay 5
 	test show_table_2
 	delay 60
+#insert 2
+    blackholing 2 insert
+    delay 5
+    test show_table_2
+    delay 60
 #remove
-	blackholing 3 remove
+	blackholing 1 remove
+	blackholing 2 remove
 	delay 5
 	test show_table_2
 	delay 40
