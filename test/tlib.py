@@ -94,8 +94,8 @@ class parser:
         elif args[2] == '<<':
             self._inbound(args[1], args[3])
         # c2 | src_mac 
-        elif args[2] == '|':
-            self._blackholing(args[1], args[3])
+        elif args[3] == '|':
+            self._blackholing(args[1], args[2], args[4])
         else:
             raise Exception('bad flow format')
         
@@ -121,7 +121,7 @@ class parser:
         return policy
     
     # TODO: Implement additional matching capabilities         
-    def _blackholing (self, dst, src_mac):        
+    def _blackholing (self, id, dst, src_mac):        
             
         das, dasport = host2as_router(dst)
         n = as2part(das)
