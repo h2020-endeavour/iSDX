@@ -45,14 +45,18 @@ test regress {
 	blackholing 1 insert
 	delay 5
 	test show_table_2
-	delay 60
+	delay 40
 #insert 2
     blackholing 2 insert
     delay 5
     test show_table_2
-    delay 60
-#remove
+    delay 40
+#remove 1
 	blackholing 1 remove
+	delay 5
+	test show_table_2
+	delay 40
+# remove 2
 	blackholing 2 remove
 	delay 5
 	test show_table_2
@@ -69,6 +73,7 @@ test xfer {
 
 test show_table_2 {
     local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
+    local ovs-ofctl dump-flows edge-2 -O OpenFlow13 table=2
 }
 
 test start_send {
