@@ -93,7 +93,7 @@ class parser:
             self._outbound(args[1], args[2], args[4])
         elif args[2] == '<<':
             self._inbound(args[1], args[3])
-        # c2 | src_mac 
+        # c2 rule_id | src_mac
         elif args[3] == '|':
             self._blackholing(args[1], args[2], args[4])
         else:
@@ -121,7 +121,7 @@ class parser:
         return policy
     
     # TODO: Implement additional matching capabilities         
-    def _blackholing (self, dst, id, src_mac):        
+    def _blackholing (self, dst, rule_id, src_mac):        
             
         das, dasport = host2as_router(dst)
         n = as2part(das)
@@ -130,9 +130,7 @@ class parser:
         tmp_policy = {}
 
         # Assign Cookie ID
-        #tmp_policy["cookie"] = self.cookie_id
-        #self.cookie_id += 1
-        tmp_policy["cookie"] = id
+        tmp_policy["cookie"] = rule_id
     
         # Match
         tmp_policy["match"] = {}

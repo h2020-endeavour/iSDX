@@ -226,7 +226,7 @@ def blackholing (args):
     
     part_id = args[0]
     part_action = args[1]
-    part_id = args[2]
+    rule_id = args[2]
     client_path = '/home/vagrant/endeavour/pclnt/participant_client.py'
     config_file = 'participant_' + part_id + '_bh.cfg'
 
@@ -238,9 +238,12 @@ def blackholing (args):
     policy_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "policies"))
     config_path = os.path.join(policy_path, config_file)
 
-    cmd = ['python', client_path, config_path, part_id, part_action]
-    local(cmd)
+    #data = json.loads(config_path)
 
+    cmd = ['python', client_path, config_path, part_id, part_action, rule_id]
+    #cmd = ['python', client_path, data, part_id, part_action]
+    local(cmd)
+#python /home/vagrant/endeavour/pclnt/participant_client.py /home/vagrant/iSDX/examples/test3-mh-bh/policies/participant_4096_bh.cfg 4096 remove 
 
 # execute a command remotely
 
