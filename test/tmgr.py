@@ -220,12 +220,13 @@ def local (args):
 # execute participant client
 
 def blackholing (args):
-    if len(args) < 2:
-        log.error('MM:00 EXEC: ERROR usage: participant participant_id remove/insert ...')
+    if len(args) < 3:
+        log.error('MM:00 EXEC: ERROR usage: participant participant_id remove/insert cookie/id...')
         return
     
     part_id = args[0]
     part_action = args[1]
+    part_id = args[2]
     client_path = '/home/vagrant/endeavour/pclnt/participant_client.py'
     config_file = 'participant_' + part_id + '_bh.cfg'
 

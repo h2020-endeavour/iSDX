@@ -21,10 +21,10 @@ flow a1 80 >> c
 flow b1 80 >> c
 flow c1 << 80
 flow c1 << 8888
-flow a1 | 08:00:bb:bb:01:00
-flow b1 | 08:00:bb:bb:02:00
-flow c1 | 08:00:bb:bb:01:00
-flow c1 | 08:00:bb:bb:02:00
+flow a1 4096 | 08:00:bb:bb:01:00
+flow b1 4096 | 08:00:bb:bb:02:00
+flow c1 4096 | 08:00:bb:bb:01:00
+flow c1 8192 | 08:00:bb:bb:02:00
 
 listener AUTOGEN 8888
 	
@@ -42,22 +42,22 @@ test regress {
     test show_table_2
     delay 40
 #insert 1
-	blackholing 1 insert
+	blackholing 1 insert 4096
 	delay 5
 	test show_table_2
 	delay 40
 #insert 2
-    blackholing 2 insert
+    blackholing 2 insert 4096
     delay 5
     test show_table_2
     delay 40
 #remove 1
-	blackholing 1 remove
+	blackholing 1 remove 4096
 	delay 5
 	test show_table_2
 	delay 40
 # remove 2
-	blackholing 2 remove
+	blackholing 2 remove 4096
 	delay 5
 	test show_table_2
 	delay 40
