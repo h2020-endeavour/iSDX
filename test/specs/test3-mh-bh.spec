@@ -21,8 +21,6 @@ flow a1 80 >> c
 flow b1 80 >> c
 flow c1 << 80
 flow c1 << 8888
-flow a1 4096 | 08:00:bb:bb:01:00
-flow b1 4096 | 08:00:bb:bb:02:00
 flow c1 4096 | 08:00:bb:bb:01:00
 flow c1 8192 | 08:00:bb:bb:02:00
 
@@ -35,34 +33,42 @@ test init {
 test regress {
 	delay 5
 	test xfer
-	delay 40
+	test delay
 #start
 	test start_send
 	delay 5
     test show_table_2
-    delay 40
+    test delay
 #insert 1
-	blackholing 1 insert 4096
+	blackholing 3 insert 4096
 	delay 5
 	test show_table_2
-	delay 40
+	test delay
 #insert 2
-    blackholing 2 insert 4096
+    blackholing 3 insert 8192
     delay 5
     test show_table_2
-    delay 40
+    test delay
 #remove 1
-	blackholing 1 remove 4096
+	blackholing 3 remove 4096
 	delay 5
 	test show_table_2
-	delay 40
+	test delay
 # remove 2
-	blackholing 2 remove 4096
+	blackholing 3 remove 8192
 	delay 5
 	test show_table_2
-	delay 40
+	test delay
+# insert all
+	blackholing 3 insert 4096,8192
+	delay 5
+	test show_table_2
+	blackholing 3 remove 4096,8192
+	delay 5
+	test show_table_2
+	test delay
 	test stop_send
-	delay 40
+	test delay
 	test info
 }
 
@@ -74,6 +80,10 @@ test xfer {
 test show_table_2 {
     local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
     local ovs-ofctl dump-flows edge-2 -O OpenFlow13 table=2
+}
+
+test delay {
+	delay 40
 }
 
 test start_send {
