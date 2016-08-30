@@ -22,7 +22,7 @@ flow a1 4321 >> c
 flow a1 4322 >> c
 flow c1 << 4321
 flow c2 << 4322
-flow c1 4096 | 08:00:27:89:3b:9f
+flow c1 4096 | a1
 
 listener AUTOGEN 80 4321 4322 8888
 

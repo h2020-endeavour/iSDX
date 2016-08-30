@@ -226,7 +226,11 @@ def blackholing (args):
     
     part_id = args[0]
     part_action = args[1]
-    rule_id = args[2]+2**12
+
+    rule_ids = []
+    for policy_id in args[2].split(','):
+        rule_ids.append(int(policy_id)+2**12)
+    
     client_path = '/home/vagrant/endeavour/pclnt/participant_client.py'
     config_file = 'participant_' + part_id + '_bh.cfg'
 
@@ -240,7 +244,7 @@ def blackholing (args):
 
     #data = json.loads(config_path)
 
-    cmd = ['python', client_path, config_path, part_id, part_action, rule_id]
+    cmd = ['python', client_path, config_path, part_id, part_action, ','.join(str(e) for e in rule_ids)]
     #cmd = ['python', client_path, data, part_id, part_action]
     local(cmd)
 #python /home/vagrant/endeavour/pclnt/participant_client.py /home/vagrant/iSDX/examples/test3-mh-bh/policies/participant_4096_bh.cfg 4096 remove 

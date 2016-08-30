@@ -95,10 +95,10 @@ class parser:
             self._inbound(args[1], args[3])
         # c2 rule_id | src_mac
         elif args[3] == '|':
-            if len(args) == 5:
-                self._blackholing(args[1], args[2]+2**12, args[4], int(args[5]))
-            elif len(args) == 4:
-                self._blackholing(args[1], args[2]+2**12, args[4])
+            if len(args) == 6:
+                self._blackholing(args[1], int(args[2])+2**12, args[4], int(args[5]))
+            elif len(args) == 5:
+                self._blackholing(args[1], int(args[2])+2**12, args[4])
         else:
             raise Exception('bad flow format')
         
@@ -145,8 +145,8 @@ class parser:
         tmp_policy["match"] = {}
         tmp_policy["match"]["eth_src"] = src_mac
         
-        if dst_port not 0:
-            tmp_policy["match"]["tp_dst"] = dst_port
+        if dst_port is not 0:
+            tmp_policy["match"]["tcp_dst"] = int(dst_port)
 
         tmp_policy["action"] = {"drop": 0}
         

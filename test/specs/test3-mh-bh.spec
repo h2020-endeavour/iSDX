@@ -21,8 +21,9 @@ flow a1 80 >> c
 flow b1 80 >> c
 flow c1 << 80
 flow c1 << 8888
-flow c1 4096 | a1
-flow c1 8192 | b1
+flow c1 1 | a1 53
+flow c1 2 | a1 80
+flow c1 3 | b1
 
 listener AUTOGEN 8888
 	
@@ -40,30 +41,30 @@ test regress {
     test show_table_2
     test delay
 #insert 1
-	blackholing 3 insert 4096
+	blackholing 3 insert 1,2
 	delay 5
 	test show_table_2
 	test delay
 #insert 2
-    blackholing 3 insert 8192
+    blackholing 3 insert 3
     delay 5
     test show_table_2
     test delay
 #remove 1
-	blackholing 3 remove 4096
+	blackholing 3 remove 1,2
 	delay 5
 	test show_table_2
 	test delay
 # remove 2
-	blackholing 3 remove 8192
+	blackholing 3 remove 3
 	delay 5
 	test show_table_2
 	test delay
 # insert all
-	blackholing 3 insert 4096,8192
+	blackholing 3 insert 1,2,3
 	delay 5
 	test show_table_2
-	blackholing 3 remove 4096,8192
+	blackholing 3 remove 1,2,3
 	delay 5
 	test show_table_2
 	test delay
@@ -78,7 +79,6 @@ test xfer {
 }
 
 test show_table_2 {
-    local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
     local ovs-ofctl dump-flows edge-2 -O OpenFlow13 table=2
 }
 
@@ -87,8 +87,9 @@ test delay {
 }
 
 test start_send {
-    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 50M &IPERF1
-    delay 40
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 53 -u -t 350 -b 25M &IPERF1
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 25M &IPERF1
+    test delay
     exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 70M &IPERF1
 }
 
