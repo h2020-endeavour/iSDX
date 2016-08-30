@@ -95,7 +95,10 @@ class parser:
             self._inbound(args[1], args[3])
         # c2 rule_id | src_mac
         elif args[3] == '|':
-            self._blackholing(args[1], args[2], args[4])
+            if len(args) == 5:
+                self._blackholing(args[1], args[2]+2**12, args[4], int(args[5]))
+            elif len(args) == 4:
+                self._blackholing(args[1], args[2]+2**12, args[4])
         else:
             raise Exception('bad flow format')
         
@@ -121,13 +124,19 @@ class parser:
         return policy
     
     # TODO: Implement additional matching capabilities         
-    def _blackholing (self, dst, rule_id, src_mac):        
-            
+    def _blackholing (self, dst, rule_id, src):        
+
         das, dasport = host2as_router(dst)
         n = as2part(das)
-        
+
         blackholing_policy = self._get_bh_policy(n)
         tmp_policy = {}
+
+        # get mac from src
+        dest_as, dest_as_port = host2as_router(src)
+        part_nr = as2part(dest_as)
+        
+        src_mac = nextmac(int(part_nr), int(dest_as_port))
 
         # Assign Cookie ID
         tmp_policy["cookie"] = rule_id
@@ -139,7 +148,6 @@ class parser:
         tmp_policy["action"] = {"drop": 0}
         
         blackholing_policy["inbound"].append(tmp_policy)
-
 
 
     def _inbound (self, dst, port):        

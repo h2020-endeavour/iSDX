@@ -226,7 +226,7 @@ def blackholing (args):
     
     part_id = args[0]
     part_action = args[1]
-    rule_id = args[2]
+    rule_id = args[2]+2**12
     client_path = '/home/vagrant/endeavour/pclnt/participant_client.py'
     config_file = 'participant_' + part_id + '_bh.cfg'
 
@@ -549,7 +549,7 @@ def usage (args):
     'exec anynode cmd arg ... [&ID]  # execute cmd on node\n'
     'killp anynode ID                # terminate background process\n'
     'local cmd arg arg               # execute cmd on local machine\n'
-    'participant id insert/remove    # execute participant_client insert/remove policy\n'
+    'blackholing part ins/rem id     # execute on participant insert/remove policy_id\n'
     'pending anyhost                 # check if any pending or unclaimed data transfers are on host\n'
     'send host bind daddr port       # send data xmit request to source node\n'
     'comment commentary ...          # log a comment\n'

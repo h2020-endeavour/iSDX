@@ -66,7 +66,7 @@ def update_outbound_rules(sdx_msgs, policies, ss_instance, my_mac):
             match_args["eth_src"] = my_mac
 
             actions = {"set_eth_dst":next_hop_mac, "fwd":["inbound"]}
-
+          
             rule = {"rule_type":"outbound", "priority":OUTBOUND_HIT_PRIORITY,
                     "match":match_args , "action":actions, "mod_type":"insert",
                     "cookie":(policy["cookie"],2**16-1)}
@@ -126,17 +126,14 @@ def build_inbound_rules_for(participant_id, in_policies, ss_instance, final_swit
         match_args = policy["match"]
         actions = {}
 
+        # match on the next-hop
+        vmac_bitmask = vmac_next_hop_mask(ss_instance)
+        vmac = vmac_next_hop_match(participant_id, ss_instance)
+
+        match_args["eth_dst"] = (vmac, vmac_bitmask)
+
         if "fwd" in policy["action"]:
             port_num = policy["action"]["fwd"]
-
-            # match on the next-hop
-            vmac_bitmask = vmac_next_hop_mask(ss_instance)
-            vmac = vmac_next_hop_match(participant_id, ss_instance)
-
-
-            
-            match_args["eth_dst"] = (vmac, vmac_bitmask)
-
 
             port_num = policy["action"]["fwd"]
             new_vmac = vmac_part_port_match(participant_id, port_num, ss_instance)

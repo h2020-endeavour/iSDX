@@ -23,7 +23,7 @@ from xctrl.flowmodmsg import FlowModMsgBuilder
 from lib import PConfig
 from peer import BGPPeer
 from ss_lib import vmac_part_port_match
-from ss_rule_scheme import update_outbound_rules, init_inbound_rules, init_outbound_rules, msg_clear_all_outbound, ss_process_policy_change
+from ss_rule_scheme import update_outbound_rules, init_inbound_rules, init_outbound_rules, msg_clear_all_outbound
 from supersets import SuperSets
 
 
@@ -334,8 +334,6 @@ class ParticipantController(object):
             ]               // end policy-array
         }
         '''
-
-        #ss_process_policy_change_dev(change_info) // not used
 
         policies = self.sanitize_policies(change_info)
 
