@@ -197,10 +197,10 @@ The additional arguments are:
 - __flow__ defines an inbound or outbound flow rule.
   * outbound rule: `flow source-AS-edge-router tcp_port >> destination_AS`
   * inbound rule: `flow AS-edge-router << tcp_port`
-  * blackholing drop policy: `flow AS-edge-router policy_id/cookie_id | eth_src`
-- __blackholing__ defines an activation (insert) or deactivation (remove) from a participant with specify a blackholing drop rule. There is now the possibility to dynamically insert and remove drop rules.
+  * blackholing policy: `flow AS-edge-router cookie_id | eth_src`
+- __blackholing__ defines an activation (insert) or deactivation (remove) of an (inbound) blackholing policy for a specific participant. Blackholing policies can be dynamically inserted or removed within a test. Blackholing policies are currently limited to drop traffic from the specified eth_src.
 ``` 
-blackholing participant_id insert/remove policy_id/cookie_id
+blackholing participant_id {"insert"|"remove"} cookie_id
 ```
 - __listener__ defines the listeners that will be created on each quagga host to receive data routed through the switching fabric.
 The additional arguments are:
@@ -220,7 +220,7 @@ The additional arguments are:
     delay seconds                   # pause for things to settle
     exec anynode cmd arg arg        # execute cmd on node
     local cmd arg arg               # execute cmd on local machine
-    blackholing part ins/rem id     # execute on participant insert/remove policy_id
+    blackholing part ins/rem id     # execute on participant insert/remove cookie_id
     pending anyhost                 # check if any pending or unclaimed data transfers are on host
     send host bind daddr port       # send data xmit request to source node
     comment commentary ...          # log a comment
@@ -332,13 +332,13 @@ test start_send {
 }
 ```
 
-To define a blackholing policy with a specific policy_id/cookie_id here an example for participant 3.
+Blackholing policies are defined for a specific participant (c1) with a cookie_id (to ease the insertion and removal command) and the eth_src to be dropped by the blackholing policy. 
 ```
 flow c1 4096 | 08:00:bb:bb:01:00
 flow c1 8192 | 08:00:bb:bb:02:00
 ```
 
-Insert or remove the specific policy or multiple policies in the test to activate or deactivate the drop policy.
+Insert or remove the specific blackholing policy or multiple policies in the test to activate or deactivate the blackholing policy.
 ```
 test regress {
 	...
