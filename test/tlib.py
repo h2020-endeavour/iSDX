@@ -121,7 +121,7 @@ class parser:
         return policy
     
     # TODO: Implement additional matching capabilities         
-    def _blackholing (self, dst, rule_id, src_mac):        
+    def _blackholing (self, dst, rule_id, src_mac, dst_port=0):        
             
         das, dasport = host2as_router(dst)
         n = as2part(das)
@@ -132,10 +132,13 @@ class parser:
         # Assign Cookie ID
         tmp_policy["cookie"] = rule_id
     
-        # Match
+        # Build match
         tmp_policy["match"] = {}
         tmp_policy["match"]["eth_src"] = src_mac
-        # forward to participant number: convert name to assumed number (a=1)
+        
+        if dst_port not 0:
+            tmp_policy["match"]["tp_dst"] = dst_port
+
         tmp_policy["action"] = {"drop": 0}
         
         blackholing_policy["inbound"].append(tmp_policy)
