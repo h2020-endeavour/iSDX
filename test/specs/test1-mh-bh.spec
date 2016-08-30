@@ -22,7 +22,7 @@ flow a1 4321 >> c
 flow a1 4322 >> c
 flow c1 << 4321
 flow c2 << 4322
-flow c1 | 08:00:27:89:3b:9f
+flow c1 4096 | 08:00:27:89:3b:9f
 
 listener AUTOGEN 80 4321 4322 8888
 
@@ -38,11 +38,11 @@ test regress {
 	test xfer
 	delay 3
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
-	blackholing 3 insert
+	blackholing 3 insert 4096
 	delay 3
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 3
-	blackholing 3 remove
+	blackholing 3 remove 4096
 	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
 	delay 2
 }
