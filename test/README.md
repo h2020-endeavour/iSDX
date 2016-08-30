@@ -197,8 +197,8 @@ The additional arguments are:
 - __flow__ defines an inbound or outbound flow rule.
   * outbound rule: `flow source-AS-edge-router tcp_port >> destination_AS`
   * inbound rule: `flow AS-edge-router << tcp_port`
-  * blackholing policy: `flow AS-edge-router policy_id | AS-edge-router`
-- __blackholing__ defines an activation (insert) or deactivation (remove) of an (inbound) blackholing policy for a specific participant. Blackholing policies can be dynamically inserted or removed within a test. Blackholing policies are currently limited to drop traffic from the specified AS-edge-router.
+  * blackholing policy: `flow AS-edge-router policy_id | AS-edge-router [udp_dst_port]
+- __blackholing__ defines an activation (insert) or deactivation (remove) of an (inbound) blackholing policy for a specific participant. Blackholing policies can be dynamically inserted or removed within a test by using the blackholing command. Blackholing policies are currently limited to drop traffic from the specified AS-edge-router towards a participant. Additionally, the udp_dst_port can be specified to enable more fine grained blackholing policies. 
 ``` 
 blackholing participant_id {"insert"|"remove"} policy_id
 ```
