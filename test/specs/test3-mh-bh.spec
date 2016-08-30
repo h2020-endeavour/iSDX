@@ -18,8 +18,10 @@ announce 2 120.0.0.0/24 130.0.0.0/24
 announce 3 140.0.0.0/24 150.0.0.0/24
 
 flow a1 80 >> c
+flow a1 53 >> c
 flow b1 80 >> c
 flow c1 << 80
+flow c1 << 53
 flow c1 << 8888
 flow c1 1 | a1 53
 flow c1 2 | a1 80
@@ -79,6 +81,7 @@ test xfer {
 }
 
 test show_table_2 {
+    local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
     local ovs-ofctl dump-flows edge-2 -O OpenFlow13 table=2
 }
 
@@ -88,13 +91,14 @@ test delay {
 
 test start_send {
     exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 53 -u -t 350 -b 25M &IPERF1
-    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 25M &IPERF1
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 25M &IPERF2
     test delay
     exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 70M &IPERF1
 }
 
 test stop_send {
 	killp a1_100 IPERF1
+	killp a1_100 IPERF2
 	killp b1_120 IPERF1
 }
 

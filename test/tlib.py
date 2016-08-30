@@ -146,7 +146,7 @@ class parser:
         tmp_policy["match"]["eth_src"] = src_mac
         
         if dst_port is not 0:
-            tmp_policy["match"]["tcp_dst"] = int(dst_port)
+            tmp_policy["match"]["udp_dst"] = int(dst_port)
 
         tmp_policy["action"] = {"drop": 0}
         
