@@ -11,4 +11,4 @@ done
 rm -r output/
 
 #workaround for yaml files
-sudo echo /home/vagrant/iSDX/examples/test*-mh-bh | xargs -n 1 cp /home/vagrant/endeavour/examples/test-mh/config/gauge*
+sudo echo /home/vagrant/iSDX/examples/test*-mh-bh/config | xargs -n 1 cp /home/vagrant/endeavour/examples/test-mh/config/gauge*

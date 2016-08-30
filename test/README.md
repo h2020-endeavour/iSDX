@@ -197,6 +197,11 @@ The additional arguments are:
 - __flow__ defines an inbound or outbound flow rule.
   * outbound rule: `flow source-AS-edge-router tcp_port >> destination_AS`
   * inbound rule: `flow AS-edge-router << tcp_port`
+  * blackholing drop policy: `flow AS-edge-router policy_id/cookie_id | eth_src`
+- __blackholing__ defines an activation (insert) or deactivation (remove) from a participant with specify a blackholing drop rule. There is now the possibility to dynamically insert and remove drop rules.
+``` 
+blackholing participant_id insert/remove policy_id/cookie_id
+```
 - __listener__ defines the listeners that will be created on each quagga host to receive data routed through the switching fabric.
 The additional arguments are:
   * host for this listener
@@ -215,6 +220,7 @@ The additional arguments are:
     delay seconds                   # pause for things to settle
     exec anynode cmd arg arg        # execute cmd on node
     local cmd arg arg               # execute cmd on local machine
+    blackholing part ins/rem id     # execute on participant insert/remove policy_id
     pending anyhost                 # check if any pending or unclaimed data transfers are on host
     send host bind daddr port       # send data xmit request to source node
     comment commentary ...          # log a comment
@@ -310,6 +316,43 @@ flow l1 << 4321
 flow l2 << 4322
 ```
 ![Experimental Setup](https://docs.google.com/drawings/d/1LHTyuZR8qbzq7wp1HgpiprpMGeQ2XY2sUvlu6XwgcNM/pub?w=960&h=720)
+
+### Configuration test3-mh-bh
+This configuration is for the blackholing demo and presents two traffic streams from a1_100 (50Mbit/s) and b1_120 (70MBit/s) to c1 on port 80.
+```
+flow a1 80 >> c
+flow b1 80 >> c
+flow c1 << 80
+```
+```
+test start_send {
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 50M &IPERF1
+    delay 40
+    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 70M &IPERF1
+}
+```
+
+To define a blackholing policy with a specific policy_id/cookie_id here an example for participant 3.
+```
+flow c1 4096 | 08:00:bb:bb:01:00
+flow c1 8192 | 08:00:bb:bb:02:00
+```
+
+Insert or remove the specific policy or multiple policies in the test to activate or deactivate the drop policy.
+```
+test regress {
+	...
+	blackholing 3 insert 4096
+	...
+	blackholing 3 remove 4096
+	...
+	blackholing 3 insert 4096,8192
+	...
+	blackholing 3 remove 4096,8192
+	...
+}
+```
+
 
 ### Configuration test4-ms
 This configuration includes only outbound flow rules. AS A sends traffic to 8 other AS'es based on port number.
