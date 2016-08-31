@@ -17,15 +17,15 @@ announce 1 100.0.0.0/24 110.0.0.0/24
 announce 2 120.0.0.0/24 130.0.0.0/24
 announce 3 140.0.0.0/24 150.0.0.0/24
 
-flow a1 80 >> c
 flow a1 53 >> c
-flow b1 80 >> c
-flow c1 << 80
+flow a1 80 >> c
+flow b1 53 >> c
+flow b1 << 443
 flow c1 << 53
-flow c1 << 8888
-flow c1 1 | a1 53
-flow c1 2 | a1 80
-flow c1 3 | b1
+flow c1 << 80
+flow c1 1 | a1 ipv4_dst=140.0.0.1 udp_dst=53
+flow c1 2 | a1 ipv4_dst=140.0.0.2 udp_dst=53
+flow c1 3 | b1 ipv4_dst=140.0.0.1 udp_dst=53
 
 listener AUTOGEN 8888
 	
@@ -36,41 +36,43 @@ test init {
 test regress {
 	delay 5
 	test xfer
-	test delay
-#start
-	test start_send
+	delay 5
+#start all send
+	test start_all_send
 	delay 5
     test show_table_2
     test delay
 #insert 1
-	blackholing 3 insert 1,2
+	blackholing 3 insert 1
 	delay 5
 	test show_table_2
 	test delay
 #insert 2
-    blackholing 3 insert 3
+    blackholing 3 insert 2
     delay 5
     test show_table_2
     test delay
-#remove 1
-	blackholing 3 remove 1,2
+#insert 3
+	blackholing 3 insert 3
 	delay 5
 	test show_table_2
 	test delay
-# remove 2
-	blackholing 3 remove 3
+#stop restart send
+	test stop_restart_send
 	delay 5
 	test show_table_2
 	test delay
-# insert all
-	blackholing 3 insert 1,2,3
-	delay 5
-	test show_table_2
+#remove all
 	blackholing 3 remove 1,2,3
 	delay 5
-	test show_table_2
 	test delay
-	test stop_send
+	test delay
+#start restart send
+	test start_restart_send
+	delay 5
+	test delay
+#stop all send
+	test stop_all_send
 	test delay
 	test info
 }
@@ -78,6 +80,7 @@ test regress {
 test xfer {
 	verify a1_100 c1_140 8888
 	verify b1_120 c1_140 8888
+	verify a1_100 b1_120 8888
 }
 
 test show_table_2 {
@@ -89,17 +92,28 @@ test delay {
 	delay 40
 }
 
-test start_send {
-    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 53 -u -t 350 -b 25M &IPERF1
-    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 25M &IPERF2
-    test delay
-    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 70M &IPERF1
+test start_all_send {
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 420 -b 20M &IPERF0
+    exec a1_100 iperf -c 120.0.0.1 -B 100.0.0.1 -p 443 -u -t 420 -b 50M &IPERF3
+    test start_restart_send
 }
 
-test stop_send {
+test start_restart_send {
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 53 -u -t 420 -b 40M &IPERF1
+    exec a1_100 iperf -c 140.0.0.2 -B 100.0.0.1 -p 53 -u -t 420 -b 60M &IPERF2
+    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 53 -u -t 420 -b 80M &IPERF0
+}
+
+test stop_restart_send {
 	killp a1_100 IPERF1
 	killp a1_100 IPERF2
-	killp b1_120 IPERF1
+	killp b1_120 IPERF0
+}
+
+test stop_all_send {
+	killp a1_100 IPERF0
+	killp a1_100 IPERF3
+	test stop_restart_send
 }
 
 test info {

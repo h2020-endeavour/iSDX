@@ -89,21 +89,24 @@ class parser:
     
             
     def _do_flow (self, args):
+        
         if args[3] == '>>':
             self._outbound(args[1], args[2], args[4])
         elif args[2] == '<<':
             self._inbound(args[1], args[3])
-        # c2 rule_id | src_mac
+        # dst rule_id | src additional_arguments
+        # c1 1 | a1 udp_dst=80
         elif args[3] == '|':
-            if len(args) == 6:
-                self._blackholing(args[1], int(args[2])+2**12, args[4], int(args[5]))
+            if len(args) >= 6:
+                additional_arguments = dict(item.split('=') for item in args[5:])
+                self._blackholing(args[1], args[2], args[4], additional_arguments)
             elif len(args) == 5:
-                self._blackholing(args[1], int(args[2])+2**12, args[4])
+                self._blackholing(args[1], args[2], args[4])
         else:
             raise Exception('bad flow format')
-        
+
             
-    def _get_policy (self, name):        
+    def _get_policy (self, name):       
         try:
             policy = self.policies[name]
         except:
@@ -112,6 +115,7 @@ class parser:
             policy["inbound"] = []
             self.policies[name] = policy
         return policy
+
 
     def _get_bh_policy (self, name):        
         try:
@@ -123,14 +127,23 @@ class parser:
             self.bh_policies[name] = policy
         return policy
     
-    # TODO: Implement additional matching capabilities         
-    def _blackholing (self, dst, rule_id, src, dst_port=0):        
-            
+      
+    def _blackholing (self, dst, rule_id, src, kwargs=None):        
+        
+        # create empty policy, update rule_id, template for validated matches
+        tmp_policy = {}
+        rule_id = int(rule_id)+2**12 # add 4096
+        #validated_matches = ["eth_dst", "eth_src", "ipv4_src", "ipv4_dst", "tcp_src", "tcp_dst", "udp_src", "udp_dst"]
+        validated_str_matches = ["ipv4_src", "ipv4_dst"]
+        validated_int_matches = ["tcp_src", "tcp_dst", "udp_src", "udp_dst"]
+
+        # get blackholing policy from dst
         das, dasport = host2as_router(dst)
         n = as2part(das)
-
         blackholing_policy = self._get_bh_policy(n)
-        tmp_policy = {}
+        
+        # Assign Cookie ID
+        tmp_policy["cookie"] = rule_id
 
         # get mac from src
         dest_as, dest_as_port = host2as_router(src)
@@ -138,18 +151,22 @@ class parser:
         
         src_mac = nextmac(int(part_nr), int(dest_as_port))
 
-        # Assign Cookie ID
-        tmp_policy["cookie"] = rule_id
-    
-        # Build match
+        # assign src_mac to policy
         tmp_policy["match"] = {}
         tmp_policy["match"]["eth_src"] = src_mac
-        
-        if dst_port is not 0:
-            tmp_policy["match"]["udp_dst"] = int(dst_port)
 
-        tmp_policy["action"] = {"drop": 0}
+        # assign other validates matches to policy
+        if kwargs is not None:
+            for key, value in kwargs.iteritems():
+                if key in validated_int_matches:
+                    tmp_policy["match"][key] = int(value)
+                elif key in validated_str_matches:
+                    tmp_policy["match"][key] = value
         
+
+        # assign drop action and append to inbound policy from dst
+        tmp_policy["action"] = {"drop": 0}
+
         blackholing_policy["inbound"].append(tmp_policy)
 
 
