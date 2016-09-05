@@ -197,10 +197,10 @@ The additional arguments are:
 - __flow__ defines an inbound or outbound flow rule.
   * outbound rule: `flow source-AS-edge-router tcp_port >> destination_AS`
   * inbound rule: `flow AS-edge-router << tcp_port`
-  * blackholing policy: `flow AS-edge-router policy_id | AS-edge-router [udp_dst_port]
-- __blackholing__ defines an activation (insert) or deactivation (remove) of an (inbound) blackholing policy for a specific participant. Blackholing policies can be dynamically inserted or removed within a test by using the blackholing command. Blackholing policies are currently limited to drop traffic from the specified AS-edge-router towards a participant. Additionally, the udp_dst_port can be specified to enable more fine grained blackholing policies. 
+  * blackholing policy: `flow AS-edge-router policy_id | AS-edge-router [ipv4_src, ipv4_dst, tcp_src, tcp_dst, udp_src, udp_dst]`
+- __blackholing__ defines an activation (insert) or deactivation (remove) of an (inbound) blackholing policy for a specific participant. Blackholing policies can be dynamically inserted or removed within a test by using the blackholing command. Blackholing policies are currently limited to drop traffic from the specified AS-edge-router towards a participant. Additionally, the ipv4_src, ipv4_dst, tcp_src, tcp_dst, udp_src and/or udp_dst can be specified (eg. udp_dst=80) to enable more fine grained blackholing policies.
 ``` 
-blackholing participant_id {"insert"|"remove"} policy_id
+blackholing participant_id {"insert"|"remove"} policy_id[s]
 ```
 - __listener__ defines the listeners that will be created on each quagga host to receive data routed through the switching fabric.
 The additional arguments are:
@@ -220,7 +220,7 @@ The additional arguments are:
     delay seconds                   # pause for things to settle
     exec anynode cmd arg arg        # execute cmd on node
     local cmd arg arg               # execute cmd on local machine
-    blackholing part ins/rem id     # execute on participant insert/remove policy_id
+    blackholing part ins/rem ids    # execute on participant insert/remove policy_id or policy_ids
     pending anyhost                 # check if any pending or unclaimed data transfers are on host
     send host bind daddr port       # send data xmit request to source node
     comment commentary ...          # log a comment
@@ -318,38 +318,63 @@ flow l2 << 4322
 ![Experimental Setup](https://docs.google.com/drawings/d/1LHTyuZR8qbzq7wp1HgpiprpMGeQ2XY2sUvlu6XwgcNM/pub?w=960&h=720)
 
 ### Configuration test3-mh-bh
-This configuration is for the blackholing demo and presents two traffic streams from a1_100 (50Mbit/s) and b1_120 (70MBit/s) to c1 on port 80.
+This configuration is for the blackholing demo and presents five traffic streams.
+ * a1_100 to c1 140.0.0.1 (20Mbit/s) on port 80. (permanent)
+ * a1_100 to b 120.0.0.1 (50Mbit/s) on port 443. (permanent)
+
+ * a1_100 to c1 140.0.0.1 (40Mbit/s) on port 53. (blackholing policy_id 1)
+ * a1_100 to c1 140.0.0.1 (60Mbit/s) on port 53. (blackholing policy_id 2)
+ * b1_120 to c1 140.0.0.1 (80Mbit/s) on port 53. (blackholing policy_id 3)
+
 ```
+flow a1 53 >> c
 flow a1 80 >> c
-flow b1 80 >> c
+flow b1 53 >> c
+flow b1 << 443
+flow c1 << 53
 flow c1 << 80
 ```
 ```
-test start_send {
-    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 350 -b 50M &IPERF1
-    delay 40
-    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 80 -u -t 350 -b 70M &IPERF1
+test start_all_send {
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 420 -b 20M &IPERF_P1
+    exec a1_100 iperf -c 120.0.0.1 -B 100.0.0.1 -p 443 -u -t 420 -b 50M &IPERF_P2
+    test start_restart_send
+}
+
+test start_restart_send {
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 53 -u -t 420 -b 40M &IPERF_B1
+    exec a1_100 iperf -c 140.0.0.2 -B 100.0.0.1 -p 53 -u -t 420 -b 60M &IPERF_B2
+    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 53 -u -t 420 -b 80M &IPERF_B3
 }
 ```
 
 Blackholing policies are defined for a specific participant (c1) with a policy_id (to ease the insertion and removal command) and the AS-edge-router as the source of the traffic to be dropped by the blackholing policy. 
 ```
-flow c1 1 | a1
-flow c1 2 | b1
+flow c1 1 | a1 ipv4_dst=140.0.0.1 udp_dst=53
+flow c1 2 | a1 ipv4_dst=140.0.0.2 udp_dst=53
+flow c1 3 | b1 ipv4_dst=140.0.0.1 udp_dst=53
 ```
 
 Insert or remove the specific blackholing policy or multiple policies in the test to activate or deactivate the blackholing policy.
 ```
 test regress {
-	...
-	blackholing 3 insert 1
-	...
-	blackholing 3 remove 2
-	...
-	blackholing 3 insert 1,2
-	...
-	blackholing 3 remove 1,2
-	...
+  ...
+  test start_all_send
+  ...
+  blackholing 3 insert 1
+  ...
+  blackholing 3 insert 2
+  ...
+  blackholing 3 insert 3
+  ...
+  test stop_restart_send    //stop only traffic to c1 on port 53
+  ...
+  blackholing 3 remove 1,2,3
+  ...
+  test start_restart_send  // start traffic to c1 on port 53
+  ...
+  test stop_all_send
+  ...
 }
 ```
 

@@ -553,7 +553,7 @@ def usage (args):
     'exec anynode cmd arg ... [&ID]  # execute cmd on node\n'
     'killp anynode ID                # terminate background process\n'
     'local cmd arg arg               # execute cmd on local machine\n'
-    'blackholing part ins/rem id     # execute on participant insert/remove policy_id\n'
+    'blackholing part ins/rem ids    # execute on participant insert/remove policy_id or pilicy_ids\n'
     'pending anyhost                 # check if any pending or unclaimed data transfers are on host\n'
     'send host bind daddr port       # send data xmit request to source node\n'
     'comment commentary ...          # log a comment\n'

@@ -93,26 +93,26 @@ test delay {
 }
 
 test start_all_send {
-    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 420 -b 20M &IPERF0
-    exec a1_100 iperf -c 120.0.0.1 -B 100.0.0.1 -p 443 -u -t 420 -b 50M &IPERF3
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 420 -b 20M &IPERF_P1
+    exec a1_100 iperf -c 120.0.0.1 -B 100.0.0.1 -p 443 -u -t 420 -b 50M &IPERF_P2
     test start_restart_send
 }
 
 test start_restart_send {
-    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 53 -u -t 420 -b 40M &IPERF1
-    exec a1_100 iperf -c 140.0.0.2 -B 100.0.0.1 -p 53 -u -t 420 -b 60M &IPERF2
-    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 53 -u -t 420 -b 80M &IPERF0
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 53 -u -t 420 -b 40M &IPERF_B1
+    exec a1_100 iperf -c 140.0.0.2 -B 100.0.0.1 -p 53 -u -t 420 -b 60M &IPERF_B2
+    exec b1_120 iperf -c 140.0.0.1 -B 120.0.0.1 -p 53 -u -t 420 -b 80M &IPERF_B3
 }
 
 test stop_restart_send {
-	killp a1_100 IPERF1
-	killp a1_100 IPERF2
-	killp b1_120 IPERF0
+	killp a1_100 IPERF_B1
+	killp a1_100 IPERF_B2
+	killp b1_120 IPERF_B3
 }
 
 test stop_all_send {
-	killp a1_100 IPERF0
-	killp a1_100 IPERF3
+	killp a1_100 IPERF_P1
+	killp a1_100 IPERF_P2
 	test stop_restart_send
 }
 
