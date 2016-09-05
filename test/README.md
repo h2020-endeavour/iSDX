@@ -323,8 +323,9 @@ This configuration is for the blackholing demo and presents five traffic streams
  * a1_100 to b 120.0.0.1 (50Mbit/s) on port 443. (permanent)
 
  * a1_100 to c1 140.0.0.1 (40Mbit/s) on port 53. (blackholing policy_id 1)
- * a1_100 to c1 140.0.0.1 (60Mbit/s) on port 53. (blackholing policy_id 2)
+ * a1_100 to c1 140.0.0.2 (60Mbit/s) on port 53. (blackholing policy_id 2)
  * b1_120 to c1 140.0.0.1 (80Mbit/s) on port 53. (blackholing policy_id 3)
+
 
 ```
 flow a1 53 >> c
