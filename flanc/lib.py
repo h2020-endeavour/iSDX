@@ -389,11 +389,14 @@ class MultiHopController(Controller):
         edge.send_msg(mod)    
 
     def init_fabric(self):
+        monitor = False
         tables = self.config.tables
         umbrella_core_table = tables["umbrella-core"]
         umbrella_edge_table = tables["umbrella-edge"]
         lb_table = tables["load-balancer"]
         iSDX_tables = {x:tables[x] for x in tables if x.find("umbrella") < 0}
+        if "monitor" in iSDX_tables:
+            monitor = True
         # Need to init more tables in the edges
         datapaths = self.config.datapaths
         edges = [datapaths[x] for x in datapaths if x.find("edge") == 0]
@@ -405,13 +408,15 @@ class MultiHopController(Controller):
                     self.install_default_flow(edge, table_id)
             # TODO: Send these packets to the load-balancer table?
             self.install_default_flow(edge, umbrella_edge_table)
-            self.default_monitoring(edge, iSDX_tables["monitor"], iSDX_tables["main-in"])
+            if monitor:
+                self.default_monitoring(edge, iSDX_tables["monitor"], iSDX_tables["main-in"])
             self.handle_BGP(edge, iSDX_tables["main-in"], lb_table)
             self.handle_ARP(edge, iSDX_tables["main-in"], umbrella_edge_table)
         # Only one table for the cores
         cores = [datapaths[x] for x in datapaths if x.find("core") == 0]
         for core in cores:
-            self.default_monitoring(core, iSDX_tables["monitor"], iSDX_tables["main-in"])
+            if monitor:
+                self.default_monitoring(core, iSDX_tables["monitor"], iSDX_tables["main-in"])
             self.install_default_flow(core, umbrella_core_table)            
 
     def send_barrier_request(self):
