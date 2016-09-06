@@ -354,6 +354,17 @@ class MultiHopController(Controller):
                                                 match=match, instructions=instructions)
         datapath.send_msg(mod)
 
+    def default_monitoring(self, datapath, table_id, goto_table):
+        match = self.config.parser.OFPMatch()
+        instructions = [self.config.parser.OFPInstructionGotoTable(goto_table)]
+        mod = self.config.parser.OFPFlowMod(datapath=datapath,
+                                                cookie=NO_COOKIE, cookie_mask=1,
+                                                table_id=table_id,
+                                                command=self.config.ofproto.OFPFC_ADD,
+                                                priority=FLOW_MISS_PRIORITY,
+                                                match=match, instructions=instructions)
+        datapath.send_msg(mod)
+
     # Create flow to send every BGP packet to the umbrella table
     def handle_BGP(self, edge, table, goto_table):
         match = self.config.parser.OFPMatch(eth_type=IP_ETH_TYPE, ip_proto = TCP_IP_PROTO, tcp_src = BGP)
@@ -389,15 +400,18 @@ class MultiHopController(Controller):
         for edge in edges:
             # iSDX tables            
             for table in iSDX_tables:
-                table_id = iSDX_tables[table]
-                self.install_default_flow(edge, table_id)
+                if table != "monitor":
+                    table_id = iSDX_tables[table]
+                    self.install_default_flow(edge, table_id)
             # TODO: Send these packets to the load-balancer table?
             self.install_default_flow(edge, umbrella_edge_table)
+            self.default_monitoring(edge, iSDX_tables["monitor"], iSDX_tables["main-in"])
             self.handle_BGP(edge, iSDX_tables["main-in"], lb_table)
             self.handle_ARP(edge, iSDX_tables["main-in"], umbrella_edge_table)
         # Only one table for the cores
         cores = [datapaths[x] for x in datapaths if x.find("core") == 0]
         for core in cores:
+            self.default_monitoring(core, iSDX_tables["monitor"], iSDX_tables["main-in"])
             self.install_default_flow(core, umbrella_core_table)            
 
     def send_barrier_request(self):
