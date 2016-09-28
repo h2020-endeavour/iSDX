@@ -55,7 +55,7 @@ test regress {
     #test info
 
    withdraw b1 140.0.0.0/24
-   exec a1 ip -s -s neigh flush all
+   exec b1 ip -s -s neigh flush all
    delay 2
 
     test info
