@@ -68,22 +68,22 @@ test regress {
 
    #test xfer
    announce b1 140.0.0.0/24
-   exec a1 ip -s -s neigh flush all
+   exec b1 ip -s -s neigh flush all
    delay 2
    #test xfer
 
    test start_all_send_80
     test delay
     test stop_all_send_80
-    test delay
+    #test delay
 
-   withdraw c1 140.0.0.0/24
-   exec a1 ip -s -s neigh flush all
-   delay 2
+   #withdraw c1 140.0.0.0/24
+   #exec c1 ip -s -s neigh flush all
+   #delay 2
 
-   test start_all_send_4321
-   test delay
-   test stop_all_send_4321
+   #test start_all_send_4321
+   #test delay
+   #test stop_all_send_4321
    delay 2
    test stop_servers_iperf
    test delay
@@ -104,7 +104,9 @@ test xfer {
 test start_servers_iperf {
     exec b1_140 iperf -s -p 80 &IPERF_SERVER1
     exec c1_140 iperf -s -p 4321 &IPERF_SERVER2
-    exec c2_140 iperf -s -p 4322 &IPERF_SERVER3
+    exec c1_140 iperf -s -p 80 &IPERF_SERVER3
+    exec c2_140 iperf -s -p 4322 &IPERF_SERVER4
+    exec c2_140 iperf -s -p 4321 &IPERF_SERVER5
 }
 
 test start_all_send_80 {
@@ -136,7 +138,9 @@ test stop_all_send_4321 {
 test stop_servers_iperf {
     killp b1_140 IPERF_SERVER1
     killp c1_140 IPERF_SERVER2
-    killp c2_140 IPERF_SERVER3
+    killp c1_140 IPERF_SERVER3
+    killp c2_140 IPERF_SERVER4
+    killp c2_140 IPERF_SERVER5
 }
 
 
