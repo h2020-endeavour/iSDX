@@ -107,6 +107,7 @@ test start_servers_iperf {
     exec c1_140 iperf -s -p 80 &IPERF_SERVER3
     exec c2_140 iperf -s -p 4322 &IPERF_SERVER4
     exec c2_140 iperf -s -p 4321 &IPERF_SERVER5
+    exec c2_140 iperf -s -p 80 &IPERF_SERVER6
 }
 
 test start_all_send_80 {
@@ -141,6 +142,7 @@ test stop_servers_iperf {
     killp c1_140 IPERF_SERVER3
     killp c2_140 IPERF_SERVER4
     killp c2_140 IPERF_SERVER5
+    killp c2_140 IPERF_SERVER6
 }
 
 
