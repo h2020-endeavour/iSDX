@@ -27,15 +27,17 @@ listener AUTOGEN 80 4321 4322 8888
 
 test regress {
     delay 5
-	#test xfer
-	#delay 5
+   #test xfer
+   #delay 5
+   test start_servers_iperf
+   delay 2
 
-
+    test info
 
     test start_all_send_80
     test delay
     test stop_all_send_80
-    delay 5
+    test delay
 
 
     test start_all_send_4321
@@ -52,84 +54,104 @@ test regress {
 
     #test info
 
-	withdraw b1 140.0.0.0/24
-	exec a1 ip -s -s neigh flush all
-	delay 2
+   withdraw b1 140.0.0.0/24
+   exec a1 ip -s -s neigh flush all
+   delay 2
 
-	test start_all_send_80
+    test info
+   test start_all_send_80
     test delay
     test stop_all_send_80
     test delay
 
-	#test xfer
-	announce b1 140.0.0.0/24
-	exec a1 ip -s -s neigh flush all
-	delay 2
-	#test xfer
+    test info
 
-	test start_all_send_80
+   #test xfer
+   announce b1 140.0.0.0/24
+   exec a1 ip -s -s neigh flush all
+   delay 2
+   #test xfer
+
+   test start_all_send_80
     test delay
     test stop_all_send_80
     test delay
+
+   withdraw c1 140.0.0.0/24
+   exec a1 ip -s -s neigh flush all
+   delay 2
+
+   test start_all_send_4321
+   test delay
+   test stop_all_send_4321
+   delay 2
+   test stop_servers_iperf
+   test delay
 
 }
-	
+
 test init {
-	listener
+   listener
 }
 
 test xfer {
-	verify a1_100 b1_140 80
-	verify a1_100 c1_140 4321
-	verify a1_100 c2_140 4322
-	verify a1_100 b1_140 8888
+   verify a1_100 b1_140 80
+   verify a1_100 c1_140 4321
+   verify a1_100 c2_140 4322
+   verify a1_100 b1_140 8888
 }
 
-
+test start_servers_iperf {
+    exec b1_140 iperf -s -p 80 &IPERF_SERVER1
+    exec c1_140 iperf -s -p 4321 &IPERF_SERVER2
+    exec c2_140 iperf -s -p 4322 &IPERF_SERVER3
+}
 
 test start_all_send_80 {
-    exec b1_140 iperf -s -p 80 &IPERF_P1_1
     exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -t 40  &IPERF_P1_2
 }
 
 test stop_all_send_80 {
-    killp b1_140 IPERF_P1_1
-	killp a1_100 IPERF_P1_2
+
+   killp a1_100 IPERF_P1_2
 }
 
 test start_all_send_4321 {
-    exec c1_140 iperf -s -p 4321 &IPERF_P2_1
     exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 4321 -t 40  &IPERF_P2_2
 }
 
 test stop_all_send_4321 {
-    killp c1_140 IPERF_P2_1
-	killp a1_100 IPERF_P2_2
+
+   killp a1_100 IPERF_P2_2
 }
 
 test start_all_send_4322 {
-    exec c2_140 iperf -s -p 4322 &IPERF_P3_1
     exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 4322 -t 40  &IPERF_P3_2
 }
 
 test stop_all_send_4321 {
-    killp c2_140 IPERF_P3_1
-	killp a1_100 IPERF_P3_2
+   killp a1_100 IPERF_P3_2
+}
+
+test stop_servers_iperf {
+    killp b1_140 IPERF_SERVER1
+    killp c1_140 IPERF_SERVER2
+    killp c2_140 IPERF_SERVER3
 }
 
 
 test delay {
-        delay 15
+        delay 40
 }
 
 test info {
-	local ovs-ofctl -O OpenFlow13 dump-flows edge-1
-	exec a1 ip route
-	bgp a1
-	exec b1 ip route
-	bgp b1
-	exec c1 ip route
-	bgp c1
-	exec c2 ip route
-	bgp c2
+   local ovs-ofctl -O OpenFlow13 dump-flows edge-1
+   #exec a1 ip route
+   #bgp a1
+   #exec b1 ip route
+   #bgp b1
+   #exec c1 ip route
+   #bgp c1
+   #exec c2 ip route
+   #bgp c2
 }

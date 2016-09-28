@@ -1,5 +1,5 @@
 {
-  "id": 3,
+  "id": null,
   "title": "Inbound/Outbound TE",
   "originalTitle": "Inbound/Outbound TE",
   "tags": [],
@@ -94,9 +94,9 @@
               ],
               "tags": [
                 {
-                  "key": "tcp_dst",
+                  "key": "cookie",
                   "operator": "=",
-                  "value": "80"
+                  "value": "1"
                 },
                 {
                   "condition": "AND",
@@ -108,7 +108,7 @@
                   "condition": "AND",
                   "key": "table_id",
                   "operator": "=",
-                  "value": "2"
+                  "value": "0"
                 }
               ]
             },
@@ -155,9 +155,9 @@
               ],
               "tags": [
                 {
-                  "key": "tcp_dst",
+                  "key": "cookie",
                   "operator": "=",
-                  "value": "4321"
+                  "value": "2"
                 },
                 {
                   "condition": "AND",
@@ -169,7 +169,7 @@
                   "condition": "AND",
                   "key": "table_id",
                   "operator": "=",
-                  "value": "2"
+                  "value": "0"
                 }
               ]
             },
@@ -216,9 +216,9 @@
               ],
               "tags": [
                 {
-                  "key": "tcp_dst",
+                  "key": "cookie",
                   "operator": "=",
-                  "value": "4322"
+                  "value": "3"
                 },
                 {
                   "condition": "AND",
@@ -230,7 +230,7 @@
                   "condition": "AND",
                   "key": "table_id",
                   "operator": "=",
-                  "value": "2"
+                  "value": "0"
                 }
               ]
             }
@@ -346,9 +346,9 @@
               ],
               "tags": [
                 {
-                  "key": "tcp_dst",
+                  "key": "cookie",
                   "operator": "=",
-                  "value": "80"
+                  "value": "1"
                 },
                 {
                   "condition": "AND",
@@ -360,7 +360,7 @@
                   "condition": "AND",
                   "key": "table_id",
                   "operator": "=",
-                  "value": "2"
+                  "value": "0"
                 }
               ]
             },
@@ -407,9 +407,9 @@
               ],
               "tags": [
                 {
-                  "key": "tcp_dst",
+                  "key": "cookie",
                   "operator": "=",
-                  "value": "4321"
+                  "value": "2"
                 },
                 {
                   "condition": "AND",
@@ -421,7 +421,7 @@
                   "condition": "AND",
                   "key": "table_id",
                   "operator": "=",
-                  "value": "2"
+                  "value": "0"
                 }
               ]
             },
@@ -468,9 +468,9 @@
               ],
               "tags": [
                 {
-                  "key": "tcp_dst",
+                  "key": "cookie",
                   "operator": "=",
-                  "value": "4322"
+                  "value": "3"
                 },
                 {
                   "condition": "AND",
@@ -482,7 +482,7 @@
                   "condition": "AND",
                   "key": "table_id",
                   "operator": "=",
-                  "value": "2"
+                  "value": "0"
                 }
               ]
             }
