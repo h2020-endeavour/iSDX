@@ -35,7 +35,7 @@ test regress {
     test start_all_send_80
     test delay
     test stop_all_send_80
-    test delay
+    delay 5
 
 
     test start_all_send_4321
@@ -52,14 +52,26 @@ test regress {
 
     #test info
 
-	#withdraw b1 140.0.0.0/24
-	#exec a1 ip -s -s neigh flush all
-	#delay 2
+	withdraw b1 140.0.0.0/24
+	exec a1 ip -s -s neigh flush all
+	delay 2
+
+	test start_all_send_80
+    test delay
+    test stop_all_send_80
+    test delay
+
 	#test xfer
-	#announce b1 140.0.0.0/24
-	#exec a1 ip -s -s neigh flush all
-	#delay 2
+	announce b1 140.0.0.0/24
+	exec a1 ip -s -s neigh flush all
+	delay 2
 	#test xfer
+
+	test start_all_send_80
+    test delay
+    test stop_all_send_80
+    test delay
+
 }
 	
 test init {
@@ -107,7 +119,7 @@ test stop_all_send_4321 {
 
 
 test delay {
-        delay 40
+        delay 15
 }
 
 test info {
