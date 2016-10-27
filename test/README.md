@@ -274,6 +274,62 @@ flow c2 << 4322
 ```
 ![Experimental Setup](https://docs.google.com/drawings/d/1mOw8i23mZYNSj1eH4wwXECLwx6SViR0NaI4bgnAnaHs/pub?w=960&h=720)
 
+### Configuration test1-mh-te
+This configuration is for the in/out-bound TE demo and presents three TCP traffic streams.
+
+```
+flow a1 80 >> b
+flow a1 4321 >> c
+flow a1 4322 >> c
+flow c1 << 4321
+flow c2 << 4322
+```
+```
+test start_all_send_80 {
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -t 40  &IPERF_P1_2
+}
+
+test start_all_send_4321 {
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 4321 -t 40  &IPERF_P2_2
+}
+
+test start_all_send_4322 {
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 4322 -t 40  &IPERF_P3_2
+}
+
+```
+
+The outline of the test is described here:
+```
+test regress {
+  ...
+  test start_all_send_80
+  ... // traffic should flow from 'a1' towards 'b1'
+  test stop_all_send_80
+  ...
+  test start_all_send_4321
+  ... // traffic should flow from 'a1' towards 'c1'
+  test stop_all_send_4321
+  ...
+  test start_all_send_4322
+  ... // traffic should flow from 'a1' towards 'c2'
+  test stop_all_send_4322
+  ...
+  withdraw b1 140.0.0.0/24
+  ...
+  test start_all_send_80
+  ... // traffic should now flow from 'a1' towards 'c1' or 'c2'
+  test stop_all_send_80
+  ...
+  announce b1 140.0.0.0/24
+  ...
+  test start_all_send_80
+  ... // traffic should flow from 'a1' towards 'b1'
+  test stop_all_send_80
+  ...
+}
+```
+
 ### Configuration test2-ms 
 This configuration is patterned on test1-ms, but adds 2 AS'es. It is intended to replicate a hardware test-bed configuration. A, C and D are patterned after A, B and C in test 1. An additional source, B, has its port 80 traffic sent to E. B also sends port 4321 and 4322 traffic to D.
 ```
