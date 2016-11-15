@@ -67,10 +67,10 @@ class GSS(object):
         self.fm_builder = FlowModMsgBuilder(0, self.config.flanc_auth["key"])
         self.vmac_builder = VMACBuilder(self.config.vmac_options)
 
-    def handle_BGP(self, rule_type):
+    def handle_BGP_in_main(self, rule_type):
         ### BGP traffic to route server
         port = self.config.route_server.ports[0]
-        action = {"fwd": [port.id]}
+        action = {"fwd": ["arp_proxy"]}
         match = {"eth_dst": port.mac, "tcp_src": BGP}
         self.fm_builder.add_flow_mod("insert", rule_type, BGP_PRIORITY, match, action)
 
@@ -86,11 +86,30 @@ class GSS(object):
                 match = {"eth_dst": port.mac, "tcp_dst": BGP}
                 self.fm_builder.add_flow_mod("insert", rule_type, BGP_PRIORITY, match, action)
 
+    def handle_BGP_in_arp(self, rule_type):
+        ### BGP traffic to route server
+        port = self.config.route_server.ports[0]
+        action = {"fwd": [port.id]}
+        match = {"eth_dst": port.mac, "tcp_src": BGP}
+        self.fm_builder.add_flow_mod("insert", rule_type, BGP_PRIORITY, match, action)
+
+        match = {"eth_dst": port.mac, "tcp_dst": BGP}
+        self.fm_builder.add_flow_mod("insert", rule_type, BGP_PRIORITY, match, action)
+
+        # Send all other BGP packets to main
+        match = {"tcp_src": BGP}
+        action = {"fwd": ["main"]}
+        self.fm_builder.add_flow_mod("insert", rule_type, DEFAULT_PRIORITY, match, action)
+
+        match =  {"tcp_dst": BGP}
+        self.fm_builder.add_flow_mod("insert", rule_type, DEFAULT_PRIORITY, match, action)
+        
+
     def handle_ARP_in_main(self, rule_type):
         ### direct all ARP responses for the route server to it
         port = self.config.route_server.ports[0]
         match = {"eth_type": ETH_TYPE_ARP, "eth_dst": port.mac}
-        action = {"fwd": [port.id]}
+        action = {"fwd": ["arp"]}
         self.fm_builder.add_flow_mod("insert", rule_type, ARP_PRIORITY, match, action)
 
         for participant in self.config.peers.values():
@@ -131,6 +150,17 @@ class GSS(object):
         self.fm_builder.add_flow_mod("insert", rule_type, VNH_ARP_FILTER_PRIORITY, match, action)
 
     def handle_ARP_in_arp(self, rule_type):
+        # Direct ARPs to Route Server
+        port = self.config.route_server.ports[0]
+        match = {"eth_type": ETH_TYPE_ARP, "eth_dst": port.mac}
+        action = {"fwd": [port.id]}
+        self.fm_builder.add_flow_mod("insert", rule_type, ARP_PRIORITY, match, action)
+
+        ### send all ARP replies from the Route Server to the main switch
+        match = {"eth_type": ETH_TYPE_ARP, "in_port": port.id}
+        action = {"fwd": ["main"]}
+        self.fm_builder.add_flow_mod("insert", rule_type, DEFAULT_PRIORITY, match, action)
+
         ### direct ARP requests for VNHs to ARP proxy
         port = self.config.arp_proxy.ports[0]
         match = {"in_port": "main",
@@ -139,6 +169,7 @@ class GSS(object):
         action = {"fwd": [port.id]}
         self.fm_builder.add_flow_mod("insert", rule_type, VNH_ARP_PRIORITY, match, action)
 
+        
         ### send all other ARP requests back
         match = {"eth_type": ETH_TYPE_ARP, "in_port": "main"}
         action = {"fwd": [OFPP_IN_PORT]}
@@ -282,7 +313,8 @@ class GSSmT(GSS):
         # MAIN-IN TABLE
         ## handle BGP traffic
         self.logger.info('create flow mods to handle BGP traffic')
-        self.handle_BGP("main-in")
+        self.handle_BGP_in_main("main-in")
+        self.handle_BGP_in_arp("arp")
 
         ## handle ARP traffic
         self.logger.info('create flow mods to handle ARP traffic')
