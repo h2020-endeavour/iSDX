@@ -9,7 +9,7 @@ from ofdpa20 import OFDPA20
 class FlowMod(object):
     def __init__(self, config, origin, flow_mod):
         self.mod_types = ["insert", "remove"]
-        self.rule_types = ["inbound", "outbound", "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core"]
+        self.rule_types = ["inbound", "outbound", "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core", "monitor"]
         
         self.config = config
         self.parser = None

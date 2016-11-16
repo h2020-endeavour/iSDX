@@ -70,7 +70,7 @@ class GSS(object):
     def handle_BGP_in_main(self, rule_type):
         ### BGP traffic to route server
         port = self.config.route_server.ports[0]
-        action = {"fwd": ["arp_proxy"]}
+        action = {"fwd": ["arp"]}
         match = {"eth_dst": port.mac, "tcp_src": BGP}
         self.fm_builder.add_flow_mod("insert", rule_type, BGP_PRIORITY, match, action)
 
@@ -152,7 +152,7 @@ class GSS(object):
     def handle_ARP_in_arp(self, rule_type):
         # Direct ARPs to Route Server
         port = self.config.route_server.ports[0]
-        match = {"eth_type": ETH_TYPE_ARP, "eth_dst": port.mac}
+        match = {"eth_type": ETH_TYPE_ARP, "arp_tpa": port.ip}
         action = {"fwd": [port.id]}
         self.fm_builder.add_flow_mod("insert", rule_type, ARP_PRIORITY, match, action)
 
@@ -168,7 +168,6 @@ class GSS(object):
                  "arp_tpa": (str(self.config.vnhs.network), str(self.config.vnhs.netmask))}
         action = {"fwd": [port.id]}
         self.fm_builder.add_flow_mod("insert", rule_type, VNH_ARP_PRIORITY, match, action)
-
         
         ### send all other ARP requests back
         match = {"eth_type": ETH_TYPE_ARP, "in_port": "main"}
@@ -176,7 +175,7 @@ class GSS(object):
         self.fm_builder.add_flow_mod("insert", rule_type, DEFAULT_PRIORITY, match, action)
 
         ### send all ARP replies from the ARP proxy to the main switch
-        match = {"eth_type": ETH_TYPE_ARP, "in_port": "arp proxy"}
+        match = {"eth_type": ETH_TYPE_ARP, "in_port": "arp"}
         action = {"fwd": ["main"]}
         self.fm_builder.add_flow_mod("insert", rule_type, DEFAULT_PRIORITY, match, action)
 
@@ -306,9 +305,15 @@ class GSSmT(GSS):
         super(GSSmT, self).__init__(util.log.getLogger('GSSmT'), sender, config)
 
     
+    def init_monitor(self, rule_type):
+        match = {}
+        action = {"fwd": ["main-in"]}
+        self.fm_builder.add_flow_mod("insert", rule_type, DEFAULT_PRIORITY, match, action)
 
     def init_fabric(self):
         self.logger.info('init fabric')
+
+        self.init_monitor("monitor")
 
         # MAIN-IN TABLE
         ## handle BGP traffic
@@ -319,7 +324,6 @@ class GSSmT(GSS):
         ## handle ARP traffic
         self.logger.info('create flow mods to handle ARP traffic')
         self.handle_ARP_in_main("main-in")
-
         self.handle_ARP_in_arp("arp")
 
         ## handle all participant traffic depending on whether they specified inbound/outbound policies
