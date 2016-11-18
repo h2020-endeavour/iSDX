@@ -21,6 +21,8 @@ class FlowMod(object):
         self.datapath = None
         self.table = None
         self.priority = None
+        self.idle_timeout = 0 
+        self.hard_timeout = 0
         self.cookie = {}
         self.matches = {}
         self.actions = []
@@ -48,15 +50,23 @@ class FlowMod(object):
                         self.rule_type = self.config.dp_alias[flow_mod["rule_type"]]
                     else:
                         self.rule_type = flow_mod["rule_type"]
+                    
                     datapath = flow_mod["datapath"]
                     if datapath in self.config.dpids:
                         self.datapath = datapath
+                    
+                    if "idle_timeout" in flow_mod:
+                        self.idle_timeout = flow_mod["idle_timeout"]
+                    if "hard_timeout" in flow_mod:
+                        self.hard_timeout = flow_mod["hard_timeout"]
+
                     if ("priority" in flow_mod):
                         self.priority = flow_mod["priority"]
                         if "match" in flow_mod:
                             self.matches = self.validate_match(flow_mod["match"])
                         if "action" in flow_mod:
                             self.actions = self.validate_action(flow_mod["action"])
+                    
 
     def validate_match(self, matches):
         validated_matches = {}
@@ -216,7 +226,8 @@ class FlowMod(object):
                 instructions = self.make_instructions()
             flow_mod = self.parser.OFPFlowMod(datapath=datapath, 
                                           cookie=self.cookie["cookie"], cookie_mask=self.cookie["mask"], 
-                                          table_id=table_id, 
+                                          table_id=table_id, idle_timeout = self.idle_timeout,
+                                          hard_timeout = self.hard_timeout,
                                           command=self.config.ofproto.OFPFC_ADD,
                                           priority=self.priority, 
                                           match=match, instructions=instructions)
