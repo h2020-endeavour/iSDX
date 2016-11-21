@@ -21,7 +21,7 @@ To get started install these softwares on your ```host``` machine:
 
 * Clone the ```iSDX``` repository from Github:
 ```bash 
-$ git clone https://github.com/sdn-ixp/iSDX.git
+$ git clone https://github.com/h2020-endeavour/iSDX.git
 ```
 
 * Change the directory to ```iSDX```:

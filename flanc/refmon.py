@@ -24,20 +24,20 @@ from lib import MultiSwitchController, MultiTableController, MultiHopController,
 from ofp10 import FlowMod as OFP10FlowMod
 from ofp13 import FlowMod as OFP13FlowMod
 from server import Server
-
-
+from rest import AnomalyDetectionReceiver
+from ryu.app.wsgi import WSGIApplication
 LOG = True
 
 class RefMon(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION, ofproto_v1_3.OFP_VERSION]
-    # REST API _CONTEXTS = { 'wsgi': WSGIApplication }
+    _CONTEXTS = { 'wsgi': WSGIApplication }
 
     def __init__(self, *args, **kwargs):
         super(RefMon, self).__init__(*args, **kwargs)
 
-        # Used for REST API
-        #wsgi = kwargs['wsgi']
-        #wsgi.register(FlowModReceiver, self)
+        # Use REST API for Anomaly Detection for now
+        wsgi = kwargs['wsgi']
+        wsgi.register(AnomalyDetectionReceiver, self)
 
         self.logger = util.log.getLogger('ReferenceMonitor')
         self.logger.info('refmon: start')

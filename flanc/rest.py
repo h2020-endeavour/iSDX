@@ -10,6 +10,7 @@ from ryu.app.wsgi import ControllerBase, route
 
 
 url = '/refmon/flowmod'
+anomaly_url = '/refmon/anomaly'
 
 class FlowModReceiver(ControllerBase):
     def __init__(self, req, link, data, **config):
@@ -27,3 +28,17 @@ class FlowModReceiver(ControllerBase):
 
         body = json.dumps(msgs)
         return Response(content_type='application/json', body=body)
+
+class AnomalyDetectionReceiver(ControllerBase):
+    def __init__(self, req, link, data, **config):
+        super(AnomalyDetectionReceiver, self).__init__(req, link, data, **config)
+        self.refmon = data
+
+    @route('refmon', anomaly_url, methods=['POST'])
+    def anomaly_detection_report(self, req, **kwargs):
+        try:
+            data = json.loads(req.body)
+        except SyntaxError:
+            return Response(status=400)
+
+        print data
