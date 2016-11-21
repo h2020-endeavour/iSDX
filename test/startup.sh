@@ -131,7 +131,7 @@ do
 		sleep 1
                 echo starting mctrl
                 cd $RUN_DIR/mctrl
-                python ./mctrl.py $EXAMPLES/$TEST/
+                python ./mctrl.py $EXAMPLES/$TEST/ &
  
 		echo starting xctrl
 		cd $BASE/xctrl/
