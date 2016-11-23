@@ -13,9 +13,9 @@ participant 3 300 edge-3:5 MAC 172.0.0.21/16 edge-4:5 MAC 172.0.0.22/16
 
 host AS ROUTER _ IP           # host names of form a1_100 a1_110
 
-announce 1 100.0.0.0/24 110.0.0.0/24
-announce 2 140.0.0.0/24 150.0.0.0/24
-announce 3 140.0.0.0/24 150.0.0.0/24
+announce 1 100.0.0.0/24
+announce 2 140.0.0.0/24
+announce 3 140.0.0.0/24
 
 flow a1 80 >> b
 flow a1 4321 >> c
