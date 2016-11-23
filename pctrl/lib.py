@@ -18,6 +18,7 @@ from xctrl.flowmodmsg import FlowModMsgBuilder
 
 from peer import BGPPeer
 from participant_server import ParticipantServer
+from participant_api import ParticipantAPI
 
 
 class PConfig(object):
@@ -121,7 +122,8 @@ class PConfig(object):
         config = self.config
         conn_info = config["Participants"]
         part_info = conn_info[str(id)]
-        return ParticipantServer(part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], logger)
+        #return ParticipantServer(part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], logger)
+        return ParticipantAPI(part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], logger, self)
 
     # arp client
     def get_arp_client(self, logger):
