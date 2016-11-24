@@ -508,7 +508,7 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def response_entrance(self):
         # send api entrance by default
-        location = 'http://'+HOST_NAME+':'+str(PORT_NUMBER)
+        location = 'http://'+str(self.server.server_name)+':'+str(self.server.server_port)
         self.send_header('Location', location)
         self.response_next_content_location(self.ds_names)
 
