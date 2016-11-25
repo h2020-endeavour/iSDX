@@ -18,6 +18,7 @@ python-sphinx mongodb dos2unix wireshark
 sudo pip install -U pip
 
 sudo pip install -r ~/iSDX/setup/pip-basic-requires
+sudo pip install Flask
 
 sudo apt-get install -y ssh git sshfs graphviz feh
 sudo apt-get install -y libstring-crc32-perl
