@@ -128,8 +128,11 @@ do
                         STATS_APP=stats/gauge.py
                 fi
 		ryu-manager $STATS_APP ryu.app.ofctl_rest refmon.py --refmon-config $EXAMPLES/$TEST/config/sdx_global.cfg >/dev/null 2>&1 &
-		#sleep 2
-
+		sleep 1
+                echo starting mctrl
+                cd $RUN_DIR/mctrl
+                python ./mctrl.py $EXAMPLES/$TEST/ &
+ 
 		echo starting xctrl
 		cd $BASE/xctrl/
 		python ./xctrl.py $EXAMPLES/$TEST/config/sdx_global.cfg
