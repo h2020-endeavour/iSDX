@@ -371,6 +371,9 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         # get parsed path
         parsed_path = self.parse_path()         
 
+        print 'MyContollerId(get): %s' % self.controller.id
+
+
         # check 1 to 3 arguments and right datastore
         if len(parsed_path) in range(1,4) and parsed_path[0] in self.ds_names: 
             
@@ -434,6 +437,13 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 if self.ds[parsed_path[0]].checkSchema(data, parsed_path) and isinstance(data, list):
                     # post data and response next content location 
                     next_content_location = self.ds[parsed_path[0]].post(data, parsed_path)
+                    
+                    return_data = {}
+                    policies = {}
+                    policies['insert'] = ata
+                    return_data['policy'] = [policies]
+                    self.controller.process_event(return_data)
+
                     self.send_response(201) # created
                     self.response(next_content_location)
                 else:
@@ -462,6 +472,13 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 self.method_not_allowed(parsed_path)
             else:
                 try:
+                    
+                    return_data = {}
+                    policies = {}
+                    policies['remove'] = self.filehandler.read(self.datastore)
+                    return_data['policy'] = [policies]
+                    self.controller.process_event(return_data)
+
                     # call delete function
                     next_content_location = self.ds[parsed_path[0]].delete(parsed_path)
                     self.send_response(200) # ok

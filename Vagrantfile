@@ -20,9 +20,9 @@ Vagrant.configure("2") do |config|
   #config.vm.network :private_network, ip: "192.168.0.300"
   config.vm.network :forwarded_port, guest:6633, host:6637 # open flow controller
   config.vm.network :forwarded_port, guest:3000, host:3000 # grafana
-  config.vm.network :forwarded_port, guest:5551, host: 9001 # participant 1 api
-  config.vm.network :forwarded_port, guest:5552, host: 9002 # participant 2 api
-  config.vm.network :forwarded_port, guest:5553, host: 9003 # participant 3 api
+  config.vm.network :forwarded_port, guest:5551, host:5551 # participant 1 api
+  config.vm.network :forwarded_port, guest:5552, host:5552 # participant 2 api
+  config.vm.network :forwarded_port, guest:5553, host:5553 # participant 3 api
 
 
   ## Provisioning

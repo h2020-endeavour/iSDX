@@ -89,9 +89,9 @@ class ParticipantController(object):
         self.arp_client = self.cfg.get_arp_client(self.logger)
         self.arp_client.send({'msgType': 'hello', 'macs': self.cfg.get_macs()})
 
-        # Participant Server for dynamic route updates
-        self.participant_server = self.cfg.get_participant_server(self.id, self.logger)
-        self.participant_server.start(self)
+        # Participant API for dynamic route updates
+        self.participant_api = self.cfg.get_participant_api(self.id, self.logger)
+        self.participant_api.start(self)
 
         # RefMon Instance
         self.refmon_client = self.cfg.get_refmon_client(self.logger)

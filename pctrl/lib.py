@@ -118,12 +118,11 @@ class PConfig(object):
         return GenericClient2(conn_info["EH_SOCKET"][0], conn_info["EH_SOCKET"][1], '', logger, 'participant')
 
     # participant server
-    def get_participant_server(self, id, logger):
+    def get_participant_api(self, id, logger):
         config = self.config
         conn_info = config["Participants"]
         part_info = conn_info[str(id)]
-        #return ParticipantServer(part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], logger)
-        return ParticipantAPI(part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], logger, self)
+        return ParticipantAPI(part_info["EH_SOCKET"][0], part_info["EH_SOCKET"][1], logger)
 
     # arp client
     def get_arp_client(self, logger):
