@@ -8,6 +8,7 @@ do
 	python gen_test.py $i
 	mv output/$file ../examples
 	if [ -f specs/$file-monitor_flows.cfg ]; then echo "copying monitor files: cp specs/$file-monitor_flows.cfg ../examples/$file/config/monitor_flows.cfg"; cp specs/$file-monitor_flows.cfg ../examples/$file/config/monitor_flows.cfg; fi
+	if [ -f specs/$file-access_control_flows.cfg ]; then echo "copying access_control files: cp specs/$file-access_control.cfg ../examples/$file/config/access_control.cfg"; cp specs/$file-access_control.cfg ../examples/$file/config/access_control.cfg; fi
 done
 rm -r output/
 

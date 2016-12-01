@@ -132,6 +132,10 @@ do
                 echo starting mctrl
                 cd $RUN_DIR/mctrl
                 python ./mctrl.py $EXAMPLES/$TEST/ &
+
+                echo starting acctrl
+                cd $RUN_DIR/acctrl
+                python ./acctrl.py $EXAMPLES/$TEST/ &
  
 		echo starting xctrl
 		cd $BASE/xctrl/
