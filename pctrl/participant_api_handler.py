@@ -409,15 +409,19 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_POST(self):
         # get parsed path
         parsed_path = self.parse_path()  
-
+        print 'post detected'
         # load data
-        ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+        ctype, pdict = cgi.parse_header(self.headers.getheader('Content-Type'))
         if ctype == 'application/json':
             data = None
             length = int(self.headers.getheader('content-length'))
+            print length
             if length != 0:
                 try:
                     data = json.loads(self.rfile.read(length))
+                    print 'build right scheme will remove after test'
+                    data = [data]
+                    print data
                 except:
                     self.send_response(400) # bad request
 
@@ -440,18 +444,21 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     
                     return_data = {}
                     policies = {}
-                    policies['insert'] = ata
+                    policies['insert'] = data
                     return_data['policy'] = [policies]
                     self.controller.process_event(return_data)
 
                     self.send_response(201) # created
                     self.response(next_content_location)
                 else:
+                    print 'check schema false'
+                    print data
                     # schema check false - key already exist or data is no list
                     self.send_response(400) # bad request
 
         # wrong datastore (first url parameter) - return available locations
         elif len(parsed_path) in range(1,4) and parsed_path[0] not in self.ds_names:
+            print 'wrong datastore'
             self.send_response(400) # bad request
             self.response_entrance()
 
@@ -475,10 +482,11 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     
                     return_data = {}
                     policies = {}
-                    policies['remove'] = self.filehandler.read(self.datastore)
+                    element, next_content_location = self.ds[parsed_path[0]].get(parsed_path)
+                    policies['remove'] = element
                     return_data['policy'] = [policies]
                     self.controller.process_event(return_data)
-
+                    print 'delete'
                     # call delete function
                     next_content_location = self.ds[parsed_path[0]].delete(parsed_path)
                     self.send_response(200) # ok

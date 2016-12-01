@@ -208,6 +208,7 @@ def local (args):
         cmd += arg + ' '
     log.info('MM:00 LOCAL: ' + cmd)
     try:
+        subprocess.check_call(args) #remove
         p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
     except Exception, e:
@@ -224,12 +225,12 @@ def blackholing (args):
         log.error('MM:00 EXEC: ERROR usage: participant participant_id remove/insert cookie/id...')
         return
     
-    part_id = args[0]
-    part_action = args[1]
+    part_id = args[0] #participant id
+    part_action = args[1] #action insert or remove
 
     rule_ids = []
-    for policy_id in args[2].split(','):
-        rule_ids.append(int(policy_id)+2**12)
+    for policy_id in args[2].split(','): #rule ids
+        rule_ids.append(int(policy_id)+2**12) #additional 4096 for cookie id
     
     client_path = '/home/vagrant/endeavour/pclnt/participant_client.py'
     config_file = 'participant_' + part_id + '_bh.cfg'
@@ -242,12 +243,47 @@ def blackholing (args):
     policy_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "policies"))
     config_path = os.path.join(policy_path, config_file)
 
-    #data = json.loads(config_path)
+    part_info = config.participants[str(part_id)]
 
-    cmd = ['python', client_path, config_path, part_id, part_action, ','.join(str(e) for e in rule_ids)]
-    #cmd = ['python', client_path, data, part_id, part_action]
-    local(cmd)
-#python /home/vagrant/endeavour/pclnt/participant_client.py /home/vagrant/iSDX/examples/test3-mh-bh/policies/participant_4096_bh.cfg 4096 remove 
+    participant_addr = part_info["EH_SOCKET"][0]
+    #if participant_addr == 'localhost' or participant_addr == '127.0.0.1':
+    #    participant_addr = '127.0.0.1'
+    part_url = 'http://' + str(participant_addr) + ':' + str(part_info["EH_SOCKET"][1]) + '/bh/'
+
+    content_info = "--header \'Content-Type:application/json\'"
+
+    if part_action == 'insert':
+        curl_action = '-X POST'
+        new_policy = []
+        # Open File and Parse
+        with open(config_path, 'r') as f:
+            policies=json.load(f)
+
+            for policy in policies['inbound']: 
+                if int(policy['cookie']) in rule_ids:
+                    new_policy.append(policy)
+        data = {}
+        policies = {}
+        data['inbound'] = new_policy
+        pol_json = json.dumps(data)
+        pol_json = "-d '" + pol_json + "'"
+        cmd = ['curl', content_info, curl_action, part_url] #post
+        local(cmd)
+
+    elif part_action == 'remove':
+        curl_action = '-X DELETE'
+        
+        for rule_id in rule_ids:
+            new_url = part_url + 'inbound/' + str(rule_id)
+            cmd = ['curl', curl_action, new_url]
+            local(cmd)
+
+    else:
+        print 'error in blackholing'
+
+    #cmd = ['python', client_path, config_path, part_id, part_action, ','.join(str(e) for e in rule_ids)]
+    
+    #python /home/vagrant/endeavour/pclnt/participant_client.py /home/vagrant/iSDX/examples/test3-mh-bh/policies/participant_4096_bh.cfg 4096 remove 
 
 # execute a command remotely
 
