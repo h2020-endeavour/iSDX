@@ -23,6 +23,9 @@ class FlowModMsgBuilder(object):
                "action": action
              }
 
+        if rule_type == "access-control" or rule_type == "monitor":
+            print "add flow: " + str(fm)
+
         self.flow_mods.append(fm)
 
         return cookie
