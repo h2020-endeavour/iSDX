@@ -65,7 +65,7 @@ test start_servers_iperf {
 }
 
 test start_all_send_80 {
-    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -t 4  &IPERF_P1_2
+    exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -t 20  &IPERF_P1_2
 }
 
 test stop_all_send_80 {
@@ -101,7 +101,7 @@ test stop_servers_iperf {
 
 
 test delay {
-        delay 5
+        delay 20
 }
 
 test info {
