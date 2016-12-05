@@ -47,7 +47,7 @@ test show_table_4 {
 }
 
 test delay {
-	delay 30
+	delay 40
 }
 
 test start_all_send {
@@ -56,18 +56,19 @@ test start_all_send {
 	exec a1_100 ifconfig a1_100-eth0:1 100.0.0.4
 	exec a1_100 ifconfig a1_100-eth0:2 100.0.0.6
 	exec a1_100 iperf -c 120.0.0.1 -B 100.0.0.2 -p 80 -u -t 420 -b 16M &IPERF_A1a #---a2 -> b1 (core1)
-	delay 15
+	test delay
 	exec b1_120 iperf -c 140.0.0.2 -B 120.0.0.1 -p 80 -u -t 420 -b 18M &IPERF_B1 #---b1 -> c2 (core2)
 	test delay
 	exec a1_100 iperf -c 140.0.0.2 -B 100.0.0.4 -p 80 -u -t 420 -b 20M &IPERF_A2 #---a4 -> c2 (core3)  
 	test delay
+	delay 15
 	# additional traffic for core 1
 	exec a1_100 iperf -c 120.0.0.1 -B 100.0.0.6 -p 80 -u -t 420 -b 3M &IPERF_A1b #---a2 -> b1 (core1)
+	test delay
 	delay 15
 	exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 420 -b 22M &IPERF_A3 #---a1 -> c1 (core4)
 	test delay
-	test delay
-	test delay
+	delay 15
 }
 
 test stop_all_send {
