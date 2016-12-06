@@ -11,7 +11,7 @@ done
 sudo apt-get update
 
 sudo apt-get install -y build-essential fakeroot debhelper autoconf \
-automake libssl-dev graphviz python-all python-qt4 \
+automake libssl-dev graphviz python-all python-qt4 unzip \
 python-twisted-conch libtool git tmux vim python-pip python-paramiko \
 python-sphinx mongodb dos2unix wireshark
 

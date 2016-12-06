@@ -111,6 +111,8 @@ class FlowMod(object):
                     #validated_matches[match]=(value.split(",")[0].replace("(",""),value.split(",")[1].replace(")",""))
                 if "eth_type" not in validated_matches:
                     validated_matches["eth_type"] = ether.ETH_TYPE_IP
+            elif match == "ip_proto":
+                validated_matches[match] = value
             elif match == "tcp_src":
                 validated_matches[match] = value
                 if "eth_type" not in validated_matches:
