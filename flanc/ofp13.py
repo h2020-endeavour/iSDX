@@ -104,11 +104,7 @@ class FlowMod(object):
                 if "eth_type" not in validated_matches:
                     validated_matches["eth_type"] = ether.ETH_TYPE_IP
             elif match == "ipv4_dst":
-                #if "(" not in value:
                 validated_matches[match] = value
-                #else:
-                    # matches subnet from the access-control use case
-                    #validated_matches[match]=(value.split(",")[0].replace("(",""),value.split(",")[1].replace(")",""))
                 if "eth_type" not in validated_matches:
                     validated_matches["eth_type"] = ether.ETH_TYPE_IP
             elif match == "ip_proto":

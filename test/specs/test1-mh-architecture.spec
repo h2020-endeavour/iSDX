@@ -26,6 +26,7 @@ flow c2 << 4322
 listener AUTOGEN 80 4321 4322 8888
 
 test regress {
+ test info
 }
 
 test init {
