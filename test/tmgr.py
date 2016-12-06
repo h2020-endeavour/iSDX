@@ -17,6 +17,7 @@ import subprocess
 import traceback
 import time
 import shlex
+import requests
 
 import tlib
 
@@ -208,7 +209,6 @@ def local (args):
         cmd += arg + ' '
     log.info('MM:00 LOCAL: ' + cmd)
     try:
-        subprocess.check_call(args) #remove
         p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
     except Exception, e:
@@ -218,11 +218,11 @@ def local (args):
     log.debug('MM:00 LOCAL: output =\n' + r.strip())
     
 
-# execute participant client
+# execute participant api
 
 def blackholing (args):
     if len(args) < 3:
-        log.error('MM:00 EXEC: ERROR usage: participant participant_id remove/insert cookie/id...')
+        log.error('MM:00 EXEC: ERROR usage: blackholing participant_id remove/insert id[,id...]')
         return
     
     part_id = args[0] #participant id
@@ -245,15 +245,10 @@ def blackholing (args):
 
     part_info = config.participants[str(part_id)]
 
-    participant_addr = part_info["EH_SOCKET"][0]
-    #if participant_addr == 'localhost' or participant_addr == '127.0.0.1':
-    #    participant_addr = '127.0.0.1'
-    part_url = 'http://' + str(participant_addr) + ':' + str(part_info["EH_SOCKET"][1]) + '/bh/'
-
-    content_info = "--header \'Content-Type:application/json\'"
+    part_url = 'http://' + str(part_info["EH_SOCKET"][0]) + ':' + str(part_info["EH_SOCKET"][1]) + '/bh/inbound/'
+    content_header = {'Content-Type':'application/json'}
 
     if part_action == 'insert':
-        curl_action = '-X POST'
         new_policy = []
         # Open File and Parse
         with open(config_path, 'r') as f:
@@ -262,28 +257,23 @@ def blackholing (args):
             for policy in policies['inbound']: 
                 if int(policy['cookie']) in rule_ids:
                     new_policy.append(policy)
+        # Insert only inbound Policys
         data = {}
-        policies = {}
         data['inbound'] = new_policy
-        pol_json = json.dumps(data)
-        pol_json = "-d '" + pol_json + "'"
-        cmd = ['curl', content_info, curl_action, part_url] #post
-        local(cmd)
+        data=json.dumps(data)
+        print 'tmgr data: %s' % data
+        # Post
+        r = requests.post(part_url, data=data, headers=content_header)
 
+    # remove every rule_id
     elif part_action == 'remove':
-        curl_action = '-X DELETE'
-        
-        for rule_id in rule_ids:
-            new_url = part_url + 'inbound/' + str(rule_id)
-            cmd = ['curl', curl_action, new_url]
-            local(cmd)
-
-    else:
-        print 'error in blackholing'
-
-    #cmd = ['python', client_path, config_path, part_id, part_action, ','.join(str(e) for e in rule_ids)]
     
-    #python /home/vagrant/endeavour/pclnt/participant_client.py /home/vagrant/iSDX/examples/test3-mh-bh/policies/participant_4096_bh.cfg 4096 remove 
+        for rule_id in rule_ids:
+            new_url = part_url + str(rule_id)
+            r = requests.delete(new_url, headers=content_header)
+    else:
+        log.error('MM:00 EXEC: ERROR usage: error in blackholing - wrong action')
+
 
 # execute a command remotely
 

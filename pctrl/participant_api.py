@@ -12,8 +12,8 @@ class ParticipantAPI(object):
 
     def __init__(self, address, port, logger):
         
-        #if address == 'localhost' or address == '127.0.0.1':
-        #    address = '127.0.0.1'
+        if address == 'localhost' or address == '127.0.0.1':
+            address = '0.0.0.0'
         self.address = address
         self.port = port
         self.logger = logger  

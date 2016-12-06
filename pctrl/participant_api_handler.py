@@ -361,6 +361,9 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     for name in ds_names:
         ds[name] = DataStore(name, ds_protect)
 
+    # find controller in instance of self.controller
+    # print 'MyContollerId: %s' % self.controller.id
+
 
     def do_HEAD(self):
         self.send_response(501) # not implemented
@@ -370,9 +373,6 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         # get parsed path
         parsed_path = self.parse_path()         
-
-        print 'MyContollerId(get): %s' % self.controller.id
-
 
         # check 1 to 3 arguments and right datastore
         if len(parsed_path) in range(1,4) and parsed_path[0] in self.ds_names: 
@@ -409,21 +409,17 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_POST(self):
         # get parsed path
         parsed_path = self.parse_path()  
-        print 'post detected'
         # load data
         ctype, pdict = cgi.parse_header(self.headers.getheader('Content-Type'))
         if ctype == 'application/json':
             data = None
-            length = int(self.headers.getheader('content-length'))
-            print length
+            length = int(self.headers.getheader('Content-Length'))
             if length != 0:
                 try:
                     data = json.loads(self.rfile.read(length))
-                    print 'build right scheme will remove after test'
-                    data = [data]
-                    print data
+                    print 'api(1) data: %s' % data
                 except:
-                    self.send_response(400) # bad request
+                    self.send_response(409) # bad request
 
         # check 1 to 3 arguments and right datastore
         if len(parsed_path) in range(1,4) and parsed_path[0] in self.ds_names: 
@@ -436,29 +432,26 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 if len(parsed_path) == 2 and isinstance(data, dict):
                    # pack element(dict) in a list if parsed path ['bh', 'inbound']
                    data = [data]
-
+                   print 'api(2) data: %s' % data
                 # continue with next if block
                 if self.ds[parsed_path[0]].checkSchema(data, parsed_path) and isinstance(data, list):
-                    # post data and response next content location 
-                    next_content_location = self.ds[parsed_path[0]].post(data, parsed_path)
-                    
                     return_data = {}
                     policies = {}
+                     # controller post block
                     policies['insert'] = data
                     return_data['policy'] = [policies]
                     self.controller.process_event(return_data)
-
+                    print 'api(3) data: %s' % data
+                    # post data and response next content location 
+                    next_content_location = self.ds[parsed_path[0]].post(data, parsed_path)
                     self.send_response(201) # created
                     self.response(next_content_location)
                 else:
-                    print 'check schema false'
-                    print data
                     # schema check false - key already exist or data is no list
-                    self.send_response(400) # bad request
+                    self.send_response(409) # bad request
 
         # wrong datastore (first url parameter) - return available locations
         elif len(parsed_path) in range(1,4) and parsed_path[0] not in self.ds_names:
-            print 'wrong datastore'
             self.send_response(400) # bad request
             self.response_entrance()
 
@@ -479,19 +472,25 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 self.method_not_allowed(parsed_path)
             else:
                 try:
-                    
                     return_data = {}
                     policies = {}
+                    # get element from datastore
                     element, next_content_location = self.ds[parsed_path[0]].get(parsed_path)
-                    policies['remove'] = element
-                    return_data['policy'] = [policies]
-                    self.controller.process_event(return_data)
-                    print 'delete'
-                    # call delete function
-                    next_content_location = self.ds[parsed_path[0]].delete(parsed_path)
-                    self.send_response(200) # ok
-                    self.response(next_content_location)
+                    if element is None or not element:
+                        self.response_entrance() 
+                    else:
+                        # controller delete block
+                        policies['remove'] = element
+                        return_data['policy'] = [policies]
+                        self.controller.process_event(return_data)
+                        print 'delete'
+                        print return_data
+                        # delete data and response next content location
+                        next_content_location = self.ds[parsed_path[0]].delete(parsed_path)
+                        self.send_response(200) # ok
+                        self.response(next_content_location)
                 except:
+                    print 'ne pas'
                     self.send_response(400) # bad request
 
         # path length not between 1 and 3
