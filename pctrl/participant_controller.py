@@ -249,9 +249,8 @@ class ParticipantController(object):
         self.logger.debug("Exiting start_eh_xrs")
 
 
-    def process_event(self, data, mod_type=None):
+    def process_event(self, data, mod_type=None):  
         "Locally process each incoming network event"
-
 
         if 'bgp' in data:
             self.logger.debug("Event Received: BGP Update.")
@@ -267,7 +266,7 @@ class ParticipantController(object):
             for element in change_info:
                 if 'remove' in element:
                     self.process_policy_changes(element['remove'], 'remove')
-                    self.logger.debug("PART_Test: REMOVE: %s" % element)
+                    #self.logger.debug("PART_Test: REMOVE: %s" % element)
                 if 'insert' in element:
                     self.process_policy_changes(element['insert'], 'insert')
                     #self.logger.debug("PART_Test: INSERT: %s" % element)

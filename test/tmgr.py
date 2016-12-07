@@ -248,6 +248,7 @@ def blackholing (args):
     part_url = 'http://' + str(part_info["EH_SOCKET"][0]) + ':' + str(part_info["EH_SOCKET"][1]) + '/bh/inbound/'
     content_header = {'Content-Type':'application/json'}
 
+    # prepare for insert blackholing policy
     if part_action == 'insert':
         new_policy = []
         # Open File and Parse
@@ -257,19 +258,22 @@ def blackholing (args):
             for policy in policies['inbound']: 
                 if int(policy['cookie']) in rule_ids:
                     new_policy.append(policy)
-        # Insert only inbound Policys
+        
+        # insert only inbound policys
         data = {}
         data['inbound'] = new_policy
         data=json.dumps(data)
-        print 'tmgr data: %s' % data
-        # Post
+
+        # post to participant api
         r = requests.post(part_url, data=data, headers=content_header)
 
-    # remove every rule_id
+    # prepare for remove seperate blackholing policy
     elif part_action == 'remove':
     
         for rule_id in rule_ids:
             new_url = part_url + str(rule_id)
+            
+            # post to participant api
             r = requests.delete(new_url, headers=content_header)
     else:
         log.error('MM:00 EXEC: ERROR usage: error in blackholing - wrong action')

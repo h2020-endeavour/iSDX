@@ -417,7 +417,6 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             if length != 0:
                 try:
                     data = json.loads(self.rfile.read(length))
-                    print 'api(1) data: %s' % data
                 except:
                     self.send_response(409) # bad request
 
@@ -432,18 +431,16 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 if len(parsed_path) == 2 and isinstance(data, dict):
                    # pack element(dict) in a list if parsed path ['bh', 'inbound']
                    data = [data]
-                   print 'api(2) data: %s' % data
                 # continue with next if block
                 if self.ds[parsed_path[0]].checkSchema(data, parsed_path) and isinstance(data, list):
-                    return_data = {}
-                    policies = {}
-                     # controller post block
-                    policies['insert'] = data
-                    return_data['policy'] = [policies]
-                    self.controller.process_event(return_data)
-                    print 'api(3) data: %s' % data
-                    # post data and response next content location 
+                    
+                    # post data to datastore
                     next_content_location = self.ds[parsed_path[0]].post(data, parsed_path)
+
+                    # controller post block
+                    self.process_controller(data, 'insert')
+
+                    # response next content location
                     self.send_response(201) # created
                     self.response(next_content_location)
                 else:
@@ -472,25 +469,31 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 self.method_not_allowed(parsed_path)
             else:
                 try:
-                    return_data = {}
-                    policies = {}
+                    
                     # get element from datastore
                     element, next_content_location = self.ds[parsed_path[0]].get(parsed_path)
-                    if element is None or not element:
+
+                    if element is None or not element: # element not found
                         self.response_entrance() 
                     else:
+                                       
+                        # create only inbound element
+                        inbound = {'inbound': [element]}
+                        data = [inbound]
+
                         # controller delete block
-                        policies['remove'] = element
-                        return_data['policy'] = [policies]
-                        self.controller.process_event(return_data)
-                        print 'delete'
-                        print return_data
+                        self.process_controller(data, 'remove')
+                        
                         # delete data and response next content location
                         next_content_location = self.ds[parsed_path[0]].delete(parsed_path)
                         self.send_response(200) # ok
                         self.response(next_content_location)
+                
+                except ValueError as e:
+                    self.send_response(int(e[0]))
+                    self.response_next_content_location(e[1])
+
                 except:
-                    print 'ne pas'
                     self.send_response(400) # bad request
 
         # path length not between 1 and 3
@@ -544,8 +547,17 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def response(self, next_content_location):
         # no location given or empty
-        print next_content_location
         if next_content_location is None or not next_content_location:
             self.response_entrance()
         else:
             self.response_next_content_location(next_content_location)
+
+    def process_controller(self, data, action):
+        # process data with action to participant controller
+        policies = {}
+        return_data = {}
+        policies[action] = data
+        return_data['policy'] = [policies]
+        self.controller.process_event(return_data) # process to controller
+
+
