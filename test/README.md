@@ -380,6 +380,69 @@ test regress {
 ```
 
 
+### Configuration test3-mh-lb
+This configuration is for the load balancing demo and presents five traffic streams from different ip source to differnt ip destination addresses.
+
+* a1_100 - 100.0.0.2 to b1_120 - 120.0.0.1 (16Mbit/s) on port 80. 
+  
+  (***core 1*** - last bit src_ip = ***0***, last bit dst_ip = ***1*** )
+* b1_120 - 120.0.0.1 to c1_140 - 140.0.0.2 (18Mbit/s) on port 80. 
+  
+  (***core 2*** - last bit src_ip = ***1***, last bit dst_ip = ***0*** )
+* a1_100 - 100.0.0.4 to c1_140 - 140.0.0.2 (20Mbit/s) on port 80. 
+  
+  (***core 3*** - last bit src_ip = ***0***, last bit dst_ip = ***0*** )
+* a1_100 - 100.0.0.6 to b1_120 - 120.0.0.1 (3Mbit/s) on port 80. 
+  
+  (***core 1*** - last bit src_ip = ***0***, last bit dst_ip = ***1*** )
+* a1_100 - 100.0.0.1 to c1_140 - 140.0.0.1 (22Mbit/s) on port 80.
+  
+  (***core 4*** - last bit src_ip = ***1***, last bit dst_ip = ***1*** )
+
+***Load Balancing IP Matching Summary***
+
+|Core|last bit src_ip|last bit dst_ip|
+|---|---|---|
+|core 1|0|1|
+|core 2|1|0|
+|core 3|0|0|
+|core 4|1|1|
+
+
+```
+flow a1 80 >> b
+flow a1 80 >> c
+flow b1 80 >> c
+flow c1 << 80
+```
+```
+test start_all_send {
+  # add more virtual interfaces for host a1_100 for lbal ip-matching
+  exec a1_100 ifconfig a1_100-eth0:0 100.0.0.2
+  exec a1_100 ifconfig a1_100-eth0:1 100.0.0.4
+  exec a1_100 ifconfig a1_100-eth0:2 100.0.0.6
+  # start traffic streams
+  exec a1_100 iperf -c 120.0.0.1 -B 100.0.0.2 -p 80 -u -t 420 -b 16M &IPERF_A1a #(core1)
+  exec b1_120 iperf -c 140.0.0.2 -B 120.0.0.1 -p 80 -u -t 420 -b 18M &IPERF_B1 #(core2)
+  exec a1_100 iperf -c 140.0.0.2 -B 100.0.0.4 -p 80 -u -t 420 -b 20M &IPERF_A2 #(core3)  
+  # additional traffic for core 1
+  exec a1_100 iperf -c 120.0.0.1 -B 100.0.0.6 -p 80 -u -t 420 -b 3M &IPERF_A1b #(core1)
+  exec a1_100 iperf -c 140.0.0.1 -B 100.0.0.1 -p 80 -u -t 420 -b 22M &IPERF_A3 #(core4)
+}
+```
+```
+test regress {
+#start all send
+  test start_all_send
+  ...
+#stop all send
+  test stop_all_send
+  ...
+}
+```
+The regress Test only starts and stops the traffic streams above. The IP Load Balancer will be initialize by umbrella and the IP Matching to the cores is in the table above. The additional virutal interfaces for host a1_100 are sufficient for this szenario.
+
+
 ### Configuration test4-ms
 This configuration includes only outbound flow rules. AS A sends traffic to 8 other AS'es based on port number.
 ```
