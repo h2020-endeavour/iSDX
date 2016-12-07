@@ -405,6 +405,7 @@ class MultiHopController(Controller):
         tables = self.config.tables
         umbrella_core_table = tables["umbrella-core"]
         umbrella_edge_table = tables["umbrella-edge"]
+        access_control_table = tables["access-control"]
         lb_table = tables["load-balancer"]
         iSDX_tables = {x:tables[x] for x in tables if x.find("umbrella") < 0}
         if "monitor" in iSDX_tables:
@@ -423,14 +424,13 @@ class MultiHopController(Controller):
             # TODO: Send these packets to the load-balancer table?
             self.install_default_flow(edge, umbrella_edge_table)
             if access_control:
-                self.default_access_control(edge, iSDX_tables["access-control"], iSDX_tables["main-in"])
+                self.default_access_control(edge, iSDX_tables["access-control"], iSDX_tables["load-balancer"])
             if monitor:
-                if access_control:
-                    self.default_monitoring(edge, iSDX_tables["monitor"], iSDX_tables["access-control"])
-                else:
-                    self.default_monitoring(edge, iSDX_tables["monitor"], iSDX_tables["main-in"])
-            self.handle_BGP(edge, iSDX_tables["main-in"], lb_table)
-            self.handle_ARP(edge, iSDX_tables["main-in"], umbrella_edge_table)
+                self.default_monitoring(edge, iSDX_tables["monitor"], iSDX_tables["main-in"])
+            #self.handle_BGP(edge, iSDX_tables["main-in"], lb_table)
+            #self.handle_ARP(edge, iSDX_tables["main-in"], umbrella_edge_table)
+            self.handle_BGP(edge, iSDX_tables["main-in"], access_control_table)
+            self.handle_ARP(edge, iSDX_tables["main-in"], access_control_table)
         # Only one table for the cores
         cores = [datapaths[x] for x in datapaths if x.find("core") == 0]
         for core in cores:

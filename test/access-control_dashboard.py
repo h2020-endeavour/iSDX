@@ -1,5 +1,5 @@
 {
-  "id": 3,
+  "id": null,
   "title": "Access-Control",
   "originalTitle": "Access-Control",
   "tags": [],
@@ -368,7 +368,7 @@
                   "condition": "AND",
                   "key": "table_id",
                   "operator": "=",
-                  "value": "1"
+                  "value": "5"
                 }
               ]
             },
@@ -429,7 +429,7 @@
                   "condition": "AND",
                   "key": "table_id",
                   "operator": "=",
-                  "value": "3"
+                  "value": "2"
                 }
               ]
             },
@@ -490,7 +490,7 @@
                   "condition": "AND",
                   "key": "table_id",
                   "operator": "=",
-                  "value": "1"
+                  "value": "5"
                 }
               ]
             }
@@ -630,7 +630,7 @@
                   "condition": "AND",
                   "key": "table_id",
                   "operator": "=",
-                  "value": "3"
+                  "value": "2"
                 }
               ]
             },
@@ -691,7 +691,7 @@
                   "condition": "AND",
                   "key": "table_id",
                   "operator": "=",
-                  "value": "1"
+                  "value": "5"
                 }
               ]
             },
@@ -753,7 +753,7 @@
                   "condition": "AND",
                   "key": "table_id",
                   "operator": "=",
-                  "value": "3"
+                  "value": "2"
                 }
               ]
             }
