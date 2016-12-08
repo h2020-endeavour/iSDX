@@ -15,3 +15,4 @@ rm -r output/
 sudo echo /home/vagrant/iSDX/examples/test*-mh-bh/config | xargs -n 1 cp /home/vagrant/endeavour/examples/test-mh/config/gauge*
 sudo echo /home/vagrant/iSDX/examples/test*-mh-te/config | xargs -n 1 cp /home/vagrant/endeavour/examples/test-mh/config/gauge*
 sudo echo /home/vagrant/iSDX/examples/test*-mh-arp/config | xargs -n 1 cp /home/vagrant/endeavour/examples/test-mh/config/gauge*
+sudo echo /home/vagrant/iSDX/examples/test*-mh-mon/config | xargs -n 1 cp /home/vagrant/endeavour/examples/test-mh/config/gauge*
