@@ -431,13 +431,20 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 if len(parsed_path) == 2 and isinstance(data, dict):
                    # pack element(dict) in a list if parsed path ['bh', 'inbound']
                    data = [data]
+
                 # continue with next if block
                 if self.ds[parsed_path[0]].checkSchema(data, parsed_path) and isinstance(data, list):
                     
                     # post data to datastore
                     next_content_location = self.ds[parsed_path[0]].post(data, parsed_path)
 
-                    # controller post block
+                    # if parsed path onlny ['bh'] use only inbound element for controller
+                    if len(parsed_path) == 1:
+                        for element in data:
+                            if 'inbound' in element:
+                                data = [element]
+
+                    # controller post block            
                     self.process_controller(data, 'insert')
 
                     # response next content location
@@ -469,17 +476,27 @@ class ApiHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 self.method_not_allowed(parsed_path)
             else:
                 try:
-                    
-                    # get element from datastore
-                    element, next_content_location = self.ds[parsed_path[0]].get(parsed_path)
+                    # get data from datastore
+                    data, next_content_location = self.ds[parsed_path[0]].get(parsed_path)
 
-                    if element is None or not element: # element not found
+                    if data is None or not data: # element not found
                         self.response_entrance() 
                     else:
                                        
-                        # create only inbound element
-                        inbound = {'inbound': [element]}
-                        data = [inbound]
+                        if len(parsed_path) == 3:
+                             # create inbound element with cookie
+                            data = [{'inbound': [data]}]
+                            
+                        elif len(parsed_path) == 2 and parsed_path[1] == 'inbound':
+                            # use the inbound element
+                            data = [data]
+                        
+                        elif len(parsed_path) == 1:
+                            # if parsed path onlny ['bh'] use only inbound element for controller
+                            for element in data:
+                                print element
+                                if 'inbound' in element:
+                                    data = [element]
 
                         # controller delete block
                         self.process_controller(data, 'remove')
