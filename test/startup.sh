@@ -129,10 +129,12 @@ do
                 fi
 		ryu-manager $STATS_APP ryu.app.ofctl_rest refmon.py --refmon-config $EXAMPLES/$TEST/config/sdx_global.cfg >/dev/null 2>&1 &
 		sleep 1
-                echo starting mctrl
-                cd $RUN_DIR/mctrl
-                python ./mctrl.py $EXAMPLES/$TEST/ &
- 
+		if [ -n "$STATS" ]; then
+                	echo starting mctrl
+               		cd $RUN_DIR/mctrl
+                	python ./mctrl.py $EXAMPLES/$TEST/ &
+		fi
+			
 		echo starting xctrl
 		cd $BASE/xctrl/
 		python ./xctrl.py $EXAMPLES/$TEST/config/sdx_global.cfg
