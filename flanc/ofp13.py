@@ -3,13 +3,14 @@
 
 from ryu.ofproto import ether
 from ryu.ofproto import inet
+import util.log
 
 from ofdpa20 import OFDPA20
 
 class FlowMod(object):
     def __init__(self, config, origin, flow_mod):
         self.mod_types = ["insert", "remove"]
-        self.rule_types = ["inbound", "outbound", "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core", "monitor"]
+        self.rule_types = ["inbound", "outbound", "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core", "monitor", "access-control"]
         
         self.config = config
         self.parser = None
@@ -26,6 +27,8 @@ class FlowMod(object):
         self.cookie = {}
         self.matches = {}
         self.actions = []
+
+        self.logger = util.log.getLogger('OFP-13')
 
         if self.config.ofdpa:
             self.ofdpa = OFDPA20(config);
@@ -104,6 +107,8 @@ class FlowMod(object):
                 validated_matches[match] = value
                 if "eth_type" not in validated_matches:
                     validated_matches["eth_type"] = ether.ETH_TYPE_IP
+            elif match == "ip_proto":
+                validated_matches[match] = value
             elif match == "tcp_src":
                 validated_matches[match] = value
                 if "eth_type" not in validated_matches:

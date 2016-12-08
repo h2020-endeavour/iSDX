@@ -135,6 +135,13 @@ do
                 	python ./mctrl.py $EXAMPLES/$TEST/ &
 		fi
 			
+
+                sleep 1
+                echo starting acctrl
+                cd $RUN_DIR/acctrl
+                python ./acctrl.py $EXAMPLES/$TEST/ &
+
+      		sleep 1
 		echo starting xctrl
 		cd $BASE/xctrl/
 		python ./xctrl.py $EXAMPLES/$TEST/config/sdx_global.cfg

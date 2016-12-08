@@ -167,6 +167,7 @@ class RefMon(app_manager.RyuApp):
                         fm = OFP10FlowMod(self.config, origin, flow_mod)
                     elif self.config.ofv == "1.3":
                         fm = OFP13FlowMod(self.config, origin, flow_mod)
+                    self.logger.debug("rule validated. match: " + str(fm.matches) + " table:" + str(fm.table) + " cookie:" + str(fm.cookie))
                     self.controller.process_flow_mod(fm)
 
     @set_ev_cls(ofp_event.EventOFPErrorMsg, MAIN_DISPATCHER)
