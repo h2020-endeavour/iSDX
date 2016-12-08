@@ -354,6 +354,29 @@ class MultiHopController(Controller):
                                                 match=match, instructions=instructions)
         datapath.send_msg(mod)
 
+    def default_monitoring(self, datapath, table_id, goto_table):
+        match = self.config.parser.OFPMatch()
+        instructions = [self.config.parser.OFPInstructionGotoTable(goto_table)]
+        mod = self.config.parser.OFPFlowMod(datapath=datapath,
+                                                cookie=NO_COOKIE, cookie_mask=1,
+                                                table_id=table_id,
+                                                command=self.config.ofproto.OFPFC_ADD,
+                                                priority=FLOW_MISS_PRIORITY,
+                                                match=match, instructions=instructions)
+        datapath.send_msg(mod)
+
+    def default_access_control(self, datapath, table_id, goto_table):
+        match = self.config.parser.OFPMatch()
+        instructions = [self.config.parser.OFPInstructionGotoTable(goto_table)]
+        mod = self.config.parser.OFPFlowMod(datapath=datapath,
+                                                cookie=NO_COOKIE, cookie_mask=1,
+                                                table_id=table_id,
+                                                command=self.config.ofproto.OFPFC_ADD,
+                                                priority=FLOW_MISS_PRIORITY,
+                                                match=match, instructions=instructions)
+        datapath.send_msg(mod)
+
+
     # Create flow to send every BGP packet to the umbrella table
     def handle_BGP(self, edge, table, goto_table):
         match = self.config.parser.OFPMatch(eth_type=IP_ETH_TYPE, ip_proto = TCP_IP_PROTO, tcp_src = BGP)
@@ -378,26 +401,41 @@ class MultiHopController(Controller):
         edge.send_msg(mod)    
 
     def init_fabric(self):
+        monitor = False
         tables = self.config.tables
         umbrella_core_table = tables["umbrella-core"]
         umbrella_edge_table = tables["umbrella-edge"]
+        access_control_table = tables["access-control"]
         lb_table = tables["load-balancer"]
         iSDX_tables = {x:tables[x] for x in tables if x.find("umbrella") < 0}
+        if "monitor" in iSDX_tables:
+            monitor = True
+        if "access-control" in iSDX_tables:
+            access_control = True
         # Need to init more tables in the edges
         datapaths = self.config.datapaths
         edges = [datapaths[x] for x in datapaths if x.find("edge") == 0]
         for edge in edges:
             # iSDX tables            
             for table in iSDX_tables:
-                table_id = iSDX_tables[table]
-                self.install_default_flow(edge, table_id)
+                if table != "monitor" and table != "access-control":
+                    table_id = iSDX_tables[table]
+                    self.install_default_flow(edge, table_id)
             # TODO: Send these packets to the load-balancer table?
             self.install_default_flow(edge, umbrella_edge_table)
-            self.handle_BGP(edge, iSDX_tables["main-in"], lb_table)
-            self.handle_ARP(edge, iSDX_tables["main-in"], umbrella_edge_table)
+            if access_control:
+                self.default_access_control(edge, iSDX_tables["access-control"], iSDX_tables["load-balancer"])
+            if monitor:
+                self.default_monitoring(edge, iSDX_tables["monitor"], iSDX_tables["main-in"])
+            #self.handle_BGP(edge, iSDX_tables["main-in"], lb_table)
+            #self.handle_ARP(edge, iSDX_tables["main-in"], umbrella_edge_table)
+            self.handle_BGP(edge, iSDX_tables["main-in"], access_control_table)
+            self.handle_ARP(edge, iSDX_tables["main-in"], access_control_table)
         # Only one table for the cores
         cores = [datapaths[x] for x in datapaths if x.find("core") == 0]
         for core in cores:
+            if monitor:
+                self.default_monitoring(core, iSDX_tables["monitor"], iSDX_tables["main-in"])
             self.install_default_flow(core, umbrella_core_table)            
 
     def send_barrier_request(self):

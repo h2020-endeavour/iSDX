@@ -3,13 +3,14 @@
 
 from ryu.ofproto import ether
 from ryu.ofproto import inet
+import util.log
 
 from ofdpa20 import OFDPA20
 
 class FlowMod(object):
     def __init__(self, config, origin, flow_mod):
         self.mod_types = ["insert", "remove"]
-        self.rule_types = ["inbound", "outbound", "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core"]
+        self.rule_types = ["inbound", "outbound", "main", "main-in", "main-out", "arp", "load-balancer", "umbrella-edge", "umbrella-core", "monitor", "access-control"]
         
         self.config = config
         self.parser = None
@@ -21,9 +22,13 @@ class FlowMod(object):
         self.datapath = None
         self.table = None
         self.priority = None
+        self.idle_timeout = 0 
+        self.hard_timeout = 0
         self.cookie = {}
         self.matches = {}
         self.actions = []
+
+        self.logger = util.log.getLogger('OFP-13')
 
         if self.config.ofdpa:
             self.ofdpa = OFDPA20(config);
@@ -48,15 +53,23 @@ class FlowMod(object):
                         self.rule_type = self.config.dp_alias[flow_mod["rule_type"]]
                     else:
                         self.rule_type = flow_mod["rule_type"]
+                    
                     datapath = flow_mod["datapath"]
                     if datapath in self.config.dpids:
                         self.datapath = datapath
+                    
+                    if "idle_timeout" in flow_mod:
+                        self.idle_timeout = flow_mod["idle_timeout"]
+                    if "hard_timeout" in flow_mod:
+                        self.hard_timeout = flow_mod["hard_timeout"]
+
                     if ("priority" in flow_mod):
                         self.priority = flow_mod["priority"]
                         if "match" in flow_mod:
                             self.matches = self.validate_match(flow_mod["match"])
                         if "action" in flow_mod:
                             self.actions = self.validate_action(flow_mod["action"])
+                    
 
     def validate_match(self, matches):
         validated_matches = {}
@@ -94,6 +107,8 @@ class FlowMod(object):
                 validated_matches[match] = value
                 if "eth_type" not in validated_matches:
                     validated_matches["eth_type"] = ether.ETH_TYPE_IP
+            elif match == "ip_proto":
+                validated_matches[match] = value
             elif match == "tcp_src":
                 validated_matches[match] = value
                 if "eth_type" not in validated_matches:
@@ -216,7 +231,8 @@ class FlowMod(object):
                 instructions = self.make_instructions()
             flow_mod = self.parser.OFPFlowMod(datapath=datapath, 
                                           cookie=self.cookie["cookie"], cookie_mask=self.cookie["mask"], 
-                                          table_id=table_id, 
+                                          table_id=table_id, idle_timeout = self.idle_timeout,
+                                          hard_timeout = self.hard_timeout,
                                           command=self.config.ofproto.OFPFC_ADD,
                                           priority=self.priority, 
                                           match=match, instructions=instructions)

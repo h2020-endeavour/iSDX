@@ -327,7 +327,7 @@ class GSSmH(GSS):
                 vmac_mask = self.vmac_builder.part_port_mask(False)
                 match = {"eth_type": ETH_TYPE_ARP,
                          "eth_dst": (vmac, vmac_mask)}
-                action = {"set_eth_dst": port.mac, "fwd": ["load-balancer"]}
+                action = {"set_eth_dst": port.mac, "fwd": ["access-control"]}
                 self.fm_builder.add_flow_mod("insert", rule_type, GRATUITOUS_ARP_PRIORITY, match, action, switch)
                 i += 1
 
@@ -342,7 +342,7 @@ class GSSmH(GSS):
                     vmac_mask = self.vmac_builder.part_port_mask(mask_inbound_bit)
                     match = {"eth_dst": (vmac, vmac_mask)}
                     action = {"set_eth_dst": port.mac,
-                              "fwd": ["load-balancer"]}
+                              "fwd": ["access-control"]}
                     self.fm_builder.add_flow_mod("insert", rule_type, FORWARDING_PRIORITY, match, action, switch)
 
     def default_forwarding(self, rule_type, switch = None):
@@ -354,14 +354,14 @@ class GSSmH(GSS):
                 port = participant.ports[0]
                 match = {"eth_dst": (vmac, vmac_mask)}
                 action = {"set_eth_dst": port.mac,
-                          "fwd": ["load-balancer"]}
+                          "fwd": ["access-control"]}
                 self.fm_builder.add_flow_mod("insert", rule_type, FORWARDING_PRIORITY, match, action, switch)
 
     #Writes the ARP proxy MAC address for requests to virtual next hops
     def handle_vnh_ARP(self, rule_type, switch =  None): 
         port = self.config.arp_proxy.ports[0]
         match = {"eth_type": ETH_TYPE_ARP, "arp_tpa":(str(self.config.vnhs.network), str(self.config.vnhs.netmask))}
-        action = {"set_eth_dst": port.mac, "fwd": ["load-balancer"]}
+        action = {"set_eth_dst": port.mac, "fwd": ["access-control"]}
         self.fm_builder.add_flow_mod("insert", rule_type, ARP_PRIORITY, match, action, switch)
 
     def init_fabric(self):
@@ -386,5 +386,5 @@ class GSSmH(GSS):
             # MAIN-OUT TABLE            
             self.handle_participant_with_inbound("main-out", False, edge)
             self.default_forwarding("main-out", edge)
-            self.match_any_fwd("main-out", "load-balancer", edge)
+            self.match_any_fwd("main-out", "access-control", edge)
 
