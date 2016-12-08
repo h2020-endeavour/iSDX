@@ -48,7 +48,7 @@ The Grafana visualization works as follows:
    save changes to the Grafana configuration, they are stored in
    Grafana's SQLite database, `/var/lib/grafana/grafana.db`.  You can
    dump the database with the command: `sqlite3
-   /var/lib/grafana/grafana.db 'dump'`. If you want to commit this
+   /var/lib/grafana/grafana.db .dump`. If you want to commit this
    database to the SDX repo, save the output of the above command to
    `iSDX/setup/grafana-init.sql`.  This file is used to initialize the
    database when the vagrant machine is provisioned.

@@ -37,13 +37,13 @@ test regress {
 	delay 2
 	test xfer
 	delay 3
-	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
+	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=3
 	blackholing 3 insert 4096
 	delay 3
-	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
+	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=3
 	delay 3
 	blackholing 3 remove 4096
-	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=2
+	local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=3
 	delay 2
 }
 	

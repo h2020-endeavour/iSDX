@@ -17,7 +17,6 @@ if np not in sys.path:
 from xctrl.flowmodmsg import FlowModMsgBuilder
 
 from peer import BGPPeer
-from participant_server import ParticipantServer
 from participant_api import ParticipantAPI
 
 
