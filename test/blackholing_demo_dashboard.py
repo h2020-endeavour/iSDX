@@ -17,7 +17,9 @@
         {
           "aliasColors": {
             "Port A-In": "#7EB26D",
-            "Port B-In": "#EAB839"
+            "Port B-In": "#EAB839",
+            "Port B-Out": "#AEA2E0",
+            "port_packets_out.non_negative_derivative": "#AEA2E0"
           },
           "bars": false,
           "datasource": null,
@@ -218,6 +220,61 @@
                   "value": "Edge 3"
                 }
               ]
+            },
+            {
+              "alias": "Port B-Out",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "10s"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "port_packets_out",
+              "policy": "default",
+              "refId": "D",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  },
+                  {
+                    "params": [
+                      "10s"
+                    ],
+                    "type": "non_negative_derivative"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "port_name",
+                  "operator": "=",
+                  "value": "B"
+                },
+                {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge-2"
+                }
+              ]
             }
           ],
           "timeFrom": null,
@@ -254,7 +311,8 @@
         {
           "aliasColors": {
             "Port A-In": "#7EB26D",
-            "Port B-In": "#EAB839"
+            "Port B-In": "#EAB839",
+            "Port B-Out": "#AEA2E0"
           },
           "bars": false,
           "datasource": null,
@@ -460,6 +518,61 @@
                   "value": "Edge 3"
                 }
               ]
+            },
+            {
+              "alias": "Port B-Out",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "10s"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "port_bytes_out",
+              "policy": "default",
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  },
+                  {
+                    "params": [
+                      "10s"
+                    ],
+                    "type": "non_negative_derivative"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "port_name",
+                  "operator": "=",
+                  "value": "B"
+                },
+                {
+                  "condition": "AND",
+                  "key": "dp_name",
+                  "operator": "=",
+                  "value": "Edge-2"
+                }
+              ]
             }
           ],
           "timeFrom": null,
@@ -476,7 +589,7 @@
           },
           "yaxes": [
             {
-              "format": "short",
+              "format": "Bps",
               "label": "Bytes",
               "logBase": 1,
               "max": null,
@@ -543,7 +656,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "Drop Rule - Participant A",
+              "alias": "Drop Rule - Participant A (Sum)",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -576,7 +689,7 @@
                   },
                   {
                     "params": [],
-                    "type": "last"
+                    "type": "sum"
                   },
                   {
                     "params": [
@@ -601,9 +714,46 @@
               ]
             },
             {
-              "policy": "default",
+              "alias": "Drop Rule - Participant B",
               "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "10s"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "none"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flow_packet_count",
+              "policy": "default",
+              "refId": "C",
               "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  },
+                  {
+                    "params": [
+                      "10s"
+                    ],
+                    "type": "non_negative_derivative"
+                  }
+                ]
+              ],
               "tags": [
                 {
                   "key": "eth_src",
@@ -616,49 +766,52 @@
                   "operator": "=",
                   "value": "Edge-2"
                 }
-              ],
+              ]
+            },
+            {
+              "alias": "Drop Rule (Sum)",
+              "dsType": "influxdb",
               "groupBy": [
                 {
-                  "type": "time",
                   "params": [
                     "10s"
-                  ]
+                  ],
+                  "type": "time"
                 },
                 {
-                  "type": "fill",
                   "params": [
                     "none"
-                  ]
+                  ],
+                  "type": "fill"
                 }
               ],
+              "hide": false,
+              "measurement": "flow_packet_count",
+              "policy": "default",
+              "query": "SELECT non_negative_derivative(sum(\"value\"), 10s) FROM \"flow_packet_count\" WHERE \"eth_src\" = '08:00:bb:bb:01:00' AND \"dp_name\" = 'Edge-1' OR \"eth_src\" = '08:00:bb:bb:02:00' AND \"dp_name\" = 'Edge-2' AND $timeFilter GROUP BY time(10s) fill(0)",
+              "rawQuery": false,
+              "refId": "B",
+              "resultFormat": "time_series",
               "select": [
                 [
                   {
-                    "type": "field",
                     "params": [
                       "value"
-                    ]
+                    ],
+                    "type": "field"
                   },
                   {
-                    "type": "last",
-                    "params": []
+                    "params": [],
+                    "type": "sum"
                   },
                   {
-                    "type": "non_negative_derivative",
                     "params": [
                       "10s"
-                    ]
+                    ],
+                    "type": "non_negative_derivative"
                   }
                 ]
               ],
-              "refId": "C",
-              "measurement": "flow_packet_count",
-              "alias": "Drop Rule - Participant B"
-            },
-            {
-              "policy": "default",
-              "dsType": "influxdb",
-              "resultFormat": "time_series",
               "tags": [
                 {
                   "key": "eth_src",
@@ -683,44 +836,7 @@
                   "operator": "=",
                   "value": "Edge-2"
                 }
-              ],
-              "groupBy": [
-                {
-                  "type": "time",
-                  "params": [
-                    "10s"
-                  ]
-                },
-                {
-                  "type": "fill",
-                  "params": [
-                    "0"
-                  ]
-                }
-              ],
-              "select": [
-                [
-                  {
-                    "type": "field",
-                    "params": [
-                      "value"
-                    ]
-                  },
-                  {
-                    "type": "sum",
-                    "params": []
-                  },
-                  {
-                    "type": "non_negative_derivative",
-                    "params": [
-                      "10s"
-                    ]
-                  }
-                ]
-              ],
-              "refId": "B",
-              "measurement": "flow_packet_count",
-              "alias": "Drop Rule (Sum)"
+              ]
             }
           ],
           "timeFrom": null,
@@ -737,7 +853,7 @@
           },
           "yaxes": [
             {
-              "format": "bytes",
+              "format": "short",
               "label": "Packets",
               "logBase": 1,
               "max": null,
@@ -796,7 +912,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "Drop Rule - Participant A",
+              "alias": "Drop Rule - Participant A (Sum)",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -829,7 +945,7 @@
                   },
                   {
                     "params": [],
-                    "type": "last"
+                    "type": "sum"
                   },
                   {
                     "params": [
@@ -854,9 +970,46 @@
               ]
             },
             {
-              "policy": "default",
+              "alias": "Drop Rule - Participant B",
               "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "10s"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "none"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flow_byte_count",
+              "policy": "default",
+              "refId": "C",
               "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "last"
+                  },
+                  {
+                    "params": [
+                      "10s"
+                    ],
+                    "type": "non_negative_derivative"
+                  }
+                ]
+              ],
               "tags": [
                 {
                   "key": "eth_src",
@@ -869,49 +1022,50 @@
                   "operator": "=",
                   "value": "Edge-2"
                 }
-              ],
+              ]
+            },
+            {
+              "alias": "Drop Rule (Sum)",
+              "dsType": "influxdb",
               "groupBy": [
                 {
-                  "type": "time",
                   "params": [
                     "10s"
-                  ]
+                  ],
+                  "type": "time"
                 },
                 {
-                  "type": "fill",
                   "params": [
-                    "none"
-                  ]
+                    "0"
+                  ],
+                  "type": "fill"
                 }
               ],
+              "hide": false,
+              "measurement": "flow_byte_count",
+              "policy": "default",
+              "refId": "B",
+              "resultFormat": "time_series",
               "select": [
                 [
                   {
-                    "type": "field",
                     "params": [
                       "value"
-                    ]
+                    ],
+                    "type": "field"
                   },
                   {
-                    "type": "last",
-                    "params": []
+                    "params": [],
+                    "type": "sum"
                   },
                   {
-                    "type": "non_negative_derivative",
                     "params": [
                       "10s"
-                    ]
+                    ],
+                    "type": "non_negative_derivative"
                   }
                 ]
               ],
-              "refId": "C",
-              "measurement": "flow_byte_count",
-              "alias": "Drop Rule - Participant B"
-            },
-            {
-              "policy": "default",
-              "dsType": "influxdb",
-              "resultFormat": "time_series",
               "tags": [
                 {
                   "key": "eth_src",
@@ -936,44 +1090,7 @@
                   "operator": "=",
                   "value": "Edge-2"
                 }
-              ],
-              "groupBy": [
-                {
-                  "type": "time",
-                  "params": [
-                    "10s"
-                  ]
-                },
-                {
-                  "type": "fill",
-                  "params": [
-                    "0"
-                  ]
-                }
-              ],
-              "select": [
-                [
-                  {
-                    "type": "field",
-                    "params": [
-                      "value"
-                    ]
-                  },
-                  {
-                    "type": "sum",
-                    "params": []
-                  },
-                  {
-                    "type": "non_negative_derivative",
-                    "params": [
-                      "10s"
-                    ]
-                  }
-                ]
-              ],
-              "refId": "B",
-              "measurement": "flow_byte_count",
-              "alias": "Drop Rule (Sum)"
+              ]
             }
           ],
           "timeFrom": null,
@@ -990,7 +1107,7 @@
           },
           "yaxes": [
             {
-              "format": "bytes",
+              "format": "Bps",
               "label": "Bytes",
               "logBase": 1,
               "max": null,
@@ -1018,10 +1135,11 @@
         {
           "aliasColors": {
             "Drop Rule": "#E24D42",
-            "Port A+B-In": "#EF843C",
-            "Port C-Out": "#6ED0E0",
             "Drop Rule (Sum)": "#E24D42",
-            "Port A+B-In (Sum)": "#EF843C"
+            "Port A+B-In": "#EF843C",
+            "Port A+B-In (Sum)": "#EF843C",
+            "Port B+C-Out (Sum)": "#6ED0E0",
+            "Port C-Out": "#6ED0E0"
           },
           "bars": false,
           "datasource": null,
@@ -1070,11 +1188,12 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "none"
                   ],
                   "type": "fill"
                 }
               ],
+              "hide": false,
               "measurement": "port_packets_in",
               "policy": "default",
               "refId": "A",
@@ -1137,7 +1256,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "none"
                   ],
                   "type": "fill"
                 }
@@ -1156,7 +1275,7 @@
                   },
                   {
                     "params": [],
-                    "type": "last"
+                    "type": "sum"
                   },
                   {
                     "params": [
@@ -1181,9 +1300,46 @@
               ]
             },
             {
-              "policy": "default",
+              "alias": "Drop Rule (Sum)",
               "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "10s"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "none"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flow_packet_count",
+              "policy": "default",
+              "refId": "D",
               "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "sum"
+                  },
+                  {
+                    "params": [
+                      "10s"
+                    ],
+                    "type": "non_negative_derivative"
+                  }
+                ]
+              ],
               "tags": [
                 {
                   "key": "eth_src",
@@ -1208,44 +1364,7 @@
                   "operator": "=",
                   "value": "Edge-2"
                 }
-              ],
-              "groupBy": [
-                {
-                  "type": "time",
-                  "params": [
-                    "10s"
-                  ]
-                },
-                {
-                  "type": "fill",
-                  "params": [
-                    "0"
-                  ]
-                }
-              ],
-              "select": [
-                [
-                  {
-                    "type": "field",
-                    "params": [
-                      "value"
-                    ]
-                  },
-                  {
-                    "type": "sum",
-                    "params": []
-                  },
-                  {
-                    "type": "non_negative_derivative",
-                    "params": [
-                      "10s"
-                    ]
-                  }
-                ]
-              ],
-              "refId": "D",
-              "alias": "Drop Rule (Sum)",
-              "measurement": "flow_packet_count"
+              ]
             }
           ],
           "timeFrom": null,
@@ -1281,9 +1400,10 @@
         },
         {
           "aliasColors": {
+            "Drop Rule (Sum)": "#E24D42",
             "Port A+B-In": "#EF843C",
-            "Port C-Out": "#6ED0E0",
-            "Drop Rule (Sum)": "#E24D42"
+            "Port A+B-In (Sum)": "#EF843C",
+            "Port C-Out": "#6ED0E0"
           },
           "bars": false,
           "datasource": null,
@@ -1321,7 +1441,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "Port A+B-In",
+              "alias": "Port A+B-In (Sum)",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -1332,7 +1452,7 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "none"
                   ],
                   "type": "fill"
                 }
@@ -1443,9 +1563,46 @@
               ]
             },
             {
-              "policy": "default",
+              "alias": "Drop Rule (Sum)",
               "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "10s"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "none"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flow_byte_count",
+              "policy": "default",
+              "refId": "C",
               "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "sum"
+                  },
+                  {
+                    "params": [
+                      "10s"
+                    ],
+                    "type": "non_negative_derivative"
+                  }
+                ]
+              ],
               "tags": [
                 {
                   "key": "eth_src",
@@ -1470,44 +1627,7 @@
                   "operator": "=",
                   "value": "Edge-2"
                 }
-              ],
-              "groupBy": [
-                {
-                  "type": "time",
-                  "params": [
-                    "10s"
-                  ]
-                },
-                {
-                  "type": "fill",
-                  "params": [
-                    "0"
-                  ]
-                }
-              ],
-              "select": [
-                [
-                  {
-                    "type": "field",
-                    "params": [
-                      "value"
-                    ]
-                  },
-                  {
-                    "type": "sum",
-                    "params": []
-                  },
-                  {
-                    "type": "non_negative_derivative",
-                    "params": [
-                      "10s"
-                    ]
-                  }
-                ]
-              ],
-              "refId": "C",
-              "alias": "Drop Rule (Sum)",
-              "measurement": "flow_byte_count"
+              ]
             }
           ],
           "timeFrom": null,
@@ -1524,7 +1644,7 @@
           },
           "yaxes": [
             {
-              "format": "short",
+              "format": "Bps",
               "label": "Bytes",
               "logBase": 1,
               "max": null,
@@ -1546,8 +1666,8 @@
     }
   ],
   "time": {
-    "from": "2016-08-29T07:49:40.041Z",
-    "to": "2016-08-29T07:55:40.230Z"
+    "from": "now-15m",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -1580,8 +1700,8 @@
   "annotations": {
     "list": []
   },
-  "refresh": false,
+  "refresh": "5s",
   "schemaVersion": 12,
-  "version": 5,
+  "version": 10,
   "links": []
 }
