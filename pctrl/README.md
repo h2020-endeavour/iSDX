@@ -4,7 +4,7 @@ This module is in charge of running an `event handler` for each SDX participant.
 receives network events from `xrs` module (BGP updates), `arproxy` module (ARP requests), and participants's
 control interface (high-level policy changes). It processes incoming network events to generate new
 BGP announcements and data plane updates. It sends the BGP announcements to the `xrs` module and
-dp updates to the `flanc` module. 
+data path updates to the `flanc` module. 
 
 See examples/test-ms/README.md for an example of how to run pctrl along with everything else.
 
@@ -39,7 +39,7 @@ and ***api_port*** stored in sdx_global.cfg.
 	    }  
 	} ...
 ```
-**localhost** will bind on every interface (0.0.0.0) on virtual machine. The port forwarding in vagrant makes it
+**localhost** will bind on every interface (0.0.0.0) on the virtual machine. The port forwarding in vagrant makes it
 possible to use the api also at the host machine.
 
 &nbsp;
@@ -63,8 +63,8 @@ e.g.	curl -vX GET http://localhost:5551/
 	Content-Location: /bh, /schema
 ```
 
-The ***/schema*** service is a section with prefilled policys. It is used in the following blackholing example.
-The commands POST and DELETE not allowed on the  ***/schema*** service.
+The ***/schema*** service is a section with prefilled policies. It is used in the following blackholing example.
+The methods POST and DELETE are not allowed with the  ***/schema*** service.
 
 
 &nbsp;
@@ -76,7 +76,7 @@ The commands POST and DELETE not allowed on the  ***/schema*** service.
 Status          	Satus of the HTTP response. (see Status/Error Codes)
 Content-Type 		The MIME type of this content. (e.g. application/json)
 Content-Location	An alternate location for the returned data. (e.g. /bh/inbound)
-Location         	Used in redirection. (e.g. in case of wrong request, response correct url)
+Location         	Used in redirection. (e.g. in case of a wrong request, provides the correct url)
 ```
 
 
@@ -87,16 +87,16 @@ Location         	Used in redirection. (e.g. in case of wrong request, response 
 
 |Code|Meaning|Explanation|
 |---|---|---|
-|200|ok|a  valid get/delete|
-|201|created|a valid post, policy successful created|
+|200|ok|a valid get/delete|
+|201|created|a valid POST, policy successful created|
 |303|see other|need to specify uri|
-|400|bad request|an invalid get/post/delete|
+|400|bad request|an invalid GET/POST/DELETE|
 |404|not found|service or uri not found|
-|405|method not allowed|e.g. post/delete on schema service not allowed| 
-|409|conflict|e.g. cookie already exist on post or is wrong formated| 
+|405|method not allowed|e.g. POST/DELETE on schema service not allowed| 
+|409|conflict|e.g. cookie already exists on post or is wrong formated| 
 |414|url to long|use instead service/element/subelement (e.g. bh/inbound/4097)| 
 |500|internal server error|all other errors| 
-|501|not implemented|put/head are not implemented| 
+|501|not implemented|PUT/HEAD are not implemented| 
 
 
 &nbsp;
@@ -120,7 +120,7 @@ Location         	Used in redirection. (e.g. in case of wrong request, response 
 ```
 
 You can not delete a complete service but all data within the service. After api DELETE 3) the data from **service1** is empty.
-The api GET ***/service1*** response only [].
+The api GET ***/service1*** response with an empty list.
 
 
 &nbsp;
@@ -142,7 +142,7 @@ The api GET ***/service1*** response only [].
 	Content-Location: /service1/element1/subelement1
 	Content-Location: /service1/element1/subelement2
 ```
-The response for API POST 1) and 2) are the same, it returns the created cookie`s URI.
+The response for api POST 1) and 2) are the same, it returns the created cookie`s URI.
 
 
 &nbsp;
@@ -154,21 +154,21 @@ The response for API POST 1) and 2) are the same, it returns the created cookie`
 ---
 > **TORCH** implementation (process to controller)
 
-The api uses a ***datastore.json*** to store policys locally on the participant controller. After each test, the datastore
-will be deleted (defined in startup.sh and clean.py). The ***blackholing*** commands in **torch use only inbound policys** for insert/remove commands.
+The api uses a ***datastore.json*** to store policies locally on the participant controller. After each test, the datastore
+will be deleted (defined in startup.sh and clean.py). The ***blackholing*** commands in **torch use only inbound policies** for insert/removal functions.
 The chart below gives an example for the current possible commands in the torch blackholing implementation.
 
 
 |API|URI|Explanation|
 |---|---|---|
-|GET|/bh/|shows all policys|
-||/bh/inbound/|shows only inbound policys|
+|GET|/bh/|shows all policies|
+||/bh/inbound/|shows only inbound policies|
 ||/bh/inbound/4097/|shows only inbound cookie 4097|
-|DELETE|/bh/|only inbound policys **from controller** will be deleted<br>(e.g. outbound will also be deleted in api)|
-||/bh/inbound/|deletes all inbound policys|
+|DELETE|/bh/|only inbound policies **from controller** will be deleted<br>(e.g. outbound will also be deleted in api)|
+||/bh/inbound/|deletes all inbound policies|
 ||/bh/inbound/4097/|deletes only inbound cookie 4097|
-|POST|/bh/|**only inbound** policys will be pushed **to controller**<br>if exist, outbound policys will be stored in api<br>(e.g. schema from GET /bh/)|
-||/bh/inbound/|push list of inbound policys **to controller**<br>(e.g. schema from GET /bh/inbound/)|
+|POST|/bh/|**only inbound** policies will be pushed **to controller**<br>if exist, outbound policies will be stored in api<br>(e.g. schema from GET /bh/)|
+||/bh/inbound/|push list of inbound policies **to controller**<br>(e.g. schema from GET /bh/inbound/)|
 ||/bh/inbound/4097/|not implemented|
 
 
@@ -189,7 +189,7 @@ The chart below gives an example for the current possible commands in the torch 
 3)	curl -X GET http://ip_participant_controller:api_port/bh/inbound/4097
 ```
 
-+ Response 1 (All Blackholing Policys)
++ Response to query 1) returns all blackholing policies
 ```
 	[
 	    {
@@ -239,7 +239,7 @@ The chart below gives an example for the current possible commands in the torch 
 ```
 
 
-+ Response 2 (Only Inbound Blackholing Policys)
++ Response to query 2) answers with inbound blackholing policies
 
 ```
 	{
@@ -274,7 +274,7 @@ The chart below gives an example for the current possible commands in the torch 
 	Content-Location: /bh/inbound/4097, /bh/outbound/4098
 ```
 
-+ Response 3 (Only Inbound Cookie 4097)
++ Response to query 3) returns inbound cookie 4097
 ```
 	{
 	    "action": {
