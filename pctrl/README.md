@@ -53,7 +53,7 @@ possible to use the api also at the host machine.
 
 
 ```bash
-	curl -vX GET http://ip_participant_controller:api_port/
+		curl -vX GET http://ip_participant_controller:api_port/
 
 e.g.	curl -vX GET http://localhost:5551/
 ```
@@ -93,7 +93,7 @@ Location         	Used in redirection. (e.g. in case of a wrong request, provide
 
 |Code|Meaning|Explanation|
 |---|---|---|
-|200|ok|a valid get/delete|
+|200|ok|a valid GET/DELETE|
 |201|created|a valid POST, policy successful created|
 |303|see other|need to specify uri|
 |400|bad request|an invalid GET/POST/DELETE|
@@ -206,7 +206,7 @@ The chart below gives an example for the current possible commands in the torch 
 ```
 
 
-By using the GET method with the uri's defined above the following output will be gernated.
+By using the GET method with the uri's defined above the following output will be generated.
 
 
 &nbsp;
@@ -340,10 +340,6 @@ By using the GET method with the uri's defined above the following output will b
 
 By using the DELETE method, the api responses with the status and content available next.
 
-
-&nbsp;
-
-
 > API RESPONSE
 
 
@@ -374,10 +370,6 @@ By using the DELETE method, the api responses with the status and content availa
 
 
 By using the POST method the api responses the created content as uri. The first POST initializes a list of inbound drop policies from participant 3 to drop all traffic with ip destination 140.0.0.1 on udp port 53 from given eth_src (means participant 1). In this case, the list has only one drop policy. The second POST initalizes a single inbound drop policy from participant 3 to drop all traffic with ip destination 140.0.0.2 on udp port 53 from participant 1.
-
-
-&nbsp;
-
 
 > API RESPONSE
 
