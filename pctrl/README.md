@@ -46,7 +46,7 @@ possible to use the api also at the host machine.
 
 
 ---
-#### **Introduction** to use the api generally.
+#### **Introduction** to use the api in general.
 
 > API GET
 ```
@@ -188,8 +188,7 @@ The chart below gives an example for the current possible commands in the torch 
 2)	curl -X GET http://ip_participant_controller:api_port/bh/inbound
 3)	curl -X GET http://ip_participant_controller:api_port/bh/inbound/4097
 ```
-By using the GET method with this defined uri's the following output will also be
-fine granular defined.
+By using the GET method with the uri's defined above the following output will be gernated.
 
 
 &nbsp;
@@ -311,7 +310,7 @@ fine granular defined.
 
 3)	curl -vX DELETE http://ip_participant_controller:api_port/bh/
 ```
-By using the DELETE method the API response the next available content.
+By using the DELETE method, the api responses with the status and content available next.
 
 
 &nbsp;
@@ -342,7 +341,7 @@ By using the DELETE method the API response the next available content.
 
 2)	curl -X POST -H 'Content-Type: application/json' -d '{"action": {"drop": 0},"cookie": 4098,"match": {"eth_src": "08:00:bb:bb:01:00","udp_dst": 53,"ipv4_dst": "140.0.0.2"}}' http://localhost:5553/bh/inbound/
 ```
-By using the POST method the API response the created content as uri. The first POST initialize a list of inbound drop policies from participant 3 to drop all traffic with ip destination 140.0.0.1 on udp port 53 from given eth_src (means participant 1). In this case, the list has only one drop policy inside. The second POST initalize a single inbound drop policy from participant 3 to drop all traffic with ip destination 140.0.0.2 on udp port 53 from participant 1.
+By using the POST method the api responses the created content as uri. The first POST initializes a list of inbound drop policies from participant 3 to drop all traffic with ip destination 140.0.0.1 on udp port 53 from given eth_src (means participant 1). In this case, the list has only one drop policy. The second POST initalizes a single inbound drop policy from participant 3 to drop all traffic with ip destination 140.0.0.2 on udp port 53 from participant 1.
 
 
 &nbsp;
