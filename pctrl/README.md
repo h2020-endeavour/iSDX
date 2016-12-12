@@ -57,7 +57,6 @@ e.g.	curl -vX GET http://localhost:5551/
 
 
 > API RESPONSE
-
 ```
 	Status: 303 see other
 	Content-Location: /bh, /schema
@@ -71,7 +70,6 @@ The methods POST and DELETE are not allowed with the  ***/schema*** service.
 
 
 #### Response Header
-
 ```
 Status          	Satus of the HTTP response. (see Status/Error Codes)
 Content-Type 		The MIME type of this content. (e.g. application/json)
@@ -111,7 +109,6 @@ Location         	Used in redirection. (e.g. in case of a wrong request, provide
 
 
 > API RESPONSE
-
 ```
 	Status: 200 OK
 1)	Content-Location: other possible subelements (e.g. service1/element1/subelement2, ..)
@@ -136,7 +133,6 @@ The api GET ***/service1*** response with an empty list.
 **data2** contains a single element (e.g. inbound) also with subelements (cookies) like the response from api GET ***/service1/element1/***.
 
 > API RESPONSE
-
 ```
 	Status: 201 Created
 	Content-Location: /service1/element1/subelement1
@@ -181,8 +177,7 @@ The chart below gives an example for the current possible commands in the torch 
 ---
 #### **Blackholing** prefilled with the stored /schema example
 
-> API GET
-		
+> API GET	
 ```
 1)	curl -X GET http://ip_participant_controller:api_port/bh/
 2)	curl -X GET http://ip_participant_controller:api_port/bh/inbound
@@ -317,7 +312,6 @@ By using the DELETE method, the api responses with the status and content availa
 
 
 > API RESPONSE
-
 ```
 1)	Status: 200 OK
 	Content-Location: /bh/inbound/4098, /bh/inbound/4099
@@ -334,8 +328,7 @@ By using the DELETE method, the api responses with the status and content availa
 &nbsp;
 
 
-> API POST
-		
+> API POST	
 ```
 1)	curl -X POST -H 'Content-Type: application/json' -d '[{"inbound": [{"action": {"drop": 0}, "cookie": 4097, "match": {"eth_src": "08:00:bb:bb:01:00", "udp_dst": 53, "ipv4_dst": "140.0.0.1"}}]}]' http://localhost:5553/bh/
 
@@ -348,7 +341,6 @@ By using the POST method the api responses the created content as uri. The first
 
 
 > API RESPONSE
-
 ```
 1)	Status: 201 CREATED
 	Content-Location: /bh/inbound/4097
