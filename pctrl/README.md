@@ -50,10 +50,12 @@ possible to use the api also at the host machine.
 #### **Introduction** to use the api in general.
 
 > API GET
-```
-	curl -vX GET http://ip_participant_controller:api_port/
 
-e.g.	curl -vX GET http://localhost:5551/
+
+```bash
+		curl -vX GET http://ip_participant_controller:api_port/
+
+	e.g.	curl -vX GET http://localhost:5551/
 ```
 
 
