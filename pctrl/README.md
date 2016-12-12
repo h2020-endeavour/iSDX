@@ -42,6 +42,7 @@ and ***api_port*** stored in sdx_global.cfg.
 **localhost** will bind on every interface (0.0.0.0) on the virtual machine. The port forwarding in vagrant makes it
 possible to use the api also at the host machine.
 
+
 &nbsp;
 
 
@@ -57,6 +58,8 @@ e.g.	curl -vX GET http://localhost:5551/
 
 
 > API RESPONSE
+
+
 ```
 	Status: 303 see other
 	Content-Location: /bh, /schema
