@@ -46,9 +46,9 @@ possible to use the api also at the host machine.
 
 
 ---
-> **Introduction** to use the api generally.
+#### **Introduction** to use the api generally.
 
-+ API GET
+> API GET
 ```
 	curl -vX GET http://ip_participant_controller:api_port/
 
@@ -56,7 +56,7 @@ e.g.	curl -vX GET http://localhost:5551/
 ```
 
 
-+ API RESPONSE
+> API RESPONSE
 
 ```
 	Status: 303 see other
@@ -70,7 +70,7 @@ The methods POST and DELETE are not allowed with the  ***/schema*** service.
 &nbsp;
 
 
-+ Response Header
+#### Response Header
 
 ```
 Status          	Satus of the HTTP response. (see Status/Error Codes)
@@ -83,7 +83,7 @@ Location         	Used in redirection. (e.g. in case of a wrong request, provide
 &nbsp;
 
 
-+ Status/Error Codes
+#### Status/Error Codes
 
 |Code|Meaning|Explanation|
 |---|---|---|
@@ -102,7 +102,7 @@ Location         	Used in redirection. (e.g. in case of a wrong request, provide
 &nbsp;
 
 
-+ API DELETE
+> API DELETE
 ```
 1)	curl -vX DELETE http://ip_participant_controller:api_port/service1/element1/subelement1
 2)	curl -vX DELETE http://ip_participant_controller:api_port/service1/element1
@@ -110,7 +110,7 @@ Location         	Used in redirection. (e.g. in case of a wrong request, provide
 ```
 
 
-+ API RESPONSE
+> API RESPONSE
 
 ```
 	Status: 200 OK
@@ -126,7 +126,7 @@ The api GET ***/service1*** response with an empty list.
 &nbsp;
 
 
-+ API POST
+> API POST
 ```
 1)	curl -vX POST -H 'Content-Type: application/json' -d 'data1' http://ip_participant_controller:api_port/service1/
 2)	curl -vX POST -H 'Content-Type: application/json' -d 'data2' http://ip_participant_controller:api_port/service1/element1
@@ -135,14 +135,14 @@ The api GET ***/service1*** response with an empty list.
 
 **data2** contains a single element (e.g. inbound) also with subelements (cookies) like the response from api GET ***/service1/element1/***.
 
-+ API RESPONSE
+> API RESPONSE
 
 ```
 	Status: 201 Created
 	Content-Location: /service1/element1/subelement1
 	Content-Location: /service1/element1/subelement2
 ```
-The response for api POST 1) and 2) are the same, it returns the created cookie`s URI.
+The response from api POST 1) and 2) are the same, it returns the created cookie`s uri.
 
 
 &nbsp;
@@ -152,7 +152,7 @@ The response for api POST 1) and 2) are the same, it returns the created cookie`
 
 
 ---
-> **TORCH** implementation (process to controller)
+#### **TORCH** implementation (process to controller)
 
 The api uses a ***datastore.json*** to store policies locally on the participant controller. After each test, the datastore
 will be deleted (defined in startup.sh and clean.py). The ***blackholing*** commands in **torch use only inbound policies** for insert/removal functions.
@@ -179,17 +179,23 @@ The chart below gives an example for the current possible commands in the torch 
 
 
 ---
-> **Blackholing** prefilled with the stored /schema example
+#### **Blackholing** prefilled with the stored /schema example
 
-+ API GET
+> API GET
 		
 ```
 1)	curl -X GET http://ip_participant_controller:api_port/bh/
 2)	curl -X GET http://ip_participant_controller:api_port/bh/inbound
 3)	curl -X GET http://ip_participant_controller:api_port/bh/inbound/4097
 ```
+By using the GET method with this defined uri's the following output will also be
+fine granular defined.
 
-+ Response to query 1) returns all blackholing policies
+
+&nbsp;
+
+
+> Response to query 1) returns all blackholing policies
 ```
 	[
 	    {
@@ -239,8 +245,7 @@ The chart below gives an example for the current possible commands in the torch 
 ```
 
 
-+ Response to query 2) answers with inbound blackholing policies
-
+> Response to query 2) answers with inbound blackholing policies
 ```
 	{
 	    "inbound": [
@@ -274,7 +279,8 @@ The chart below gives an example for the current possible commands in the torch 
 	Content-Location: /bh/inbound/4097, /bh/outbound/4098
 ```
 
-+ Response to query 3) returns inbound cookie 4097
+
+> Response to query 3) returns inbound cookie 4097
 ```
 	{
 	    "action": {
@@ -297,7 +303,7 @@ The chart below gives an example for the current possible commands in the torch 
 &nbsp;
 
 
-+ API DELETE
+> API DELETE
 ```
 1)	curl -vX DELETE http://ip_participant_controller:api_port/bh/inbound/4097
 
@@ -305,9 +311,13 @@ The chart below gives an example for the current possible commands in the torch 
 
 3)	curl -vX DELETE http://ip_participant_controller:api_port/bh/
 ```
+By using the DELETE method the API response the next available content.
 
 
-+ API RESPONSE
+&nbsp;
+
+
+> API RESPONSE
 
 ```
 1)	Status: 200 OK
@@ -325,16 +335,20 @@ The chart below gives an example for the current possible commands in the torch 
 &nbsp;
 
 
-+ API POST
+> API POST
 		
 ```
 1)	curl -X POST -H 'Content-Type: application/json' -d '[{"inbound": [{"action": {"drop": 0}, "cookie": 4097, "match": {"eth_src": "08:00:bb:bb:01:00", "udp_dst": 53, "ipv4_dst": "140.0.0.1"}}]}]' http://localhost:5553/bh/
 
 2)	curl -X POST -H 'Content-Type: application/json' -d '{"action": {"drop": 0},"cookie": 4098,"match": {"eth_src": "08:00:bb:bb:01:00","udp_dst": 53,"ipv4_dst": "140.0.0.2"}}' http://localhost:5553/bh/inbound/
 ```
+By using the POST method the API response the created content as uri. The first POST initialize a list of inbound drop policies from participant 3 to drop all traffic with ip destination 140.0.0.1 on udp port 53 from given eth_src (means participant 1). In this case, the list has only one drop policy inside. The second POST initalize a single inbound drop policy from participant 3 to drop all traffic with ip destination 140.0.0.2 on udp port 53 from participant 1.
 
 
-+ API RESPONSE
+&nbsp;
+
+
+> API RESPONSE
 
 ```
 1)	Status: 201 CREATED
