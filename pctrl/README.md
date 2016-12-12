@@ -53,9 +53,9 @@ possible to use the api also at the host machine.
 
 
 ```bash
-		curl -vX GET http://ip_participant_controller:api_port/
+	curl -vX GET http://ip_participant_controller:api_port/
 
-	e.g.	curl -vX GET http://localhost:5551/
+e.g.	curl -vX GET http://localhost:5551/
 ```
 
 
@@ -67,6 +67,7 @@ possible to use the api also at the host machine.
 	Content-Location: /bh, /schema
 ```
 
+
 The ***/schema*** service is a section with prefilled policies. It is used in the following blackholing example.
 The methods POST and DELETE are not allowed with the  ***/schema*** service.
 
@@ -75,6 +76,8 @@ The methods POST and DELETE are not allowed with the  ***/schema*** service.
 
 
 #### Response Header
+
+
 ```
 Status          	Satus of the HTTP response. (see Status/Error Codes)
 Content-Type 		The MIME type of this content. (e.g. application/json)
@@ -106,6 +109,8 @@ Location         	Used in redirection. (e.g. in case of a wrong request, provide
 
 
 > API DELETE
+
+
 ```
 1)	curl -vX DELETE http://ip_participant_controller:api_port/service1/element1/subelement1
 2)	curl -vX DELETE http://ip_participant_controller:api_port/service1/element1
@@ -114,12 +119,15 @@ Location         	Used in redirection. (e.g. in case of a wrong request, provide
 
 
 > API RESPONSE
+
+
 ```
 	Status: 200 OK
 1)	Content-Location: other possible subelements (e.g. service1/element1/subelement2, ..)
 2)	Content-Location: other possible elements (e.g. service1/element2, service1/element3)
 3)	Content-Location: /service1, /service2
 ```
+
 
 You can not delete a complete service but all data within the service. After api DELETE 3) the data from **service1** is empty.
 The api GET ***/service1*** response with an empty list.
@@ -129,6 +137,8 @@ The api GET ***/service1*** response with an empty list.
 
 
 > API POST
+
+
 ```
 1)	curl -vX POST -H 'Content-Type: application/json' -d 'data1' http://ip_participant_controller:api_port/service1/
 2)	curl -vX POST -H 'Content-Type: application/json' -d 'data2' http://ip_participant_controller:api_port/service1/element1
@@ -138,11 +148,15 @@ The api GET ***/service1*** response with an empty list.
 **data2** contains a single element (e.g. inbound) also with subelements (cookies) like the response from api GET ***/service1/element1/***.
 
 > API RESPONSE
+
+
 ```
 	Status: 201 Created
 	Content-Location: /service1/element1/subelement1
 	Content-Location: /service1/element1/subelement2
 ```
+
+
 The response from api POST 1) and 2) are the same, it returns the created cookie`s uri.
 
 
@@ -182,12 +196,16 @@ The chart below gives an example for the current possible commands in the torch 
 ---
 #### **Blackholing** prefilled with the stored /schema example
 
-> API GET	
+> API GET
+
+
 ```
 1)	curl -X GET http://ip_participant_controller:api_port/bh/
 2)	curl -X GET http://ip_participant_controller:api_port/bh/inbound
 3)	curl -X GET http://ip_participant_controller:api_port/bh/inbound/4097
 ```
+
+
 By using the GET method with the uri's defined above the following output will be gernated.
 
 
@@ -195,6 +213,8 @@ By using the GET method with the uri's defined above the following output will b
 
 
 > Response to query 1) returns all blackholing policies
+
+
 ```
 	[
 	    {
@@ -245,6 +265,8 @@ By using the GET method with the uri's defined above the following output will b
 
 
 > Response to query 2) answers with inbound blackholing policies
+
+
 ```
 	{
 	    "inbound": [
@@ -280,6 +302,8 @@ By using the GET method with the uri's defined above the following output will b
 
 
 > Response to query 3) returns inbound cookie 4097
+
+
 ```
 	{
 	    "action": {
@@ -303,6 +327,8 @@ By using the GET method with the uri's defined above the following output will b
 
 
 > API DELETE
+
+
 ```
 1)	curl -vX DELETE http://ip_participant_controller:api_port/bh/inbound/4097
 
@@ -310,6 +336,8 @@ By using the GET method with the uri's defined above the following output will b
 
 3)	curl -vX DELETE http://ip_participant_controller:api_port/bh/
 ```
+
+
 By using the DELETE method, the api responses with the status and content available next.
 
 
@@ -317,6 +345,8 @@ By using the DELETE method, the api responses with the status and content availa
 
 
 > API RESPONSE
+
+
 ```
 1)	Status: 200 OK
 	Content-Location: /bh/inbound/4098, /bh/inbound/4099
@@ -333,12 +363,16 @@ By using the DELETE method, the api responses with the status and content availa
 &nbsp;
 
 
-> API POST	
+> API POST
+
+
 ```
 1)	curl -X POST -H 'Content-Type: application/json' -d '[{"inbound": [{"action": {"drop": 0}, "cookie": 4097, "match": {"eth_src": "08:00:bb:bb:01:00", "udp_dst": 53, "ipv4_dst": "140.0.0.1"}}]}]' http://localhost:5553/bh/
 
 2)	curl -X POST -H 'Content-Type: application/json' -d '{"action": {"drop": 0},"cookie": 4098,"match": {"eth_src": "08:00:bb:bb:01:00","udp_dst": 53,"ipv4_dst": "140.0.0.2"}}' http://localhost:5553/bh/inbound/
 ```
+
+
 By using the POST method the api responses the created content as uri. The first POST initializes a list of inbound drop policies from participant 3 to drop all traffic with ip destination 140.0.0.1 on udp port 53 from given eth_src (means participant 1). In this case, the list has only one drop policy. The second POST initalizes a single inbound drop policy from participant 3 to drop all traffic with ip destination 140.0.0.2 on udp port 53 from participant 1.
 
 
@@ -346,6 +380,8 @@ By using the POST method the api responses the created content as uri. The first
 
 
 > API RESPONSE
+
+
 ```
 1)	Status: 201 CREATED
 	Content-Location: /bh/inbound/4097
@@ -353,3 +389,4 @@ By using the POST method the api responses the created content as uri. The first
 2)	Status: 201 CREATED
 	Content-Location: /bh/inbound/4098
 ```
+
