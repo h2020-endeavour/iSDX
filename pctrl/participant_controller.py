@@ -93,6 +93,10 @@ class ParticipantController(object):
         self.participant_api = self.cfg.get_participant_api(self.id, self.logger)
         self.participant_api.start(self)
 
+        # BGP Flow Spec Interface
+        self.bgp_flow_server = self.cfg.get_bgp_flow_server(self.id, self.logger)
+        self.bgp_flow_server.start(self)
+
         # RefMon Instance
         self.refmon_client = self.cfg.get_refmon_client(self.logger)
         
@@ -532,9 +536,9 @@ class ParticipantController(object):
 
     def send_announcement(self, announcement):
         "Send the announcements to XRS"
-	self.logger.debug("Sending announcements to XRS: %s", announcement)
-	self.xrs_client.send({'msgType': 'bgp', 'announcement': announcement})
-
+        self.logger.debug("Sending announcements to XRS: %s", announcement)
+        self.xrs_client.send({'msgType': 'bgp', 'announcement': announcement})
+        print 'xrs_client.send: %s' % announcement
 
     def vnh_assignment(self, update):
         "Assign VNHs for the advertised prefixes"
