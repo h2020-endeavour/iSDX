@@ -32,7 +32,7 @@ test regress {
 }
 
 test init {
-   listener
+   #    listener
 }
 
 test xfer {
