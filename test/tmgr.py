@@ -81,6 +81,7 @@ def main (argv):
         'killp': killp,
         'local': local, 'll': local,
         'blackholing': blackholing, 'b': blackholing,
+        'api' : api, 'a': api,
         'pending': pending, 'p': pending,
         'send': send, 's': send,
         'comment': comment, 'c': comment,
@@ -265,7 +266,7 @@ def blackholing (args):
         data=json.dumps(data)
 
         # post to participant api
-        r = requests.post(part_url, data=data, headers=content_header)
+        r = requests.post(part_url, data=data, headers=content_header, allow_redirects=True)
 
     # prepare for remove seperate blackholing policy
     elif part_action == 'remove':
@@ -274,9 +275,62 @@ def blackholing (args):
             new_url = part_url + str(rule_id)
             
             # post to participant api
-            r = requests.delete(new_url, headers=content_header)
+            r = requests.delete(new_url, headers=content_header, allow_redirects=True)
     else:
         log.error('MM:00 EXEC: ERROR usage: error in blackholing - wrong action')
+
+# execute api command
+
+def api (args):
+    if len(args) < 3:
+        log.error('MM:00 EXEC: ERROR usage: api participant_id remove/insert cookie/policy_id')
+        # remove cookie - or - insert policy id
+        return
+    
+    part_id = args[0] #participant id
+    part_action = args[1] #action insert or remove
+    policy_id = args[2] #policy id
+    config_file = 'blackholing_' + policy_id + '.json' #policy file
+
+    cmd = ''
+    for arg in args:
+        cmd += arg + ' '
+    #log.info('MM:00 API: ' + cmd + config_file)
+
+    policy_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "policies"))
+    config_path = os.path.join(policy_path, "day_1" ,config_file)
+
+    part_info = config.participants[str(part_id)]
+
+    part_url = 'http://' + str(part_info["EH_SOCKET"][0]) + ':' + str(part_info["EH_SOCKET"][1]) + '/bh/inbound/'
+    content_header = {'Content-Type':'application/json'}
+
+    # prepare for insert blackholing policy
+    if part_action == 'insert':
+        new_policy = []
+        # Open File and Parse
+        with open(config_path, 'r') as f:
+            policy=json.load(f)
+            new_policy.append(policy)
+
+        # insert only inbound policys
+        data = {}
+        data['inbound'] = new_policy
+        data=json.dumps(data)
+
+        # post to participant api
+        r = requests.post(part_url, data=data, headers=content_header, allow_redirects=True)
+
+    # prepare for remove seperate blackholing policy
+    elif part_action == 'remove':
+    
+        new_url = part_url + str(policy_id)
+            
+            # post to participant api
+        r = requests.delete(new_url, headers=content_header, allow_redirects=True)
+    else:
+        log.error('MM:00 EXEC: ERROR usage: error in api - wrong action')
+
 
 
 # execute a command remotely
@@ -584,6 +638,7 @@ def usage (args):
     'killp anynode ID                # terminate background process\n'
     'local cmd arg arg               # execute cmd on local machine\n'
     'blackholing part ins/rem ids    # execute on participant insert/remove policy_id or pilicy_ids\n'
+    'api part ins/rem policy_file    # execute on participant insert/remove policy file\n'
     'pending anyhost                 # check if any pending or unclaimed data transfers are on host\n'
     'send host bind daddr port       # send data xmit request to source node\n'
     'comment commentary ...          # log a comment\n'

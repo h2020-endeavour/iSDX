@@ -445,6 +445,9 @@ class parser:
 
             if args[0] == 'blackholing':
                 continue
+
+            if args[0] == 'api':
+                continue
             
             if args[0] == 'delay':
                 continue
