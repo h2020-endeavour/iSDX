@@ -18,6 +18,7 @@ import traceback
 import time
 import shlex
 import requests
+import httplib
 
 import tlib
 
@@ -79,6 +80,7 @@ def main (argv):
         'delay': delay,
         'exec': remote, 'x': remote, 'remote': remote,
         'killp': killp,
+        'killps': killps,
         'local': local, 'll': local,
         'blackholing': blackholing, 'b': blackholing,
         'api' : api, 'a': api,
@@ -226,6 +228,8 @@ def blackholing (args):
         log.error('MM:00 EXEC: ERROR usage: blackholing participant_id remove/insert id[,id...]')
         return
     
+    httplib._MAXHEADERS = 2000
+
     part_id = args[0] #participant id
     part_action = args[1] #action insert or remove
 
@@ -287,6 +291,8 @@ def api (args):
         # remove cookie - or - insert policy id
         return
     
+    httplib._MAXHEADERS = 2000
+
     part_id = args[0] #participant id
     part_action = args[1] #action insert or remove
     policy_id = args[2] #policy id
@@ -366,6 +372,21 @@ def killp(args):
         log.debug('MM:' + host + ' KILLP: output = \n' + r.strip())
 
 
+# terminate a remote background process silent
+
+def killps(args):
+    if len(args) < 2:
+        log.error('MM:00 EXEC: ERROR: usage: killp anynode ID ...')
+        return
+    host = args[0]
+    del args[0]
+    cmd = ''
+    for arg in args:
+        cmd += arg + ' '
+    log.info('MM:' + host + ' KILLPS: ' + cmd)
+    r = generic2(host, 'KILLPS', 'killp ' + cmd + '\n')
+
+
 # generic command interface to a tnode - send cmd, capture data
 # return None id cannot connect or socket error
 # return '' if no data
@@ -394,6 +415,27 @@ def generic (host, label, cmd):
             pass
         return None
     return alldata
+
+
+# generic command interface to a tnode - send cmd, capture data
+# return None id cannot connect or socket error
+# return '' if no data
+
+def generic2 (host, label, cmd):
+    s = connect(host, label)
+    if s == None:
+        return None
+    alldata = ''
+    try:
+        s.send(cmd)
+    except Exception, e:
+        log.error('MM:' + host + ' ERROR: ' + label + ': '+ repr(e))
+        try:
+            s.close()
+        except:
+            pass
+        return None
+    s.close()
 
  
 # verify a transmission - tell source to send to dst IP addr.
@@ -636,6 +678,7 @@ def usage (args):
     'delay seconds                   # pause for things to settle\n'
     'exec anynode cmd arg ... [&ID]  # execute cmd on node\n'
     'killp anynode ID                # terminate background process\n'
+    'killps anynode ID                # terminate background process silent\n'
     'local cmd arg arg               # execute cmd on local machine\n'
     'blackholing part ins/rem ids    # execute on participant insert/remove policy_id or pilicy_ids\n'
     'api part ins/rem policy_file    # execute on participant insert/remove policy file\n'

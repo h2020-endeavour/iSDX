@@ -233,6 +233,8 @@ do
 		python ~/iSDX/pctrl/clean_mongo.py
 		sudo rm -f ~/iSDX/xrs/ribs/*.db
 		sudo rm -f ~/iSDX/pctrl/datastore.json
+		sudo killall iperf
+		sudo killall iperf3
 		) >/dev/null 2>&1
 
 		echo telling mininet to shutdown
