@@ -440,6 +440,9 @@ class parser:
             if args[0] == 'killps':
                 continue
 
+            if args[0] == 'loginfo':
+                continue
+
             if args[0] == 'dump':
                 continue
             

@@ -81,6 +81,7 @@ def main (argv):
         'exec': remote, 'x': remote, 'remote': remote,
         'killp': killp,
         'killps': killps,
+        'loginfo' : loginfo,
         'local': local, 'll': local,
         'blackholing': blackholing, 'b': blackholing,
         'api' : api, 'a': api,
@@ -386,6 +387,23 @@ def killps(args):
     log.info('MM:' + host + ' KILLPS: ' + cmd)
     r = generic2(host, 'KILLPS', 'killp ' + cmd + '\n')
 
+
+# terminate a remote background process silent
+
+def loginfo(args):
+    if len(args) < 2:
+        log.error('MM:00 EXEC: ERROR: usage: loginfo filename logentry ...')
+        return
+    filename = args[0]
+    loginfo = args[1]
+
+    mininet_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "mininet"))
+    log_path = os.path.join(mininet_path, filename)
+
+    with open(log_path, "a") as log_file:
+        log_file.write("MAGIC:%s\n" % loginfo)
+
+    log.info('MM: loginfo > ' + filename + ' : ' + loginfo)
 
 # generic command interface to a tnode - send cmd, capture data
 # return None id cannot connect or socket error
