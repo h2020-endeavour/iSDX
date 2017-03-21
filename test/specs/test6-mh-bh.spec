@@ -37,6 +37,8 @@ test regress {
 	test delay
 	test xfer
 	test delay
+	comment comment-0
+	test show_table_2
 	test start_first_send
 	loginfo iperf3_bh-test4.log 50
 	api 3 insert 0
@@ -89,6 +91,8 @@ test regress {
 	api 3 insert 24
 	api 3 remove 5024
 	api 3 insert 25
+	comment comment-50
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 100
 	api 3 remove 5025
@@ -141,6 +145,8 @@ test regress {
 	api 3 remove 5052
 	api 3 insert 53
 	api 3 remove 5053
+	comment comment-100
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 150
 	api 3 insert 54
@@ -193,6 +199,8 @@ test regress {
 	api 3 remove 5077
 	api 3 insert 78
 	api 3 remove 5078
+	comment comment-150
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 200
 	api 3 insert 79
@@ -245,6 +253,8 @@ test regress {
 	api 3 remove 5102
 	api 3 insert 103
 	api 3 remove 5103
+	comment comment-200
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 250
 	api 3 insert 104
@@ -297,6 +307,8 @@ test regress {
 	api 3 insert 127
 	api 3 insert 128
 	api 3 remove 5128
+	comment comment-250
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 300
 	api 3 insert 129
@@ -349,6 +361,8 @@ test regress {
 	api 3 insert 153
 	api 3 remove 5153
 	api 3 insert 154
+	comment comment-300
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 350
 	api 3 remove 5154
@@ -401,6 +415,8 @@ test regress {
 	api 3 insert 180
 	api 3 remove 5180
 	api 3 insert 181
+	comment comment-350
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 400
 	api 3 remove 5181
@@ -453,6 +469,8 @@ test regress {
 	api 3 remove 5205
 	api 3 insert 206
 	api 3 remove 5206
+	comment comment-400
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 450
 	api 3 insert 207
@@ -505,6 +523,8 @@ test regress {
 	api 3 insert 240
 	api 3 insert 241
 	api 3 insert 242
+	comment comment-450
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 500
 	api 3 insert 243
@@ -557,6 +577,8 @@ test regress {
 	api 3 insert 290
 	api 3 insert 291
 	api 3 insert 292
+	comment comment-500
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 550
 	api 3 insert 293
@@ -609,6 +631,8 @@ test regress {
 	api 3 insert 340
 	api 3 insert 341
 	api 3 insert 342
+	comment comment-550
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 600
 	api 3 insert 343
@@ -661,6 +685,8 @@ test regress {
 	api 3 insert 390
 	api 3 insert 391
 	api 3 insert 392
+	comment comment-600
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 650
 	api 3 insert 393
@@ -713,6 +739,8 @@ test regress {
 	api 3 insert 440
 	api 3 insert 441
 	api 3 insert 442
+	comment comment-650
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 700
 	api 3 insert 443
@@ -765,6 +793,8 @@ test regress {
 	api 3 insert 490
 	api 3 insert 491
 	api 3 insert 492
+	comment comment-700
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 750
 	api 3 insert 493
@@ -817,6 +847,8 @@ test regress {
 	api 3 insert 540
 	api 3 insert 541
 	api 3 insert 542
+	comment comment-750
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 800
 	api 3 insert 543
@@ -869,6 +901,8 @@ test regress {
 	api 3 insert 590
 	api 3 insert 591
 	api 3 insert 592
+	comment comment-800
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 850
 	api 3 insert 593
@@ -921,6 +955,8 @@ test regress {
 	api 3 insert 640
 	api 3 insert 641
 	api 3 insert 642
+	comment comment-850
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 900
 	api 3 insert 643
@@ -973,6 +1009,8 @@ test regress {
 	api 3 insert 690
 	api 3 insert 691
 	api 3 insert 692
+	comment comment-900
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 950
 	api 3 insert 693
@@ -1025,6 +1063,8 @@ test regress {
 	api 3 insert 740
 	api 3 insert 741
 	api 3 insert 742
+	comment comment-950
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 1000
 	api 3 insert 743
@@ -1077,6 +1117,8 @@ test regress {
 	api 3 insert 790
 	api 3 insert 791
 	api 3 insert 792
+	comment comment-1000
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 1050
 	api 3 insert 793
@@ -1129,6 +1171,8 @@ test regress {
 	api 3 insert 840
 	api 3 insert 841
 	api 3 insert 842
+	comment comment-1050
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 1100
 	api 3 insert 843
@@ -1181,6 +1225,8 @@ test regress {
 	api 3 insert 890
 	api 3 insert 891
 	api 3 insert 892
+	comment comment-1100
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 1150
 	api 3 insert 893
@@ -1233,6 +1279,8 @@ test regress {
 	api 3 insert 940
 	api 3 insert 941
 	api 3 insert 942
+	comment comment-1150
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 1200
 	api 3 insert 943
@@ -1285,6 +1333,8 @@ test regress {
 	api 3 insert 990
 	api 3 insert 991
 	api 3 insert 992
+	comment comment-1200
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 1250
 	api 3 insert 993
@@ -1337,6 +1387,8 @@ test regress {
 	api 3 insert 1040
 	api 3 insert 1041
 	api 3 insert 1042
+	comment comment-1250
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 1300
 	api 3 insert 1043
@@ -1389,6 +1441,8 @@ test regress {
 	api 3 insert 1090
 	api 3 insert 1091
 	api 3 insert 1092
+	comment comment-1300
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 1350
 	api 3 insert 1093
@@ -1441,6 +1495,8 @@ test regress {
 	api 3 insert 1140
 	api 3 insert 1141
 	api 3 insert 1142
+	comment comment-1350
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 1400
 	api 3 insert 1143
@@ -1493,6 +1549,8 @@ test regress {
 	api 3 insert 1190
 	api 3 insert 1191
 	api 3 insert 1192
+	comment comment-1400
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 1450
 	api 3 insert 1193
@@ -1545,6 +1603,8 @@ test regress {
 	api 3 insert 1240
 	api 3 insert 1241
 	api 3 insert 1242
+	comment comment-1450
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 1500
 	api 3 insert 1243
@@ -1597,6 +1657,8 @@ test regress {
 	api 3 insert 1290
 	api 3 insert 1291
 	api 3 insert 1292
+	comment comment-1500
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 1550
 	api 3 insert 1293
@@ -1649,6 +1711,8 @@ test regress {
 	api 3 insert 1340
 	api 3 insert 1341
 	api 3 insert 1342
+	comment comment-1550
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 1600
 	api 3 insert 1343
@@ -1701,6 +1765,8 @@ test regress {
 	api 3 insert 1390
 	api 3 insert 1391
 	api 3 insert 1392
+	comment comment-1600
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 1650
 	api 3 insert 1393
@@ -1753,6 +1819,8 @@ test regress {
 	api 3 insert 1440
 	api 3 insert 1441
 	api 3 insert 1442
+	comment comment-1650
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 1700
 	api 3 insert 1443
@@ -1805,6 +1873,8 @@ test regress {
 	api 3 insert 1490
 	api 3 insert 1491
 	api 3 insert 1492
+	comment comment-1700
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 1750
 	api 3 insert 1493
@@ -1857,6 +1927,8 @@ test regress {
 	api 3 insert 1540
 	api 3 insert 1541
 	api 3 insert 1542
+	comment comment-1750
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 1800
 	api 3 insert 1543
@@ -1909,6 +1981,8 @@ test regress {
 	api 3 insert 1582
 	api 3 insert 1583
 	api 3 insert 1584
+	comment comment-1800
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 1850
 	api 3 insert 1585
@@ -1961,6 +2035,8 @@ test regress {
 	api 3 insert 1631
 	api 3 insert 1632
 	api 3 insert 1633
+	comment comment-1850
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 1900
 	api 3 insert 1634
@@ -2013,6 +2089,8 @@ test regress {
 	api 3 insert 1681
 	api 3 insert 1682
 	api 3 insert 1683
+	comment comment-1900
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 1950
 	api 3 insert 1684
@@ -2065,6 +2143,8 @@ test regress {
 	api 3 remove 6728
 	api 3 insert 1729
 	api 3 remove 6729
+	comment comment-1950
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 2000
 	api 3 insert 1730
@@ -2117,6 +2197,8 @@ test regress {
 	api 3 remove 6753
 	api 3 insert 1754
 	api 3 remove 6754
+	comment comment-2000
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 2050
 	api 3 insert 1755
@@ -2169,6 +2251,8 @@ test regress {
 	api 3 insert 1778
 	api 3 remove 6778
 	api 3 insert 1779
+	comment comment-2050
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 2100
 	api 3 remove 6779
@@ -2221,6 +2305,8 @@ test regress {
 	api 3 remove 6797
 	api 3 insert 1798
 	api 3 remove 6798
+	comment comment-2100
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 2150
 	api 3 insert 1799
@@ -2273,6 +2359,8 @@ test regress {
 	api 3 remove 6822
 	api 3 insert 1823
 	api 3 remove 6823
+	comment comment-2150
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 2200
 	api 3 insert 1824
@@ -2325,6 +2413,8 @@ test regress {
 	api 3 insert 1847
 	api 3 remove 6847
 	api 3 insert 1848
+	comment comment-2200
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 2250
 	api 3 remove 6848
@@ -2377,6 +2467,8 @@ test regress {
 	api 3 remove 6222
 	api 3 remove 5288
 	api 3 remove 5818
+	comment comment-2250
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 2300
 	api 3 remove 6053
@@ -2429,6 +2521,8 @@ test regress {
 	api 3 remove 6461
 	api 3 remove 6877
 	api 3 insert 1878
+	comment comment-2300
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 2350
 	api 3 remove 6878
@@ -2481,6 +2575,8 @@ test regress {
 	api 3 insert 1900
 	api 3 remove 6900
 	api 3 insert 1901
+	comment comment-2350
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 2400
 	api 3 remove 6901
@@ -2533,6 +2629,8 @@ test regress {
 	api 3 remove 6055
 	api 3 remove 5681
 	api 3 remove 6215
+	comment comment-2400
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 2450
 	api 3 remove 5677
@@ -2585,6 +2683,8 @@ test regress {
 	api 3 insert 1923
 	api 3 remove 6923
 	api 3 insert 1924
+	comment comment-2450
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 2500
 	api 3 remove 6924
@@ -2637,6 +2737,8 @@ test regress {
 	api 3 insert 1948
 	api 3 remove 6948
 	api 3 insert 1949
+	comment comment-2500
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 2550
 	api 3 remove 6949
@@ -2689,6 +2791,8 @@ test regress {
 	api 3 remove 6314
 	api 3 insert 1973
 	api 3 insert 1974
+	comment comment-2550
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 2600
 	api 3 remove 6974
@@ -2741,6 +2845,8 @@ test regress {
 	api 3 insert 1998
 	api 3 remove 6998
 	api 3 insert 1999
+	comment comment-2600
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 2650
 	api 3 remove 6999
@@ -2793,6 +2899,8 @@ test regress {
 	api 3 insert 2023
 	api 3 remove 7023
 	api 3 insert 2024
+	comment comment-2650
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 2700
 	api 3 remove 7024
@@ -2845,6 +2953,8 @@ test regress {
 	api 3 insert 2048
 	api 3 remove 7048
 	api 3 insert 2049
+	comment comment-2700
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 2750
 	api 3 remove 7049
@@ -2897,6 +3007,8 @@ test regress {
 	api 3 insert 2076
 	api 3 insert 2077
 	api 3 remove 7077
+	comment comment-2750
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 2800
 	api 3 insert 2078
@@ -2949,6 +3061,8 @@ test regress {
 	api 3 insert 2101
 	api 3 remove 7101
 	api 3 insert 2102
+	comment comment-2800
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 2850
 	api 3 remove 7102
@@ -3001,6 +3115,8 @@ test regress {
 	api 3 insert 2126
 	api 3 remove 7126
 	api 3 insert 2127
+	comment comment-2850
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 2900
 	api 3 remove 7127
@@ -3053,6 +3169,8 @@ test regress {
 	api 3 remove 7150
 	api 3 remove 7149
 	api 3 insert 2151
+	comment comment-2900
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 2950
 	api 3 insert 2152
@@ -3105,6 +3223,8 @@ test regress {
 	api 3 insert 2175
 	api 3 insert 2176
 	api 3 remove 7175
+	comment comment-2950
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 3000
 	api 3 remove 7176
@@ -3157,6 +3277,8 @@ test regress {
 	api 3 insert 2200
 	api 3 remove 7200
 	api 3 insert 2201
+	comment comment-3000
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 3050
 	api 3 remove 7201
@@ -3209,6 +3331,8 @@ test regress {
 	api 3 insert 2225
 	api 3 remove 7225
 	api 3 insert 2226
+	comment comment-3050
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 3100
 	api 3 remove 7226
@@ -3261,6 +3385,8 @@ test regress {
 	api 3 insert 2250
 	api 3 remove 7250
 	api 3 insert 2251
+	comment comment-3100
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 3150
 	api 3 remove 7251
@@ -3313,6 +3439,8 @@ test regress {
 	api 3 remove 7274
 	api 3 insert 2275
 	api 3 remove 7275
+	comment comment-3150
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 3200
 	api 3 insert 2276
@@ -3365,6 +3493,8 @@ test regress {
 	api 3 remove 7299
 	api 3 insert 2300
 	api 3 remove 7300
+	comment comment-3200
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 3250
 	api 3 insert 2301
@@ -3417,6 +3547,8 @@ test regress {
 	api 3 remove 7324
 	api 3 insert 2325
 	api 3 remove 7325
+	comment comment-3250
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 3300
 	api 3 insert 2326
@@ -3469,6 +3601,8 @@ test regress {
 	api 3 remove 7349
 	api 3 insert 2350
 	api 3 remove 7350
+	comment comment-3300
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 3350
 	api 3 insert 2351
@@ -3521,6 +3655,8 @@ test regress {
 	api 3 insert 2374
 	api 3 remove 7374
 	api 3 insert 2375
+	comment comment-3350
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 3400
 	api 3 remove 7375
@@ -3573,6 +3709,8 @@ test regress {
 	api 3 insert 2399
 	api 3 remove 7399
 	api 3 insert 2400
+	comment comment-3400
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 3450
 	api 3 remove 7400
@@ -3625,6 +3763,8 @@ test regress {
 	api 3 insert 2424
 	api 3 insert 2425
 	api 3 remove 7425
+	comment comment-3450
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 3500
 	api 3 insert 2426
@@ -3677,6 +3817,8 @@ test regress {
 	api 3 remove 7449
 	api 3 insert 2450
 	api 3 remove 7450
+	comment comment-3500
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 3550
 	api 3 insert 2451
@@ -3729,6 +3871,8 @@ test regress {
 	api 3 remove 7475
 	api 3 insert 2476
 	api 3 remove 7476
+	comment comment-3550
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 3600
 	api 3 insert 2477
@@ -3781,6 +3925,8 @@ test regress {
 	api 3 remove 7500
 	api 3 insert 2501
 	api 3 remove 7501
+	comment comment-3600
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 3650
 	api 3 insert 2502
@@ -3833,6 +3979,8 @@ test regress {
 	api 3 remove 7525
 	api 3 insert 2526
 	api 3 remove 7526
+	comment comment-3650
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 3700
 	api 3 insert 2527
@@ -3885,6 +4033,8 @@ test regress {
 	api 3 insert 2551
 	api 3 remove 7551
 	api 3 insert 2552
+	comment comment-3700
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 3750
 	api 3 remove 7552
@@ -3937,6 +4087,8 @@ test regress {
 	api 3 remove 7577
 	api 3 insert 2578
 	api 3 remove 7578
+	comment comment-3750
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 3800
 	api 3 insert 2579
@@ -3989,6 +4141,8 @@ test regress {
 	api 3 remove 7602
 	api 3 insert 2603
 	api 3 remove 7603
+	comment comment-3800
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 3850
 	api 3 insert 2604
@@ -4041,6 +4195,8 @@ test regress {
 	api 3 insert 2627
 	api 3 remove 7627
 	api 3 insert 2628
+	comment comment-3850
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 3900
 	api 3 remove 7628
@@ -4093,6 +4249,8 @@ test regress {
 	api 3 remove 7651
 	api 3 insert 2652
 	api 3 remove 7652
+	comment comment-3900
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 3950
 	api 3 insert 2653
@@ -4145,6 +4303,8 @@ test regress {
 	api 3 insert 2677
 	api 3 remove 7677
 	api 3 insert 2678
+	comment comment-3950
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 4000
 	api 3 remove 7678
@@ -4197,6 +4357,8 @@ test regress {
 	api 3 remove 7702
 	api 3 remove 7682
 	api 3 insert 2703
+	comment comment-4000
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 4050
 	api 3 remove 7703
@@ -4249,6 +4411,8 @@ test regress {
 	api 3 remove 7726
 	api 3 insert 2727
 	api 3 remove 7727
+	comment comment-4050
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 4100
 	api 3 insert 2728
@@ -4301,6 +4465,8 @@ test regress {
 	api 3 insert 2752
 	api 3 remove 7752
 	api 3 insert 2753
+	comment comment-4100
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 4150
 	api 3 remove 7753
@@ -4353,6 +4519,8 @@ test regress {
 	api 3 insert 2777
 	api 3 remove 7777
 	api 3 insert 2778
+	comment comment-4150
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 4200
 	api 3 remove 7778
@@ -4405,6 +4573,8 @@ test regress {
 	api 3 insert 2802
 	api 3 remove 7802
 	api 3 insert 2803
+	comment comment-4200
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 4250
 	api 3 remove 7803
@@ -4457,6 +4627,8 @@ test regress {
 	api 3 remove 7826
 	api 3 insert 2827
 	api 3 insert 2828
+	comment comment-4250
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 4300
 	api 3 remove 7828
@@ -4509,6 +4681,8 @@ test regress {
 	api 3 insert 2852
 	api 3 remove 7852
 	api 3 insert 2853
+	comment comment-4300
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 4350
 	api 3 remove 7853
@@ -4561,6 +4735,8 @@ test regress {
 	api 3 insert 2877
 	api 3 remove 7877
 	api 3 insert 2878
+	comment comment-4350
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 4400
 	api 3 remove 7878
@@ -4613,6 +4789,8 @@ test regress {
 	api 3 insert 2902
 	api 3 remove 7902
 	api 3 insert 2903
+	comment comment-4400
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 4450
 	api 3 remove 7903
@@ -4665,6 +4843,8 @@ test regress {
 	api 3 insert 2927
 	api 3 remove 7927
 	api 3 insert 2928
+	comment comment-4450
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 4500
 	api 3 remove 7928
@@ -4717,6 +4897,8 @@ test regress {
 	api 3 remove 7951
 	api 3 insert 2952
 	api 3 remove 7952
+	comment comment-4500
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 4550
 	api 3 insert 2953
@@ -4769,6 +4951,8 @@ test regress {
 	api 3 remove 7976
 	api 3 insert 2977
 	api 3 remove 5365
+	comment comment-4550
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 4600
 	api 3 insert 2978
@@ -4821,6 +5005,8 @@ test regress {
 	api 3 remove 8016
 	api 3 insert 3017
 	api 3 remove 8017
+	comment comment-4600
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 4650
 	api 3 insert 3018
@@ -4873,6 +5059,8 @@ test regress {
 	api 3 remove 8041
 	api 3 insert 3042
 	api 3 remove 8042
+	comment comment-4650
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 4700
 	api 3 insert 3043
@@ -4925,6 +5113,8 @@ test regress {
 	api 3 remove 8066
 	api 3 insert 3067
 	api 3 remove 8067
+	comment comment-4700
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 4750
 	api 3 insert 3068
@@ -4977,6 +5167,8 @@ test regress {
 	api 3 insert 3099
 	api 3 insert 3100
 	api 3 insert 3101
+	comment comment-4750
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 4800
 	api 3 insert 3102
@@ -5029,6 +5221,8 @@ test regress {
 	api 3 insert 3133
 	api 3 remove 8133
 	api 3 insert 3134
+	comment comment-4800
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 4850
 	api 3 remove 8134
@@ -5081,6 +5275,8 @@ test regress {
 	api 3 insert 3163
 	api 3 remove 8163
 	api 3 insert 3164
+	comment comment-4850
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 4900
 	api 3 remove 8164
@@ -5133,6 +5329,8 @@ test regress {
 	api 3 insert 3188
 	api 3 remove 8188
 	api 3 insert 3189
+	comment comment-4900
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 4950
 	api 3 remove 8189
@@ -5185,6 +5383,8 @@ test regress {
 	api 3 insert 3221
 	api 3 remove 8221
 	api 3 insert 3222
+	comment comment-4950
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 5000
 	api 3 remove 8222
@@ -5237,6 +5437,8 @@ test regress {
 	api 3 insert 3253
 	api 3 insert 3254
 	api 3 insert 3255
+	comment comment-5000
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 5050
 	api 3 insert 3256
@@ -5289,6 +5491,8 @@ test regress {
 	api 3 remove 8291
 	api 3 insert 3292
 	api 3 remove 8292
+	comment comment-5050
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 5100
 	api 3 remove 8086
@@ -5341,6 +5545,8 @@ test regress {
 	api 3 remove 8315
 	api 3 insert 3316
 	api 3 remove 8316
+	comment comment-5100
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 5150
 	api 3 insert 3317
@@ -5393,6 +5599,8 @@ test regress {
 	api 3 remove 8340
 	api 3 remove 8341
 	api 3 insert 3342
+	comment comment-5150
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 5200
 	api 3 insert 3343
@@ -5445,6 +5653,8 @@ test regress {
 	api 3 remove 8368
 	api 3 insert 3369
 	api 3 remove 8369
+	comment comment-5200
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 5250
 	api 3 insert 3370
@@ -5497,6 +5707,8 @@ test regress {
 	api 3 remove 8389
 	api 3 insert 3394
 	api 3 remove 8394
+	comment comment-5250
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 5300
 	api 3 remove 8385
@@ -5549,6 +5761,8 @@ test regress {
 	api 3 insert 3418
 	api 3 remove 8418
 	api 3 insert 3419
+	comment comment-5300
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 5350
 	api 3 remove 8419
@@ -5601,6 +5815,8 @@ test regress {
 	api 3 insert 3443
 	api 3 remove 8443
 	api 3 insert 3444
+	comment comment-5350
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 5400
 	api 3 remove 8444
@@ -5653,6 +5869,8 @@ test regress {
 	api 3 remove 8470
 	api 3 insert 3471
 	api 3 remove 8471
+	comment comment-5400
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 5450
 	api 3 insert 3472
@@ -5705,6 +5923,8 @@ test regress {
 	api 3 remove 8492
 	api 3 remove 8495
 	api 3 remove 8457
+	comment comment-5450
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 5500
 	api 3 insert 3498
@@ -5757,6 +5977,8 @@ test regress {
 	api 3 remove 8522
 	api 3 remove 8456
 	api 3 insert 3523
+	comment comment-5500
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 5550
 	api 3 remove 8523
@@ -5809,6 +6031,8 @@ test regress {
 	api 3 remove 8545
 	api 3 insert 3546
 	api 3 remove 8546
+	comment comment-5550
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 5600
 	api 3 insert 3547
@@ -5861,6 +6085,8 @@ test regress {
 	api 3 insert 3573
 	api 3 remove 8573
 	api 3 insert 3574
+	comment comment-5600
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 5650
 	api 3 remove 8574
@@ -5913,6 +6139,8 @@ test regress {
 	api 3 remove 8598
 	api 3 insert 3599
 	api 3 remove 8599
+	comment comment-5650
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 5700
 	api 3 insert 3600
@@ -5965,6 +6193,8 @@ test regress {
 	api 3 remove 8623
 	api 3 remove 8617
 	api 3 insert 3624
+	comment comment-5700
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 5750
 	api 3 remove 8624
@@ -6017,6 +6247,8 @@ test regress {
 	api 3 remove 8645
 	api 3 insert 3646
 	api 3 remove 8646
+	comment comment-5750
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 5800
 	api 3 insert 3647
@@ -6069,6 +6301,8 @@ test regress {
 	api 3 insert 3672
 	api 3 remove 8672
 	api 3 insert 3673
+	comment comment-5800
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 5850
 	api 3 remove 8668
@@ -6121,6 +6355,8 @@ test regress {
 	api 3 insert 3696
 	api 3 remove 8696
 	api 3 insert 3697
+	comment comment-5850
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 5900
 	api 3 remove 8697
@@ -6173,6 +6409,8 @@ test regress {
 	api 3 insert 3721
 	api 3 remove 8721
 	api 3 insert 3722
+	comment comment-5900
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 5950
 	api 3 remove 8722
@@ -6225,6 +6463,8 @@ test regress {
 	api 3 remove 8745
 	api 3 insert 3746
 	api 3 remove 8746
+	comment comment-5950
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 6000
 	api 3 insert 3747
@@ -6277,6 +6517,8 @@ test regress {
 	api 3 remove 8771
 	api 3 insert 3772
 	api 3 remove 8772
+	comment comment-6000
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 6050
 	api 3 insert 3773
@@ -6329,6 +6571,8 @@ test regress {
 	api 3 remove 8796
 	api 3 insert 3797
 	api 3 remove 8797
+	comment comment-6050
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 6100
 	api 3 insert 3798
@@ -6381,6 +6625,8 @@ test regress {
 	api 3 insert 3821
 	api 3 remove 8821
 	api 3 insert 3822
+	comment comment-6100
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 6150
 	api 3 remove 8822
@@ -6433,6 +6679,8 @@ test regress {
 	api 3 remove 8845
 	api 3 insert 3846
 	api 3 remove 8846
+	comment comment-6150
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 6200
 	api 3 insert 3847
@@ -6485,6 +6733,8 @@ test regress {
 	api 3 remove 8870
 	api 3 insert 3871
 	api 3 remove 8871
+	comment comment-6200
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 6250
 	api 3 insert 3872
@@ -6537,6 +6787,8 @@ test regress {
 	api 3 remove 8895
 	api 3 insert 3896
 	api 3 remove 8896
+	comment comment-6250
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 6300
 	api 3 insert 3897
@@ -6589,6 +6841,8 @@ test regress {
 	api 3 remove 8919
 	api 3 insert 3920
 	api 3 insert 3921
+	comment comment-6300
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 6350
 	api 3 remove 8920
@@ -6641,6 +6895,8 @@ test regress {
 	api 3 insert 3946
 	api 3 remove 8944
 	api 3 remove 8945
+	comment comment-6350
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 6400
 	api 3 remove 8946
@@ -6693,6 +6949,8 @@ test regress {
 	api 3 remove 8973
 	api 3 insert 3974
 	api 3 remove 8974
+	comment comment-6400
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 6450
 	api 3 insert 3975
@@ -6745,6 +7003,8 @@ test regress {
 	api 3 remove 8999
 	api 3 insert 4000
 	api 3 remove 9000
+	comment comment-6450
+	test show_table_2
 	test cycle_0
 	loginfo iperf3_bh-test1.log 6500
 	api 3 insert 4001
@@ -6797,6 +7057,8 @@ test regress {
 	api 3 remove 9023
 	api 3 insert 4024
 	api 3 remove 9024
+	comment comment-6500
+	test show_table_2
 	test cycle_1
 	loginfo iperf3_bh-test2.log 6550
 	api 3 insert 4025
@@ -6849,6 +7111,8 @@ test regress {
 	api 3 remove 9047
 	api 3 insert 4048
 	api 3 remove 9048
+	comment comment-6550
+	test show_table_2
 	test cycle_2
 	loginfo iperf3_bh-test3.log 6600
 	api 3 insert 4049
@@ -6901,6 +7165,8 @@ test regress {
 	api 3 insert 4072
 	api 3 remove 9072
 	api 3 insert 4073
+	comment comment-6600
+	test show_table_2
 	test cycle_3
 	loginfo iperf3_bh-test4.log 6650
 	api 3 remove 9073
@@ -6925,6 +7191,7 @@ test regress {
 }
 
 
+
 test xfer {
 	verify a1_100 c1_140 8888
 	verify b1_120 c1_140 8888
@@ -6933,7 +7200,7 @@ test xfer {
 
 test show_table_2 {
     local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=3
-    local ovs-ofctl dump-flows edge-2 -O OpenFlow13 table=3
+    comment comment-end
 }
 
 test delay {
@@ -6953,7 +7220,7 @@ test start_log {
 }
 
 test start_first_send {
-    exec b1_120 iperf3 -c 140.0.0.4 -B 120.0.0.1 -p 8080 -t 600 -b 100M &IPERF_B4
+    exec b1_120 iperf3 -c 140.0.0.4 -B 120.0.0.1 -p 8080 -t 500 -b 100M &IPERF_B4
 }
 
 test cycle_0 {
@@ -6963,7 +7230,7 @@ test cycle_0 {
     delay 5
     killps a1_100 IPERF_B2
     test delay
-    exec a1_100 iperf3 -c 140.0.0.1 -B 100.0.0.1 -p 8080 -t 600 -b 100M &IPERF_B1
+    exec a1_100 iperf3 -c 140.0.0.1 -B 100.0.0.1 -p 8080 -t 500 -b 100M &IPERF_B1
 }
 
 test cycle_1 {
@@ -6973,7 +7240,7 @@ test cycle_1 {
     delay 5
     killps b1_120 IPERF_B3
     test delay
-    exec a1_100 iperf3 -c 140.0.0.2 -B 100.0.0.1 -p 8080 -t 600 -b 100M &IPERF_B2
+    exec a1_100 iperf3 -c 140.0.0.2 -B 100.0.0.1 -p 8080 -t 500 -b 100M &IPERF_B2
 }
 
 test cycle_2 {
@@ -6983,7 +7250,7 @@ test cycle_2 {
 	delay 5
 	killps b1_120 IPERF_B4
 	test delay
-    exec b1_120 iperf3 -c 140.0.0.3 -B 120.0.0.1 -p 8080 -t 600 -b 100M &IPERF_B3
+    exec b1_120 iperf3 -c 140.0.0.3 -B 120.0.0.1 -p 8080 -t 500 -b 100M &IPERF_B3
 }
 
 test cycle_3 {
@@ -6998,7 +7265,7 @@ test cycle_3 {
 	
 	test restart_log
 	test delay
-    exec b1_120 iperf3 -c 140.0.0.4 -B 120.0.0.1 -p 8080 -t 600 -b 100M &IPERF_B4
+    exec b1_120 iperf3 -c 140.0.0.4 -B 120.0.0.1 -p 8080 -t 500 -b 100M &IPERF_B4
 }
 
 test restart_log {

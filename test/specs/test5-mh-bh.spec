@@ -6802,7 +6802,7 @@ test xfer {
 
 test show_table_2 {
     local ovs-ofctl dump-flows edge-1 -O OpenFlow13 table=3
-    local ovs-ofctl dump-flows edge-2 -O OpenFlow13 table=3
+    comment comment-end
 }
 
 test delay {
