@@ -195,6 +195,11 @@ class BGPListener(object):
             waiting = 0
             route = json.loads(route)
 
+            if 'state' in route['neighbor']:
+                logger.debug("Got route state from ExaBGP: %s", route)
+                if 'down' not in route['neighbor']['state']:
+                    continue
+
             logger.debug("Got route from ExaBGP: %s", route)
 
             # Received BGP route advertisement from ExaBGP

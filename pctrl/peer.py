@@ -55,12 +55,22 @@ class BGPPeer(object):
 
         if ('state' in route['neighbor'] and route['neighbor']['state']=='down'):
             #TODO WHY NOT COMPLETELY DELETE LOCAL?
-            routes = self.rib['input'].get_all()
+            self.logger.debug("neighbor " + str(route['neighbor']['ip']))
+            routes = self.rib['input'].get_all(neighbor=route['neighbor']['ip'])
+            self.logger.debug("routes: " + str(routes))
 
             for route_item in routes:
+                self.logger.debug("route prefix in routes " + str(route_item.prefix))
                 self.rib['local'].delete(prefix=route_item.prefix)
+                deleted_route = self.get_route_with_neighbor("input", route_item.prefix, neighbor)
+                self.logger.debug("deleted_route : " + str(deleted_route))
+                self.rib["input"].delete(prefix=route_item.prefix)
+                if deleted_route != None:
+                    self.delete_route_with_neighbor("input", route_item.prefix, neighbor)
+                    route_list.append({'withdraw': deleted_route})
+                    self.logger.debug(str({'withdraw': deleted_route}))
 
-            self.rib["input"].delete_all()
+            return route_list
 
         if ('update' in route['neighbor']['message']):
             if ('attribute' in route['neighbor']['message']['update']):

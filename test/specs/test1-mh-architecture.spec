@@ -15,7 +15,7 @@ host AS ROUTER _ IP           # host names of form a1_100 a1_110
 
 announce 1 100.0.0.0/24
 announce 2 140.0.0.0/24
-announce 3 140.0.0.0/24
+announce 3 110.0.0.0/24
 
 flow a1 80 >> b
 flow a1 4321 >> c
@@ -32,14 +32,7 @@ test regress {
 }
 
 test init {
-   listener
-}
-
-test xfer {
-   verify a1_100 b1_140 80
-   verify a1_100 c1_140 4321
-   verify a1_100 c2_140 4322
-   verify a1_100 b1_140 8888
+   #listener
 }
 
 
