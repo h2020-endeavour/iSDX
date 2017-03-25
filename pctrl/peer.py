@@ -61,10 +61,10 @@ class BGPPeer(object):
 
             for route_item in routes:
                 self.logger.debug("route prefix in routes " + str(route_item.prefix))
-                self.rib['local'].delete(prefix=route_item.prefix)
+                #self.rib['local'].delete(prefix=route_item.prefix,neighbor=route_item.neighbor)
                 deleted_route = self.get_route_with_neighbor("input", route_item.prefix, neighbor)
                 self.logger.debug("deleted_route : " + str(deleted_route))
-                self.rib["input"].delete(prefix=route_item.prefix)
+                #self.rib["input"].delete(prefix=route_item.prefix,neighbor=route_item.neighbor)
                 if deleted_route != None:
                     self.delete_route_with_neighbor("input", route_item.prefix, neighbor)
                     route_list.append({'withdraw': deleted_route})
