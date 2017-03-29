@@ -469,6 +469,9 @@ class parser:
             
             if args[0] == 'bgp':
                 continue
+
+            if args[0] == 'comment':
+                continue
             
             raise Exception('unknown test command: ' + args[0])   
         

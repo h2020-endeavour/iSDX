@@ -305,7 +305,7 @@ def api (args):
     #log.info('MM:00 API: ' + cmd + config_file)
 
     policy_path = os.path.abspath(os.path.join(os.path.realpath(sys.argv[1]), "..", "..", "policies"))
-    config_path = os.path.join(policy_path, "day_1" ,config_file)
+    config_path = os.path.join(policy_path, "api" ,config_file)
 
     part_info = config.participants[str(part_id)]
 
@@ -314,15 +314,22 @@ def api (args):
 
     # prepare for insert blackholing policy
     if part_action == 'insert':
-        new_policy = []
+        
         # Open File and Parse
         with open(config_path, 'r') as f:
             policy=json.load(f)
-            new_policy.append(policy)
+            
+        if 'inbound' in policy:
+            # insert inbound policy dict         
+            data = policy
 
-        # insert only inbound policys
-        data = {}
-        data['inbound'] = new_policy
+        else:
+            # insert only inbound policys
+            new_policy = []
+            new_policy.append(policy)
+            data = {}
+            data['inbound'] = new_policy
+        
         data=json.dumps(data)
 
         # post to participant api
