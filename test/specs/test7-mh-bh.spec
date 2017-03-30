@@ -34,12 +34,16 @@ test init {
 test regress {
 	test delay
 	test start_log
+	loginfo start.log 0
 	test delay
 	test xfer
 	test delay
-	comment comment-0
 	api 3 insert static_routes
+	test delay
+	test delay
+	comment comment-0
 	test show_table_2
+	test delay
 	test start_first_send
 	loginfo iperf3_bh-test4.log 50
 	api 3 insert 0
@@ -5277,10 +5281,7 @@ test cycle_2 {
 
 test cycle_3 {
 	blackholing 3 insert 3
-	test delay
-
-	test show_table_2
-	
+	test delay	
 	blackholing 3 remove 1
 	delay 5
 	killps a1_100 IPERF_B1

@@ -229,7 +229,7 @@ def blackholing (args):
         log.error('MM:00 EXEC: ERROR usage: blackholing participant_id remove/insert id[,id...]')
         return
     
-    httplib._MAXHEADERS = 2000
+    httplib._MAXHEADERS = 10000
 
     part_id = args[0] #participant id
     part_action = args[1] #action insert or remove
@@ -292,7 +292,7 @@ def api (args):
         # remove cookie - or - insert policy id
         return
     
-    httplib._MAXHEADERS = 2000
+    httplib._MAXHEADERS = 10000
 
     part_id = args[0] #participant id
     part_action = args[1] #action insert or remove
